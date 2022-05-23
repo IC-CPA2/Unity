@@ -79,4 +79,7 @@ Map = [['_','_','_','_','_','_','_','_','_'],
        ['_','_','_','_','_','_','_','_','_'],
        ['_','_','_','_','_','_','_','_','_']]
 
-shortestpath('4,4',tograph(Map))
+try:
+    shortestpath('4,4',tograph(Map))
+except:
+    print("Some blocks cannot be reached")
