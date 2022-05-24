@@ -39,12 +39,6 @@ posts = [
 
 modes = ["Slow", "Fast"]
 
-grid = [0 for i in range(0,9)]
-for i in range(0,9):
-    grid[i] = i
-
-# print (grid)
-
 def base(request):
     return redirect('/home')
 
@@ -56,21 +50,26 @@ def home(request):
 
 def about(request):
     default = """<canvas id="myCanvas" width="50" height="50" style="border:1px solid #000000;"></canvas>"""
-    ret = "<center>"
-    for i in range(no):
-        for j in range(no):
-            ret = ret + default
-            ret = ret + "&nbsp"
-        ret = ret + "<br>"
-    ret = ret + "</center>"
-    return HttpResponse(ret)
-    # return render(request, 'blog/about.html')
+    # ret = "<center>"
+    # for i in range(9):
+    #     for j in range(9):
+    #         ret = ret + default
+    #         ret = ret + "&nbsp"
+    #     ret = ret + "<br>"
+    # ret = ret + "</center>"
+    # return HttpResponse(ret)
+
+    context = {
+        'counter': ['1', '1', '1', '1', '1', '1', '1', '1', '1'],   
+    }
+    return render(request, 'blog/about.html', context)
 
 def login(request):
     password = request.POST['last']
-    global no
-    no = int(password)
-    return redirect('/about')
+    if hashlib.sha256(password.encode('utf-8')).hexdigest() == 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f':
+        return redirect('/about')
+    else:
+        return redirect('/')
 
 def form(request):
 
