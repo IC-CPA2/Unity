@@ -58,9 +58,13 @@ def about(request):
     #     ret = ret + "<br>"
     # ret = ret + "</center>"
     # return HttpResponse(ret)
- 
+    f = open("bat.txt", "r")
+    var = f.readline() + "%"
+
+
     context = {
-        'counter': ['1', '1', '1', '1', '1', '1', '1', '1', '1'],   
+        'counter': ['1', '1', '1', '1', '1', '1', '1', '1', '1'], 
+        'battery': var
     }
     return render(request, 'blog/about.html', context)
 
