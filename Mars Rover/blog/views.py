@@ -58,7 +58,7 @@ def about(request):
     #     ret = ret + "<br>"
     # ret = ret + "</center>"
     # return HttpResponse(ret)
-
+ 
     context = {
         'counter': ['1', '1', '1', '1', '1', '1', '1', '1', '1'],   
     }
@@ -74,3 +74,4 @@ def login(request):
 def form(request):
 
     return redirect('/about')
+
