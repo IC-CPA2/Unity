@@ -1,2 +1,0 @@
-Contributers:
-Matthew & Himanish
