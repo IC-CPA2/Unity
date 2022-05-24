@@ -1,0 +1,34 @@
+<center>
+<h1>MARS ROVER 1.0</h1>
+<form action="login/" method="post">
+{% csrf_token %}
+CODE<br>
+<input name="last">
+<br><br>
+<input type="submit" value="Submit">
+
+</form>
+<h2>Person Form</h2>
+<form action="form/" method="post">
+  {% csrf_token %}
+  <label for="modes">Mode:</label>
+  <select name="modes" id="modes">
+    <option value="Slow">Slow</option>
+    <option value="Fast">Fast</option>
+  </select>
+  <input type="submit" value="Submit">
+</form>
+
+<h1> GRID</h1>
+{% for i in posts %}
+    {% for i in posts %}
+        <canvas id="myCanvas" width="50" height="50"
+        style="border:1px solid #000000;">
+        </canvas>
+    {% endfor %}
+    <br>
+{% endfor %}
+<h1> GRID</h1>
+
+</center>
+
