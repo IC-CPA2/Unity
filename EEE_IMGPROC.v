@@ -59,7 +59,7 @@ output								source_sop;
 output								source_eop;
 
 // conduit export
-input                         mode;
+input mode;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -87,6 +87,8 @@ assign blue_detect = (blue>red+20) && (blue>green-20);
 // Highlight detected areas
 wire [23:0] red_high;
 wire [23:0] blue_high;
+reg [23:0] edge_high;
+
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
 assign blue_high  =  blue_detect ? {8'h0, 8'h0, 8'hff} : {grey, grey, grey};
 assign red_high  =  red_detect ? {8'hff, 8'h0, 8'h0} : blue_high;
@@ -110,7 +112,7 @@ assign new_image = bb_active ? bb_col : red_high;
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image : {red,green,blue};
+assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? edge_high : new_image;
 
 //Count valid pixels to tget the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
@@ -138,16 +140,16 @@ end
 //Find first and last red pixels
 reg [10:0] x_min, y_min, x_max, y_max;
 always@(posedge clk) begin
-	if (red_detect && in_valid) begin	//Update bounds when the pixel is red
+	if ((red_detect || blue_detect) && in_valid) begin	//Update bounds when the pixel is red
 		if (x < x_min) x_min <= x;
 		if ((x > x_max) && ((x-x_max < 0 ? -(x-x_max) : x - x_max)<10 ||x_max==0)) x_max <= x;
 		if ((y > y_max) && ((y-y_max < 0 ? -(y-y_max) : x - y_max)<10 ||y_max==0)) y_max <= y;
-		y_min <= y_max - (x_max - x_min);
+		y_min <= y_max + (x_max - x_min);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min <= IMAGE_W-11'h1;
 		x_max <= 0;
-		y_min <= y_max - (x_max - x_min);
+		y_min <= y_max + (x_max - x_min);
 		y_max <= 0;
 	end
 end
@@ -156,6 +158,37 @@ end
 reg [1:0] msg_state;
 reg [10:0] left, right, top, bottom;
 reg [7:0] frame_count;
+
+reg [7:0] redprev;
+reg [7:0] greenprev;
+reg [7:0] blueprev;
+
+wire [10:0] lumprev;
+wire [10:0] lumcurr;
+
+assign lumprev = 3*redprev+blueprev+4*greenprev;
+assign lumcurr = 3*red+blue+4*green;
+
+always@(posedge clk) begin
+	if (sop & in_valid) begin
+		redprev <= 0;
+		greenprev <= 0;
+		blueprev <= 0;
+	end
+	if ((lumprev - lumcurr>0?lumprev-lumcurr:lumcurr-lumprev)>500) begin
+			redprev <= red;
+			greenprev <= green;
+			blueprev <= blue;
+			edge_high <= {8'hff, 8'hff, 8'hff};
+		end
+	else begin
+		redprev <= red;
+		greenprev <= green;
+		blueprev <= blue;
+		edge_high <= {8'h0, 8'h0, 8'h0};
+	end
+end
+
 always@(posedge clk) begin
 	if (eop & in_valid & packet_video) begin  //Ignore non-video packets
 		
@@ -319,3 +352,4 @@ assign msg_buf_rd = s_chipselect & s_read & ~read_d & ~msg_buf_empty & (s_addres
 
 
 endmodule
+
