@@ -59,12 +59,38 @@ def about(request):
     # ret = ret + "</center>"
     # return HttpResponse(ret)
     f = open("bat.txt", "r")
-    var = f.readline() + "%"
+    batteryLvl = f.readline() + "%"
+    f.close()
 
+    img = []
+
+    ali = [[0]*9 for i in range(9)]
+    fi = open("image.txt", "r")
+    val = fi.readline()
+    val1 = val.split(";")
+    for i in range(len(val1)):
+        value = val1[i].split(",")
+        img.append(value)
+        for j in range(len(value)):
+            alienDict = {}
+            # print (value[j])
+            if value[j] == '0':
+                # print (value[j])
+                # alienDict["isThere"] = 1
+                a = 1
+            else:
+                # alienDict["isThere"] = 0
+                a = 0
+            # print(alienDict)
+            ali[i][j] = a
+        
+    print (ali)
 
     context = {
-        'counter': ['1', '1', '1', '1', '1', '1', '1', '1', '1'], 
-        'battery': var
+        'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
+        'battery': batteryLvl,
+        'images': img,
+        'aliens': ali
     }
     return render(request, 'blog/about.html', context)
 

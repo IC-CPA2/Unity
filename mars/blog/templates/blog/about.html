@@ -1,13 +1,36 @@
+    {% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
+    {% load static %} <img id="alien" src="{% static "blog/media/alien.png" %}" alt="alien" height="0" width="0" />
+    {% load extras %}
+    
+
     <div id="div1" style="padding-top:3%; padding-left:25%;float:left">
         {% for i in counter %}
-            {% for i in counter %}
-                <canvas id="myCanvas" width="50" height="50"
-                style="border:1px solid #000000;">
+            {% for j in counter %}
+                 <canvas id={{i}}{{j}} width="50" height="50"
+                     style="border:1px solid #000000;">
                 </canvas>
+                    <!-- {{aliens|index:i|index:j}} -->
+                    {% if aliens|index:i|index:j == 0 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% else %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("alien");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% endif %}
             {% endfor %}
             <br>
         {% endfor %}
     </div>
+
+    
 
     <div id="div2" style="padding-top:3%;padding-left:5%;float:left">
         <form>
@@ -45,7 +68,7 @@
     </div>
 
 <script>
-    window.setInterval('refresh()', 10000); 	
+    window.setInterval('refresh()', 20000); 	
     // Call a function every 10000 milliseconds 
     // (OR 10 seconds).
   
