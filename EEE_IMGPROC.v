@@ -79,8 +79,8 @@ wire         sop, eop, in_valid, out_ready;
 // Detect red areas
 wire red_detect;
 wire blue_detect;
-assign red_detect = (red>green+30) & (red>blue+30);
-assign blue_detect = (blue>red+20) & (blue>green-20);
+assign red_detect = (red>green+30) && (red>blue+30);
+assign blue_detect = (blue>red+20) && (blue>green-20);
 
 // Find boundary of cursor box
 
@@ -138,10 +138,10 @@ end
 //Find first and last red pixels
 reg [10:0] x_min, y_min, x_max, y_max;
 always@(posedge clk) begin
-	if (red_detect & in_valid) begin	//Update bounds when the pixel is red
+	if (red_detect && in_valid) begin	//Update bounds when the pixel is red
 		if (x < x_min) x_min <= x;
-		if ((x > x_max) & ((x-x_max < 0 ? -(x-x_max) : x - x_max)<10 |x_max==0)) x_max <= x;
-		if ((y > y_max) & ((y-y_max < 0 ? -(y-y_max) : x - y_max)<10 |y_max==0)) y_max <= y;
+		if ((x > x_max) && ((x-x_max < 0 ? -(x-x_max) : x - x_max)<10 ||x_max==0)) x_max <= x;
+		if ((y > y_max) && ((y-y_max < 0 ? -(y-y_max) : x - y_max)<10 ||y_max==0)) y_max <= y;
 		y_min <= y_max - (x_max - x_min);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
