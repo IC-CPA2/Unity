@@ -70,7 +70,7 @@ def about(request):
     val1 = val.split(";")
     for i in range(len(val1)):
         value = val1[i].split(",")
-        img.append(value)
+        # img.append(value)
         for j in range(len(value)):
             alienDict = {}
             # print (value[j])
@@ -83,13 +83,10 @@ def about(request):
                 a = 0
             # print(alienDict)
             ali[i][j] = a
-        
-    print (ali)
 
     context = {
         'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
         'battery': batteryLvl,
-        'images': img,
         'aliens': ali
     }
     return render(request, 'blog/about.html', context)

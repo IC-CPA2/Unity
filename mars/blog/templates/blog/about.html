@@ -1,7 +1,41 @@
     {% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
     {% load static %} <img id="alien" src="{% static "blog/media/alien.png" %}" alt="alien" height="0" width="0" />
+    {% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
     {% load extras %}
-    
+    <style>
+        .container{
+            margin: auto auto;
+            display:grid;
+            grid-template-columns: 50px 50px 50px;
+            grid-row: 50px 50px;
+            grid-column-gap: 20px;
+            grid-row-gap: 20px;
+            padding-top: 10%;
+            padding-left: 10%;
+        }
+        .buttonup{
+            grid-column: 2 / span 1;
+            grid-row: 1 / span 1;
+        }
+
+        .buttondown{
+
+            grid-column: 2 / span 1;
+            grid-row: 2 / span 1;
+        }
+
+        .buttonleft{
+            grid-column: 1 / span 1;
+            grid-row: 2 / span 1;
+        }
+        .buttonright{
+            grid-column: 3 / span 1;
+            grid-row: 2 / span 1;
+        }
+    </style>
+
+    <body style="background-color:#B5F0C4;">
+        </body>
 
     <div id="div1" style="padding-top:3%; padding-left:25%;float:left">
         {% for i in counter %}
@@ -9,15 +43,14 @@
                  <canvas id={{i}}{{j}} width="50" height="50"
                      style="border:1px solid #000000;">
                 </canvas>
+                <script>
+                    var c = document.getElementById({{i}}{{j}});
+                    var ctx = c.getContext("2d");
+                    var img = document.getElementById("terrain");
+                    ctx.drawImage(img,0,0,50,50);
+                </script>
                     <!-- {{aliens|index:i|index:j}} -->
-                    {% if aliens|index:i|index:j == 0 %}
-                        <script>
-                            var c = document.getElementById({{i}}{{j}});
-                            var ctx = c.getContext("2d");
-                            var img = document.getElementById("terrain");
-                            ctx.drawImage(img,0,0,50,50);
-                        </script>
-                    {% else %}
+                    {% if aliens|index:i|index:j == 1 %}
                         <script>
                             var c = document.getElementById({{i}}{{j}});
                             var ctx = c.getContext("2d");
@@ -32,7 +65,7 @@
 
     
 
-    <div id="div2" style="padding-top:3%;padding-left:5%;float:left">
+    <!-- <div id="div2" style="padding-top:3%;padding-left:5%;float:left">
         <form>
         <h2>Mode</h2>
         <form action="form/" method="post">
@@ -42,33 +75,52 @@
             <option value="Slow">Slow</option>
             <option value="Fast">Fast</option>
         </select>
-        <!-- <input type="submit" value="Submit"> -->
         </form>
-    </div>  
+    </div>   -->
 
-    <div id="div3" style="padding-top:45%;padding-left:3%;">
+   
+    <div class="container">
+        <div class="buttonup">
+            <button type = "button"> ↑ </button>
+        </div>
+        <div class="buttondown">
+            <button type = "button"> ↓ </button>
+        </div>
+        <div class="buttonleft">
+            <button type = "button"> ← </button>
+        </div>
+        <div class="buttonright">
+            <button type = "button"> → </button>
+        </div>
+    </div>
+
+    <div id="div3" style="padding-top:27%;padding-left:3%;">
       <style>
       #myProgress{
           width: 30%;
-          background-color: #ddd;
+          background-color: #c1c1c1;
       }
         
       #myBar{
           width: {{battery}};
           height: 30px;
-          background-color: #04AA6D;
+          background-color: #F05760;
       }
       </style>
       
       <body>
+        Battery Level:
         <div id="myProgress">
           <div id="myBar"></div>
         </div>
       </body>
     </div>
 
+
+   
+
 <script>
-    window.setInterval('refresh()', 20000); 	
+    window.setInterval('refresh()', 10000); 	
     // Call a function every 10000 milliseconds 
     // (OR 10 seconds).
   
@@ -77,3 +129,5 @@
         window .location.reload();
     }
   </script>
+
+    
