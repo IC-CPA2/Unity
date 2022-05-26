@@ -59,7 +59,7 @@ output								source_sop;
 output								source_eop;
 
 // conduit export
-input mode;
+input                         mode;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -75,34 +75,45 @@ wire [7:0]   red_out, green_out, blue_out;
 
 wire         sop, eop, in_valid, out_ready;
 ////////////////////////////////////////////////////////////////////////
+// HSV 
+wire [7:0] hue_init , hue_mid, min , max ,  sat, value, hue;
+assign max = (red >blue) ? ((red>green) ? red : green) : (blue > green) ? blue : green; // max(R,G,B)
+assign value = max;    // val = MAX
+assign min = (red < blue) ? ((red<green) ? red : green) : (blue < green) ? blue : green;
+assign sat = (value != 0) ? (value - min)* 255 / value : 0;
 
-// Detect red areas
-wire red_detect;
-wire blue_detect;
-assign red_detect = (red>green+30) && (red>blue+30);
-assign blue_detect = (blue>red+20) && (blue>green-20);
+assign hue_init = (red == green && red == blue) ? 0 :((value != red)? (value != green) ? (((240*((value - min))+ (60* (red - green)))/(value-min))>>1):
+                ((120*(value-min)+60*(blue - red))/(value - min)>>1): 
+                (blue < green) ? ((60*(green - blue)/(value - min))>>1): (((360*(value-min) +(60*(green - blue)))/(value - min))>>1));
+assign hue = (hue_init>0) ? hue_init : hue_init +360;
+					 
+/// Detect  areas
+wire red_detect , orange_detect, pink_detect, blue_detect, any_detect;
+reg prev0, prev1;
+initial begin
+	prev0 <=0;
+	prev1 <= 0;
+end
+assign   pink_detect     = (((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+assign   orange_detect  = (hue >= 15 && hue <= 30 && value > 120 && sat > 110);
+assign   blue_detect    = ((blue>green-20) && (blue>red) && ~pink_detect && ~orange_detect );//(hue >= 55 && hue <= 85 && saturation >= 51 && sat <= 89 && value >= 76 && value <= 240);
+assign   red_detect    = ((red>green+30) && (red>blue+30) && ~pink_detect && ~orange_detect);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+assign   any_detect = ((pink_detect || orange_detect || blue_detect || red_detect ));
+
+
 
 // Find boundary of cursor box
 
 // Highlight detected areas
 wire [23:0] red_high;
-wire [23:0] blue_high;
-reg [23:0] edge_high;
-
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign blue_high  =  blue_detect ? {8'h0, 8'h0, 8'hff} : {grey, grey, grey};
-assign red_high  =  red_detect ? {8'hff, 8'h0, 8'h0} : blue_high;
-//if (red_detect) begin
-//	assign red_high = {8'hff, 8'h0, 8'h0};
-//end
-//else if (blue_detect) begin
-//	assign red_high = {8'00, 8'h0, 8'hff};
-//end 
-//else begin
-//	assign red_high = {grey, grey, grey};
-//end
+assign red_high  =  (red_detect && prev0 && prev1) ? {8'hff,8'h0,8'h0} 
+	: ((blue_detect && prev0 && prev1)? {8'h0,8'h0,8'hff} 
+	: ((orange_detect && prev0 && prev1)? {8'hde, 8'h9a, 8'h7}
+	: ((pink_detect && prev0 && prev1)? {8'hff, 8'hba, 8'hfd}
+	: {grey,grey,grey})));
 
-
+	
 // Show bounding box
 wire [23:0] new_image;
 wire bb_active;
@@ -112,12 +123,14 @@ assign new_image = bb_active ? bb_col : red_high;
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
 // Don't modify data in non-video packets
-assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? edge_high : new_image;
+assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image : {red,green,blue};
 
 //Count valid pixels to tget the image coordinates. Reset and detect packet type on Start of Packet.
 reg [10:0] x, y;
 reg packet_video;
 always@(posedge clk) begin
+	prev0 <= any_detect;
+	prev1 <= prev0;
 	if (sop) begin
 		x <= 11'h0;
 		y <= 11'h0;
@@ -134,22 +147,19 @@ always@(posedge clk) begin
 	end
 end
 
-
-//((x < x_min) & ((x-x_min < 0 ? -(x-x_min) : x - x_min)<10 |x_min==IMAGE_W-11'h1))
-//((y < y_min) & ((y-y_min < 0 ? -(y-y_min) : y - y_min)<10 |y_min==IMAGE_H-11'h1))
 //Find first and last red pixels
 reg [10:0] x_min, y_min, x_max, y_max;
 always@(posedge clk) begin
-	if ((red_detect || blue_detect) && in_valid) begin	//Update bounds when the pixel is red
+	if ((red_detect || orange_detect || blue_detect || pink_detect) && in_valid) begin	//Update bounds when the pixel is red
 		if (x < x_min) x_min <= x;
-		if ((x > x_max) && ((x-x_max < 0 ? -(x-x_max) : x - x_max)<10 ||x_max==0)) x_max <= x;
-		if ((y > y_max) && ((y-y_max < 0 ? -(y-y_max) : x - y_max)<10 ||y_max==0)) y_max <= y;
-		y_min <= y_max + (x_max - x_min);
+		if (x > x_max) x_max <= x;
+		if (y < y_min) y_min <= y;
+		y_max <= y;
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min <= IMAGE_W-11'h1;
 		x_max <= 0;
-		y_min <= y_max + (x_max - x_min);
+		y_min <= IMAGE_H-11'h1;
 		y_max <= 0;
 	end
 end
@@ -158,37 +168,6 @@ end
 reg [1:0] msg_state;
 reg [10:0] left, right, top, bottom;
 reg [7:0] frame_count;
-
-reg [7:0] redprev;
-reg [7:0] greenprev;
-reg [7:0] blueprev;
-
-wire [10:0] lumprev;
-wire [10:0] lumcurr;
-
-assign lumprev = 3*redprev+blueprev+4*greenprev;
-assign lumcurr = 3*red+blue+4*green;
-
-always@(posedge clk) begin
-	if (sop & in_valid) begin
-		redprev <= 0;
-		greenprev <= 0;
-		blueprev <= 0;
-	end
-	if ((lumprev - lumcurr>0?lumprev-lumcurr:lumcurr-lumprev)>500) begin
-			redprev <= red;
-			greenprev <= green;
-			blueprev <= blue;
-			edge_high <= {8'hff, 8'hff, 8'hff};
-		end
-	else begin
-		redprev <= red;
-		greenprev <= green;
-		blueprev <= blue;
-		edge_high <= {8'h0, 8'h0, 8'h0};
-	end
-end
-
 always@(posedge clk) begin
 	if (eop & in_valid & packet_video) begin  //Ignore non-video packets
 		
@@ -352,4 +331,3 @@ assign msg_buf_rd = s_chipselect & s_read & ~read_d & ~msg_buf_empty & (s_addres
 
 
 endmodule
-
