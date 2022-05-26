@@ -72,17 +72,7 @@ def about(request):
         value = val1[i].split(",")
         # img.append(value)
         for j in range(len(value)):
-            alienDict = {}
-            # print (value[j])
-            if value[j] == '0':
-                # print (value[j])
-                # alienDict["isThere"] = 1
-                a = 1
-            else:
-                # alienDict["isThere"] = 0
-                a = 0
-            # print(alienDict)
-            ali[i][j] = a
+            ali[i][j] = int(value[j])
 
     context = {
         'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 

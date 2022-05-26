@@ -1,9 +1,33 @@
     {% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
     {% load static %} <img id="alien" src="{% static "blog/media/alien.png" %}" alt="alien" height="0" width="0" />
-    {% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
+    {% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
     {% load extras %}
     <style>
-        .container{
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto;
+            gap: 10px;
+            background-color: #ffffff00;
+            padding: 10px;
+        }
+
+        .grid-container > div {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 20px 0;
+            font-size: 30px;
+        }
+
+        .item8 {
+            grid-area: 1 / 2 / 5 / 6;
+        }
+        .item10 {
+            grid-area: 5 / 1 / 5 / 3;
+        }
+
+
+        .buttons{
             margin: auto auto;
             display:grid;
             grid-template-columns: 50px 50px 50px;
@@ -32,89 +56,143 @@
             grid-column: 3 / span 1;
             grid-row: 2 / span 1;
         }
+
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+            padding-top: 5%;
+            padding-bottom: 5%;
+        }
+
+        /* The slider itself */
+        .slider {
+            -webkit-appearance: none;  /* Override default CSS styles */
+            appearance: none;
+            width: 100%; /* Full-width */
+            height: 25px; /* Specified height */
+            background: #d3d3d3; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .slider:hover {
+            opacity: 1; /* Fully shown on mouse-over */
+        }
+
+        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px; /* Set a specific slider handle width */
+            height: 25px; /* Slider handle height */
+            background: #04AA6D; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+        
     </style>
 
-    <body style="background-color:#B5F0C4;">
-        </body>
+    <div class="grid-container">
 
-    <div id="div1" style="padding-top:3%; padding-left:25%;float:left">
-        {% for i in counter %}
-            {% for j in counter %}
-                 <canvas id={{i}}{{j}} width="50" height="50"
-                     style="border:1px solid #000000;">
-                </canvas>
-                <script>
-                    var c = document.getElementById({{i}}{{j}});
-                    var ctx = c.getContext("2d");
-                    var img = document.getElementById("terrain");
-                    ctx.drawImage(img,0,0,50,50);
-                </script>
-                    <!-- {{aliens|index:i|index:j}} -->
-                    {% if aliens|index:i|index:j == 1 %}
-                        <script>
-                            var c = document.getElementById({{i}}{{j}});
-                            var ctx = c.getContext("2d");
-                            var img = document.getElementById("alien");
-                            ctx.drawImage(img,0,0,50,50);
-                        </script>
-                    {% endif %}
-            {% endfor %}
-            <br>
-        {% endfor %}
-    </div>
-
-    
-
-    <!-- <div id="div2" style="padding-top:3%;padding-left:5%;float:left">
-        <form>
-        <h2>Mode</h2>
-        <form action="form/" method="post">
-        {% csrf_token %}
-        <label for="modes">Mode:</label>
-        <select name="modes" id="modes">
-            <option value="Slow">Slow</option>
-            <option value="Fast">Fast</option>
-        </select>
-        </form>
-    </div>   -->
-
-   
-    <div class="container">
-        <div class="buttonup">
-            <button type = "button"> ↑ </button>
-        </div>
-        <div class="buttondown">
-            <button type = "button"> ↓ </button>
-        </div>
-        <div class="buttonleft">
-            <button type = "button"> ← </button>
-        </div>
-        <div class="buttonright">
-            <button type = "button"> → </button>
-        </div>
-    </div>
-
-    <div id="div3" style="padding-top:27%;padding-left:3%;">
-      <style>
-      #myProgress{
-          width: 30%;
-          background-color: #c1c1c1;
-      }
+        <body style="background-color:#B5F0C4;">
+            </body>
         
-      #myBar{
-          width: {{battery}};
-          height: 30px;
-          background-color: #F05760;
-      }
-      </style>
-      
-      <body>
-        Battery Level:
-        <div id="myProgress">
-          <div id="myBar"></div>
+        <div class="item1">1</div>
+        <div class="item2">{% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
         </div>
-      </body>
-    </div>
+        <div class="item3">3</div>  
+        <div class="item4">
+            <form>
+                <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
+                <input type="text" id="dist" name="dist" value="0"><br>
+                <div class="slidecontainer">
+                    <input type="range" min="0" max="360" value="0" id="myRange">
+                    <font size="3"> <span id="demo"></span>º </font>
+                </div>
+                <input type="submit" value="Submit">
+
+                <script>
+                    var slider = document.getElementById("myRange");
+                    var output = document.getElementById("demo");
+                    output.innerHTML = slider.value; // Display the default slider value
+                
+                    // Update the current slider value (each time you drag the slider handle)
+                    slider.oninput = function() {
+                    output.innerHTML = this.value;
+                    }
+                </script>
+                
+            </form>
+        </div>
+        <div class="item5">5</div>
+        <div class="item6">6</div>
+        <div class="item7">7</div>
+        <div class="item8">
+            {% for i in counter %}
+                {% for j in counter %}
+                    <canvas id={{i}}{{j}} width="50" height="50"
+                        style="border:1px solid #000000;">
+                    </canvas>
+                    <script>
+                        var c = document.getElementById({{i}}{{j}});
+                        var ctx = c.getContext("2d");
+                        var img = document.getElementById("terrain");
+                        ctx.drawImage(img,0,0,50,50);
+                    </script>
+                        <!-- {{aliens|index:i|index:j}} -->
+                        {% if aliens|index:i|index:j == 0 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("alien");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 2 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("rover");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% endif %}
+                {% endfor %}
+                <br>
+            {% endfor %}
+        </div>  
+        <div class="item9">9</div>
+        <div class="item10">
+            <style>
+                #myProgress{
+                    width: 100%;
+                    background-color: #c1c1c1;
+                }
+                    
+                #myBar{
+                    width: {{battery}};
+                    height: 30px;
+                    background-color: #F05760;
+                }
+            </style>
+                
+                <body>
+                    <font size="3"> Battery Level: </font>
+                    <div id="myProgress">
+                    <div id="myBar"></div>
+                    </div>
+                </body>
+        </div>
+        <div class="item11">11</div>
+        <div class="item12">12</div>
+        <div class="item13">13</div>
+        <div class="item14">14</div>
 
 
    
@@ -128,6 +206,6 @@
     function refresh() {
         window .location.reload();
     }
-  </script>
+</script>
 
     
