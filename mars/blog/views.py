@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
 from django.template import loader
 from django.views.generic import ListView, CreateView, UpdateView
+from .forms import NameForm
 import hashlib
 
 no = 9
@@ -101,8 +102,10 @@ def about(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi
+        'wifis': wifi,
+        'forms': NameForm()
     }
+    print(request.POST)
     return render(request, 'blog/about.html', context)
 
 def login(request):

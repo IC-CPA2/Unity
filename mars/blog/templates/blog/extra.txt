@@ -99,3 +99,71 @@
                     <button type = "button"> → </button>
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            <form action="">
+                <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
+                <input type="text" id="dist" name="dist" value="0"><br>
+                <div class="slidecontainer">
+                    <input type="range" min="0" max="360" value="0" id="myRange" step="90">
+                    <br><font size="3"> <span id="slide"></span>º </font>
+                </div>
+                <input type="submit" value="Submit" onclick="refreshScreen()">
+
+                <script>
+                    var slider = document.getElementById("myRange");
+                    var output = document.getElementById("slide");
+                    output.innerHTML = slider.value; // Display the default slider value
+                
+                    // Update the current slider value (each time you drag the slider handle)
+                    slider.oninput = function() {
+                    output.innerHTML = this.value;
+                    }
+                    
+                    function refreshScreen(){
+                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
+                        console.log(disang)
+                        for (i = 0; i<9; i++){
+                            for (j = 0; j<9; j++){
+                                if (aliens[i][j] == 0){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("alien");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                                else if (aliens[i][j] == 2){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("rover");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                            }
+                        }
+
+                        var elem = document.getElementById("myBar");
+                        var id = setInterval(frame, 10);
+                        function frame() {
+                            elem.style.width = battery;
+                        } 
+                    
+                    }
+
+                </script>
+            </form>
+
+
+            <form action = "" method = "post">
+                {% csrf_token %}
+                {{ forms }}
+                <input type="submit" value=Submit>
+            </form>

@@ -159,11 +159,12 @@
         </div>
         <div class="item5">5</div>
         <div class="item6">
-            <form>
+            <form action="" method="post">
+                {% csrf_token %}
                 <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
                 <input type="text" id="dist" name="dist" value="0"><br>
                 <div class="slidecontainer">
-                    <input type="range" min="0" max="360" value="0" id="myRange" step="90">
+                    <input type="range" min="0" max="360" value="0" id="myRange" step="90" name="angle">
                     <br><font size="3"> <span id="slide"></span>º </font>
                 </div>
                 <input type="submit" value="Submit" onclick="refreshScreen()">
@@ -179,6 +180,8 @@
                     }
                     
                     function refreshScreen(){
+                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
+                        console.log(disang)
                         for (i = 0; i<9; i++){
                             for (j = 0; j<9; j++){
                                 if (aliens[i][j] == 0){
