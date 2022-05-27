@@ -123,15 +123,15 @@
         </body>
         
         <div class="item1">
-            Wifi Signal:
+            Wifi Status:
             <br>
-            {% if wifis <= "3" %}
+            {% if wifis == "0" or wifis == "1" or wifis == "2" %}
                 {% load static %} <img id="none" src="{% static "blog/media/none.png" %}" alt="wifibad" height="100" width="110" />
-            {% elif wifis <= "5" and wifis > "3" %}
+            {% elif wifis == "3" or wifis == "4" %}
                 {% load static %} <img id="weak" src="{% static "blog/media/weak.png" %}" alt="wifiok" height="100" width="110" />
-            {% elif wifis <= "7" and wifis > "5" %}
+            {% elif wifis == "5" or wifis == "6" or wifi == "7" %}
                 {% load static %} <img id="mid" src="{% static "blog/media/mid.png" %}" alt="wifimid" height="100" width="110" />
-            {% elif wifis <= "10" and wifis > "7" %}
+            {% elif wifis == "8" or wifis == "9" or wifis == "10" %}
                 {% load static %} <img id="good" src="{% static "blog/media/good.png" %}" alt="wifigood" height="100" width="110" />
             {% endif %}
 
@@ -157,7 +157,10 @@
             </select>
             </form>
         </div>
-        <div class="item5">5</div>
+        <div class="item5">Reset <br>
+            <button type="button" onclick="resetMap()">Reset</button>
+            
+        </div>
         <div class="item6">
             <form action="" method="post">
                 {% csrf_token %}
@@ -179,34 +182,7 @@
                     output.innerHTML = this.value;
                     }
                     
-                    function refreshScreen(){
-                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
-                        console.log(disang)
-                        for (i = 0; i<9; i++){
-                            for (j = 0; j<9; j++){
-                                if (aliens[i][j] == 0){
-                                    var c = document.getElementById(str(i)+str(j));
-                                    var ctx = c.getContext("2d");
-                                    var img = document.getElementById("alien");
-                                    ctx.drawImage(img,0,0,50,50);
-                                }
-                                else if (aliens[i][j] == 2){
-                                    var c = document.getElementById(str(i)+str(j));
-                                    var ctx = c.getContext("2d");
-                                    var img = document.getElementById("rover");
-                                    ctx.drawImage(img,0,0,50,50);
-                                }
-                            }
-                        }
-
-                        var elem = document.getElementById("myBar");
-                        var id = setInterval(frame, 10);
-                        function frame() {
-                            elem.style.width = battery;
-                        } 
                     
-                    }
-
                 </script>
             </form>
         </div>
@@ -242,6 +218,20 @@
                 {% endfor %}
                 <br>
             {% endfor %}
+            <script>
+                function resetMap(){
+                    for (i = 0; i<9; i++){
+                        for (j = 0; j<9; j++){
+                            let va= i.toString()+j.toString()
+                            console.log(va)
+                            var c = document.getElementById(i.toString+j.toString());
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                        }
+                    }
+                }
+            </script>
         </div>  
         <div class="item9">9</div>
         <div class="item10">
@@ -267,6 +257,7 @@
         <div class="item13">13</div>
         <div class="item14">14</div>
 
+        
 
    
 

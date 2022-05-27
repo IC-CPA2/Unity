@@ -102,8 +102,7 @@ def about(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi,
-        'forms': NameForm()
+        'wifis': wifi
     }
     print(request.POST)
     return render(request, 'blog/about.html', context)

@@ -65,6 +65,7 @@ def shortestpath(start,graph):
         unvisitednode[currentnode] = 0
     print(init)
 
+    print(previousvertex)
 
 
 

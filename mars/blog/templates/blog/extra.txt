@@ -167,3 +167,33 @@
                 {{ forms }}
                 <input type="submit" value=Submit>
             </form>
+
+
+
+
+function refreshScreen(){
+                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
+                        console.log(disang)
+                        for (i = 0; i<9; i++){
+                            for (j = 0; j<9; j++){
+                                if (aliens[i][j] == 0){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("alien");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                                else if (aliens[i][j] == 2){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("rover");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                            }
+                        }
+
+                        var elem = document.getElementById("myBar");
+                        var id = setInterval(frame, 10);
+                        function frame() {
+                            elem.style.width = battery;
+                        } 
+                    }
