@@ -58,26 +58,50 @@ def about(request):
     #     ret = ret + "<br>"
     # ret = ret + "</center>"
     # return HttpResponse(ret)
-    f = open("bat.txt", "r")
+    f = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/bat.txt", "r")
     batteryLvl = f.readline() + "%"
     f.close()
 
     img = []
 
     ali = [[0]*9 for i in range(9)]
-    fi = open("image.txt", "r")
+    fi = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/image.txt", "r")
     val = fi.readline()
+    fi.close()
     val1 = val.split(";")
     for i in range(len(val1)):
         value = val1[i].split(",")
         # img.append(value)
         for j in range(len(value)):
             ali[i][j] = int(value[j])
+    
+    directionFile = []
+    direction = []
+    direc = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/direction.txt", "r")
+    for x in direc:
+        directionFile.append(x)
+    direc.close()
+
+    for i in directionFile:
+        if i[0] == "+":
+            direction.append("Forward: " + str(i[1:-1]))
+        elif i[0] == "-":
+            direction.append("Backward: " + str(i[1:-1]))
+        elif i[0] == "<":
+            direction.append("Left: " + str(i[1:-1]))
+        elif i[0] == ">":
+            direction.append("Right: " + str(i[1:-1]))
+
+    w = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/wifi.txt", "r")
+    wifi = w.readline()
+    w.close()
 
     context = {
         'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
         'battery': batteryLvl,
-        'aliens': ali
+        'aliens': ali,
+        'directions': direction,
+        'wifis': wifi
     }
     return render(request, 'blog/about.html', context)
 
