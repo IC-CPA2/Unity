@@ -159,7 +159,6 @@
         </div>
         <div class="item5">Reset <br>
             <button type="button" onclick="resetMap()">Reset</button>
-            
         </div>
         <div class="item6">
             <form action="" method="post">
@@ -193,7 +192,9 @@
                     <canvas id={{i}}{{j}} width="50" height="50"
                         style="border:0.5px solid #000000;">
                     </canvas>
+
                     <script>
+                        
                         var c = document.getElementById({{i}}{{j}});
                         var ctx = c.getContext("2d");
                         var img = document.getElementById("terrain");
@@ -220,17 +221,21 @@
             {% endfor %}
             <script>
                 function resetMap(){
-                    for (i = 0; i<9; i++){
-                        for (j = 0; j<9; j++){
+                    for (i = 1; i<10; i++){
+                        for (j = 1; j<10; j++){
                             let va= i.toString()+j.toString()
                             console.log(va)
-                            var c = document.getElementById(i.toString+j.toString());
+                            var c = document.getElementById(i.toString()+j.toString());
                             var ctx = c.getContext("2d");
                             var img = document.getElementById("terrain");
                             ctx.drawImage(img,0,0,50,50);
                         }
                     }
-                }
+                    var c = document.getElementById("55");
+                    var ctx = c.getContext("2d");
+                    var img = document.getElementById("rover");
+                    ctx.drawImage(img,0,0,50,50);
+            }
             </script>
         </div>  
         <div class="item9">9</div>

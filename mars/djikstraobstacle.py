@@ -30,7 +30,7 @@ def tograph(Map):
                         possiblepaths.append([str(i)+','+str(j+1),1])
                         
                 memo[str(i)+','+str(j)] = possiblepaths
-
+                print (possiblepaths)
     return memo
 
 def shortestpath(start,graph):
@@ -65,7 +65,6 @@ def shortestpath(start,graph):
         unvisitednode[currentnode] = 0
     print(init)
 
-    print(previousvertex)
 
 
 
