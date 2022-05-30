@@ -130,7 +130,12 @@ IPAddress secondaryDNS(8,8,4,4); //optional
 char packetBuffer[255]; //buffer to hold incoming packet
 char  ReplyBuffer[] = "acknowledged"; // a string to send back
 
-WiFiUDP Udp;
+//WiFiUDP Udp;
+
+WiFiClient client;
+
+
+//WiFiServer server;
 
 
 void setup(){
@@ -141,7 +146,15 @@ void setup(){
       if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)){
     Serial.println("STA failed to configure");
   }
+
+
     WiFi.begin(ssid, password);
+    //server.begin();
+
+
+
+
+
     Serial.println("\nConnecting");
 
     while(WiFi.status() != WL_CONNECTED){
@@ -161,9 +174,6 @@ void setup(){
 
 unsigned long previousMillis = 0;
 unsigned long interval = 3000;
-
-WiFiClient client;
-
 
 
 
@@ -208,10 +218,13 @@ void loop(){
 
   // }
   
-//if(client.read() != -1){
-//    Serial.println(client.read());
-//}
+//Serial.println(client.available());
+if(client.read() != -1){
+   Serial.println(client.read());
+}
 
+
+//
 
 if((currentMillis - previousMillis >= interval)){
  
@@ -223,7 +236,7 @@ if((currentMillis - previousMillis >= interval)){
  
   Serial.println("Connected to server successfully!");
  
-  client.print("Hello from ESP32!");
+  client.write("Hello from ESP32!");
   }
 
 if((WiFi.status() != WL_CONNECTED)){
