@@ -1,0 +1,14 @@
+<table border='1'>
+    <tr>
+      <th>Map_ID</th>
+      <th>Date</th>
+      <th>Map_Size</th>
+    </tr>
+    {% for x in posts %}
+      <tr>
+        <td>{{ x.map_id }}</td>
+          <td>{{ x.date_time }}</td>
+        <td>{{ x.map_size }}</td>
+      </tr>
+    {% endfor %}
+  </table>
