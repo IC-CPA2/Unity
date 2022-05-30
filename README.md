@@ -1,6 +1,6 @@
-#Mars Unity
+**#Mars Unity**
 
-Contributers:
+**Contributors:**
 
 James,
 Matthew,
