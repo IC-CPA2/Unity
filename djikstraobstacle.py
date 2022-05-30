@@ -4,6 +4,7 @@ def tograph(Map):
         for j in range(9):
             if Map[i][j]=='_' or Map[i][j]=='x':
                 possiblepaths = []
+                
                 if i==0:
                     if Map[1][j]=='_':
                         possiblepaths.append([str(1)+','+str(j),1])
@@ -27,12 +28,26 @@ def tograph(Map):
                         possiblepaths.append([str(i)+','+str(j-1),1])
                     if Map[i][j+1]=='_':
                         possiblepaths.append([str(i)+','+str(j+1),1])
+
+                if i-1>=0 and j-1>=0:
+                    if Map[i-1][j-1]=='_':
+                        possiblepaths.append([str(i-1)+','+str(j-1),1.4])
+                if i-1>=0 and j+1<=8:
+                    if Map[i-1][j+1]=='_':
+                        possiblepaths.append([str(i-1)+','+str(j+1),1.4])
+                if i+1<=8 and j-1>=0:
+                    if Map[i+1][j-1]=='_':
+                        possiblepaths.append([str(i+1)+','+str(j-1),1.4])
+                if i+1<=8 and j+1<=8:
+                    if Map[i+1][j+1]=='_':
+                        possiblepaths.append([str(i+1)+','+str(j+1),1.4])
                         
                 memo[str(i)+','+str(j)] = possiblepaths
 
     return memo
 
 def shortestpath(start,graph):
+    graph["void"]=[]
     previousvertex = {start:""}
     unfinishednode = [start]
     unvisitednode = {start:1}
@@ -47,7 +62,7 @@ def shortestpath(start,graph):
 
     while len(unfinishednode)>0:
         cost = 999
-        currentnode = ""
+        currentnode = "void"
         for j in init:
             if init[j]<cost and unvisitednode[j]==1:
                 cost = init[j]
@@ -60,26 +75,41 @@ def shortestpath(start,graph):
                 init[connections[i][0]] = cost + connections[i][1]
                 previousvertex[connections[i][0]]=currentnode
 
-        unfinishednode.remove(currentnode)
+        if currentnode!="void":
+            unfinishednode.remove(currentnode)
+        else:
+            break
         unvisitednode[currentnode] = 0
-    print(init)
+    return previousvertex
+
+def pathfinding(start,end,graph):
+    retpath = []
+    vertex = shortestpath(start,graph)
+    curr = end
+    while True:
+        if vertex[curr]=='' and curr!=start:
+            return []
+        elif vertex[curr]=='' and curr==start:
+            retpath.reverse()
+            return retpath
+        else:
+            retpath.append(curr)
+            curr = vertex[curr]
+            
 
 #ball - o
 #rover - x
 #obstacle - v
 #clear - _
 
-Map = [['_','_','_','_','_','_','_','_','_'],
-       ['_','_','_','_','_','_','_','_','_'],
-       ['_','_','_','_','_','_','_','_','_'],
-       ['_','_','_','_','_','_','_','_','_'],
+Map = [['_','_','_','_','_','v','_','_','_'],
+       ['_','_','_','_','_','v','v','v','v'],
+       ['_','_','_','_','_','v','_','_','_'],
+       ['_','_','_','_','_','v','_','_','_'],
        ['_','_','_','v','x','v','_','_','_'],
        ['_','_','_','_','v','_','_','_','_'],
        ['_','_','_','_','_','_','_','_','_'],
        ['_','_','_','_','_','_','_','_','_'],
        ['_','_','_','_','_','_','_','_','_']]
 
-try:
-    shortestpath('4,4',tograph(Map))
-except:
-    print("Some blocks cannot be reached")
+print(pathfinding('4,4','5,7',tograph(Map)))
