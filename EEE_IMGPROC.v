@@ -80,8 +80,43 @@ wire [7:0]   red_out, green_out, blue_out;
 
 wire         sop, eop, in_valid, out_ready;
 ////////////////////////////////////////////////////////////////////////
-// HSV 
+// CONVERTING RGB TO HSV ////////////////
+
 wire [7:0] hue_init , hue_mid, min , max ,  sat, value, hue;
+
+// obtain the max and min of RGB
+//always_ff begin
+//    if(red >= green && red >= blue) begin   // Red is max 
+//        max = red;
+//    end
+//    else if(blue >= green && blue >= red) begin //  Blue is max
+//        max = blue;
+//    end
+//    else begin          // Green is max
+//        max = green;
+//    end
+//	 
+//    if(red <= green && red <= blue) begin   // Red is min
+//        min = red;
+//    end
+//    else if(blue <= green && blue <= red) begin   // Blue is min
+//        min = blue;
+//    end
+//    else begin     // Green is min
+//        min = green;
+//    end
+//	 
+//	 // determine sat
+//	 
+//	 if (value != 0) begin
+//			sat = (value-min)*255/value;
+//	 end
+//	 else begin
+//			sat = 0;
+//	 end
+//end
+
+
 assign max = (red >blue) ? ((red>green) ? red : green) : (blue > green) ? blue : green; // max(R,G,B)
 assign value = max;    // val = MAX
 assign min = (red < blue) ? ((red<green) ? red : green) : (blue < green) ? blue : green;
@@ -179,7 +214,7 @@ assign   pink_detect     = (((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)
 assign   orange_detect  = (hue >= 15 && hue <= 30 && value > 120 && sat > 110);
 assign   blue_detect    = ((blue>green-20) && (blue>red) && ~pink_detect && ~orange_detect );//(hue >= 55 && hue <= 85 && saturation >= 51 && sat <= 89 && value >= 76 && value <= 240);
 assign   red_detect    = ((red>green+30) && (red>blue+30) && ~pink_detect && ~orange_detect);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
-assign 	green_detect = ((green>blue+10) && (green>red+30));
+assign 	green_detect = ((green>blue+10) && (green>red+30) && (45 <= hue & hue <= 65));
 assign   any_detect = ((pink_detect || orange_detect || blue_detect || red_detect || green_detect ));
 
 
