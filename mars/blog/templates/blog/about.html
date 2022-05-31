@@ -157,8 +157,14 @@
             </select>
             </form>
         </div>
-        <div class="item5">Reset <br>
+        <div class="item5"><br>
             <button type="button" onclick="resetMap()">Reset</button>
+            <br>
+            <br>
+            <button onclick="location.href = '/members'"> View database</button>
+            <br>
+            <br>
+            <button onClick="window.location.reload();">Refresh</button>
         </div>
         <div class="item6">
             <form action="" method="post">
@@ -179,13 +185,12 @@
                     // Update the current slider value (each time you drag the slider handle)
                     slider.oninput = function() {
                     output.innerHTML = this.value;
-                    }
-                    
-                    
+                    }    
                 </script>
             </form>
         </div>
-        <div class="item7">7</div>
+        <div class="item7">7
+        </div>
         <div class="item8">
             {% for i in counter %}
                 {% for j in counter %}
@@ -194,7 +199,6 @@
                     </canvas>
 
                     <script>
-                        
                         var c = document.getElementById({{i}}{{j}});
                         var ctx = c.getContext("2d");
                         var img = document.getElementById("terrain");

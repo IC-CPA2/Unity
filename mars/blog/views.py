@@ -4,6 +4,11 @@ from django.shortcuts import HttpResponse
 from django.template import loader
 from django.views.generic import ListView, CreateView, UpdateView
 from .forms import NameForm
+from .models import map_info
+from django.db import connection
+from django.db.models import Q
+from django.db.models import Count
+
 import hashlib
 
 no = 9
@@ -84,13 +89,13 @@ def about(request):
     direc.close()
 
     for i in directionFile:
-        if i[0] == "+":
+        if i[0] == "U":
             direction.append("Forward: " + str(i[1:-1]))
-        elif i[0] == "-":
+        elif i[0] == "D":
             direction.append("Backward: " + str(i[1:-1]))
-        elif i[0] == "<":
+        elif i[0] == "L":
             direction.append("Left: " + str(i[1:-1]))
-        elif i[0] == ">":
+        elif i[0] == "R":
             direction.append("Right: " + str(i[1:-1]))
 
     w = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/wifi.txt", "r")
@@ -117,4 +122,3 @@ def login(request):
 def form(request):
 
     return redirect('/about')
-
