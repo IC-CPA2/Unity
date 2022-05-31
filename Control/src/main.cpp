@@ -132,10 +132,10 @@ char  ReplyBuffer[] = "acknowledged"; // a string to send back
 
 //WiFiUDP Udp;
 
-WiFiClient client;
 
 
-//WiFiServer server;
+
+WiFiServer server(5000);
 
 
 void setup(){
@@ -149,7 +149,7 @@ void setup(){
 
 
     WiFi.begin(ssid, password);
-    //server.begin();
+    server.begin();
 
 
 
@@ -166,14 +166,15 @@ void setup(){
     Serial.print("Local ESP32 IP: ");
     Serial.println(WiFi.localIP());
     Serial.println(WiFi.SSID());
-        Serial.println(WiFi.gatewayIP());
+    Serial.println(WiFi.gatewayIP());
+
 
    // Udp.begin(port);    
 }
 
 
 unsigned long previousMillis = 0;
-unsigned long interval = 3000;
+unsigned long interval = 1000;
 
 
 
@@ -218,10 +219,33 @@ void loop(){
 
   // }
   
-//Serial.println(client.available());
-if(client.read() != -1){
-   Serial.println(client.read());
-}
+
+  
+
+
+WiFiClient client = server.available();
+
+// if(client.connect(host, port)){
+
+//   while(client.connected()){
+
+
+
+// //Serial.println(client.connected());
+//     if(client.connected()){
+//       client.stop();
+//       while(!client.available()){
+//       }
+//       msg_rec = client.read();
+//     }
+// break;
+
+//   }
+// }
+
+
+
+
 
 
 //
@@ -260,4 +284,3 @@ if((WiFi.status() == WL_CONNECTED) && (reconnecting == "true")){
 }
 
 }
-
