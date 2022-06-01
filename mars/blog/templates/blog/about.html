@@ -179,7 +179,7 @@
             <button onClick="window.location.reload();">Refresh</button>
         </div>
         <div class="item6">
-            <form action="" method="post">
+            <form action="/about/distance" method="post">
                 {% csrf_token %}
                 <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
                 <input type="text" id="dist" name="dist" value="0"><br>
