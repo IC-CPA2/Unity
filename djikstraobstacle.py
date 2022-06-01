@@ -1,3 +1,7 @@
+#The DFS Algorithm is working, however I realised that when using DFS sometimes backtracking to avoid visited paths might 
+#be more inefficient than just crossing over the visited paths so maybe have to integrate with Djikstra is make backtracking 
+#cases more efficient.
+
 def tograph(Map):
     memo = {}
     for i in range(9):
