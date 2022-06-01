@@ -1,3 +1,7 @@
+#DFS is working, however I realized backtracking in DFS to avoid visited paths might be more inefficient then just
+#driving over the visited paths, so maybe optimize with a combination of Djikstra when we have discovered some patches of location
+#mid running the program.
+
 command = []
 coordpath = []
 memo = {}
