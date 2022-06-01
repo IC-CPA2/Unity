@@ -17,12 +17,21 @@
             padding: 20px 0;
             font-size: 20px;
         }
+        
+        .item4 {
+            height: 150px;
+        }
 
         .item8 {
             grid-area: 1 / 2 / 5 / 6;
         }
         .item10 {
             grid-area: 5 / 1 / 5 / 3;
+        }
+
+        .item9 {
+            grid-area: 4 / 6 / 6 / 6;
+            font-size: 20px;
         }
 
         .buttons{
@@ -97,7 +106,7 @@
         }
 
         .scrollbox {
-            height:120px;
+            height:150px;
             width:auto;
             border:1px solid #ccc;
             overflow:auto;
@@ -149,12 +158,15 @@
         <div class="item4">
             <form>
             <h5>Mode</h5>
-            <form action="form/" method="post">
+            <form method="post">
             {% csrf_token %}
-            <select name="modes" id="modes">
-                <option value="Slow">Slow</option>
-                <option value="Fast">Fast</option>
-            </select>
+                <select name="modes" id="modes">
+                    <option value="Manual">Manual</option>
+                    <option value="Autonomous">Autonomous</option>
+                </select>
+                <br>
+                <br>
+            <input type="submit" value="Submit">
             </form>
         </div>
         <div class="item5"><br>
@@ -242,7 +254,15 @@
             }
             </script>
         </div>  
-        <div class="item9">9</div>
+        <div class="item9">
+            <h5>Save Map</h5>
+            <form action="" method="post">
+                <label for="map_name"> Save As: </label><br><br>
+                <input type="text" id="map_name" required> 
+                <br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
         <div class="item10">
             <style>
                 #myProgress{
@@ -264,7 +284,6 @@
         <div class="item11">11</div>
         <div class="item12">12</div>
         <div class="item13">13</div>
-        <div class="item14">14</div>
 
         
 
