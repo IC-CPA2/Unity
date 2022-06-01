@@ -260,10 +260,10 @@ assign bound_green = green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3  &
 // RED BOX
 always@(posedge clk) begin
 	if ((bound_red && in_valid)) begin	//Update bounds when the pixel is red
-		if (x < x_min_r) x_min_r <= x;
-		if (x > x_max_r) x_max_r <= x;
-		if (y < y_min_r) y_min_r <= y;
-		y_max_r <= y;
+		if (x < x_min_r && (x_min_r - x < 5 || x_min_r == IMAGE_W-11'h1)) x_min_r <= x;
+		if (x > x_max_r && (x-x_max_r < 5 || x_max_r == 0)) x_max_r <= x;
+		if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		y_max_r <= y_min_r + (x_max_r - x_min_r);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_r <= IMAGE_W-11'h1;
@@ -276,10 +276,10 @@ end
 // BLUE BOX
 always@(posedge clk) begin
 	if ((bound_blue && in_valid)) begin	//Update bounds when the pixel is blue
-		if (x < x_min_b) x_min_b <= x;
-		if (x > x_max_b) x_max_b <= x;
-		if (y < y_min_b) y_min_b <= y;
-		y_max_b <= y;
+		if (x < x_min_b && (x_min_b - x < 5 || x_min_b == IMAGE_W-11'h1)) x_min_b <= x;
+		if (x > x_max_b && (x-x_max_b < 5 || x_max_b == 0)) x_max_b <= x;
+		if (y < y_min_b && (y_min_b - y <5||y_min_b == IMAGE_H-11'h1)) y_min_b <= y;
+		y_max_b <= y_min_b + (x_max_b - x_min_b);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_b <= IMAGE_W-11'h1;
@@ -292,10 +292,10 @@ end
 // ORANGE BOX
 always@(posedge clk) begin
 	if ((bound_orange && in_valid)) begin	//Update bounds when the pixel is orange
-		if (x < x_min_o) x_min_o <= x;
-		if (x > x_max_o) x_max_o <= x;
-		if (y < y_min_o) y_min_o <= y;
-		y_max_o <= y;
+		if (x < x_min_o && (x_min_o - x < 5 || x_min_o == IMAGE_W-11'h1)) x_min_o <= x;
+		if (x > x_max_o && (x-x_max_o < 5 || x_max_o == 0)) x_max_o <= x;
+		if (y < y_min_o && (y_min_o - y <5||y_min_o == IMAGE_H-11'h1)) y_min_o <= y;
+		y_max_o <= y_min_o + (x_max_o - x_min_o);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_o <= IMAGE_W-11'h1;
@@ -308,10 +308,10 @@ end
 // PINK BOX
 always@(posedge clk) begin
 	if ((bound_pink && in_valid)) begin	//Update bounds when the pixel is pink
-		if (x < x_min_p) x_min_p <= x;
-		if (x > x_max_p) x_max_p <= x;
-		if (y < y_min_p) y_min_p <= y;
-		y_max_p <= y;
+		if (x < x_min_p && (x_min_p - x < 5 || x_min_p == IMAGE_W-11'h1)) x_min_p <= x;
+		if (x > x_max_p && (x-x_max_p < 5 || x_max_p == 0)) x_max_p <= x;
+		if (y < y_min_p && (y_min_p - y <5||y_min_p == IMAGE_H-11'h1)) y_min_p <= y;
+		y_max_p <= y_min_p + (x_max_p - x_min_p);
 	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_p <= IMAGE_W-11'h1;
@@ -340,7 +340,7 @@ end
 
 
 
-//Process bounding box at the end of the frame.
+//Process bounding box at the end of the frame.16 8 4 2 1
 reg [1:0] msg_state;
 reg [10:0] left_r, right_r, top_r, bottom_r;
 reg [10:0] left_b, right_b, top_b, bottom_b;
@@ -395,7 +395,75 @@ always@(posedge clk) begin
 
 end
 
-assign outbuffer = 16'b0000100000000000;
+reg [2:0] color; //000 - none, 001 - red, 010 - blue, 011 - orange, 100 - pink, 101 - green
+reg [11:0] xcoord;
+reg [11:0] ycoord;
+reg [11:0] dist;
+reg [15:0] msg;
+
+always@(posedge clk) begin
+
+	color <= 000;
+	xcoord <= 0;
+	ycoord <= 0;
+	dist <= 100;
+	
+	if (right_r - left_r > dist && right_r - left_r < 750) begin
+		color <= 001;
+		xcoord <= right_r;
+		ycoord <= top_r;
+		dist <= right_r - left_r;
+	end
+	
+	else if (right_b - left_b > dist && right_b - left_b < 750) begin
+		color <= 010;
+		xcoord <= right_b;
+		ycoord <= top_b;
+		dist <= right_b - left_b;
+	end
+	
+	else if (right_o - left_o > dist && right_o - left_o < 750) begin
+		color <= 011;
+		xcoord <= right_o;
+		ycoord <= top_o;
+		dist <= right_o - left_o;
+	end
+	
+	else if (right_p - left_p > dist && right_p - left_p < 750) begin
+		color <= 100;
+		xcoord <= right_p;
+		ycoord <= top_p;
+		dist <= right_p - left_p;
+	end
+	
+	else if (right_g - left_g > dist && right_g - left_g < 750) begin
+		color <= 101;
+		xcoord <= right_g;
+		ycoord <= top_g;
+		dist <= right_g - left_g;
+	end
+	
+	if (red_detect) begin
+		color <= 001;
+	end
+	else if (blue_detect) begin
+		color <= 010;
+	end
+	else if (orange_detect) begin
+		color <= 011;
+	end
+	else if (pink_detect) begin
+		color <= 100;
+	end
+	else if (green_detect) begin
+		color <= 101;
+	end
+	
+	msg <= {xcoord[10:7],ycoord[10:7],dist[10:6],color};
+	
+end
+
+assign outbuffer = msg;
 	
 //Generate output messages for CPU
 reg [31:0] msg_buf_in; 
@@ -558,4 +626,5 @@ assign msg_buf_rd = s_chipselect & s_read & ~read_d & ~msg_buf_empty & (s_addres
 reg	[23:0]	bb_col_r, bb_col_b, bb_col_o, bb_col_p , bb_col_g;
 
 endmodule
+
 
