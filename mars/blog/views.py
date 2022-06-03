@@ -7,6 +7,7 @@ from .models import map_info
 from django.db import connection
 from django.db.models import Q
 from django.db.models import Count
+import os
 
 import hashlib
 
@@ -55,36 +56,43 @@ def home(request):
 
 def about(request):
     default = """<canvas id="myCanvas" width="50" height="50" style="border:1px solid #000000;"></canvas>"""
-    # ret = "<center>"
-    # for i in range(9):
-    #     for j in range(9):
-    #         ret = ret + default
-    #         ret = ret + "&nbsp"
-    #     ret = ret + "<br>"
-    # ret = ret + "</center>"
-    # return HttpResponse(ret)
-    f = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/bat.txt", "r")
+
+    curr_dir = os.getcwd()
+    file_path = curr_dir+"\\blog\\text_files\\bat.txt"
+    file_path = file_path.replace("\\","/")
+    f = open(file_path, "r")
     batteryLvl = f.readline() + "%"
+    #reads battery levels. 
     f.close()
 
     img = []
 
     ali = [[0]*9 for i in range(9)]
-    fi = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/image.txt", "r")
+    #edit value of ali at each position to get the current position. 
+    file_path = curr_dir+"\\blog\\text_files\\image.txt"
+    file_path = file_path.replace("\\","/")
+    fi = open(file_path, "r")
     val = fi.readline()
     fi.close()
     val1 = val.split(";")
+    #reads in sequence the vlues of this thing. 
     print (val1)
+    curr_pos = 0
     for i in range(len(val1)):
+        #renders the values
         value = val1[i].split(",")
         # img.append(value)
         for j in range(len(value)):
             ali[i][j] = int(value[j])
-    print (ali)
+            if int(value[j]) == 2:
+                curr_pos = str(i)+str(j)# in array coordinates will be 44
+    print ("let's find curr_pos",curr_pos)
 
     directionFile = []
     direction = []
-    direc = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/direction.txt", "r")
+    file_path = curr_dir+"\\blog\\text_files\\direction.txt"
+    file_path = file_path.replace("\\","/")
+    direc = open(file_path, "r")
     for x in direc:
         directionFile.append(x)
     direc.close()
@@ -98,8 +106,10 @@ def about(request):
             direction.append("Left: " + str(i[1:]))
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
+    file_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+    file_path = file_path.replace("\\","/")
 
-    w = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/wifi.txt", "r")
+    w = open(file_path, "r")
     wifi = w.readline()
     w.close()
 
@@ -123,15 +133,24 @@ def login(request):
 def form(request):
     return redirect('/about')
 
+#takes distance and sends to back end I think. 
+#the file edited is distance.txt
 def distance(request):
-    f = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/bat.txt", "r")
+
+    curr_dir = os.getcwd()
+    file_path = curr_dir+"\\blog\\text_files\\bat.txt"
+    file_path = file_path.replace("\\","/")
+
+    f = open(file_path, "r")
     batteryLvl = f.readline() + "%"
     f.close()
 
     img = []
 
     ali = [[0]*9 for i in range(9)]
-    fi = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/image.txt", "r")
+    file_path = curr_dir+"\\blog\\text_files\\image.txt"
+    file_path = file_path.replace("\\","/")
+    fi = open(file_path, "r")
     val = fi.readline()
     fi.close()
     val1 = val.split(";")
@@ -141,19 +160,23 @@ def distance(request):
         for j in range(len(value)):
             ali[i][j] = int(value[j])
     
-
-    w = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/wifi.txt", "r")
+    file_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+    file_path = file_path.replace("\\","/")
+    w = open(file_path, "r")
     wifi = w.readline()
     w.close()
     
     if request.method == 'POST':
         distance = request.POST["dist"]
+        direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
+        direction_path = file_path.replace("\\","/")
+
         angle = request.POST["angle"]
-        f = open ("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/distance.txt", "w")
+        f = open (direction_path, "w")
         f.write(distance+ "\n" + angle)
         f.close()
 
-        direc = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/direction.txt", "a")
+        direc = open(direction_path, "a")
         if angle == "0":
             direc.write("\n" + "U" + distance)
         elif angle == "90":
@@ -169,7 +192,7 @@ def distance(request):
 
     directionFile = []
     direction = []
-    direc = open("/Users/charmainelouie/Documents/Imperial/Year 2/Summer Project/Unity/direction.txt", "r")
+    direc = open(direction_path, "r")
     for x in direc:
         directionFile.append(x)
     direc.close()

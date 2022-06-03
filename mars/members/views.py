@@ -1,7 +1,7 @@
 #the newly written files. 
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
-from .models import all_info, map_info
+from .models import all_info, map_info,live_database
 from django.db import connection
 from django.db.models import Q
 from django.db.models import Count
