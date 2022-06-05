@@ -47,7 +47,7 @@ def query(request):
 
         try:
             image_dec = """<img id="terrain" src="static/members/media/terrain.jpg" alt="terrain" height="0" width="0"/>"""
-            image_dec += """<img id="alien" src="static/members/media/alien.png" alt="alien" height="0" width="0"/>"""
+            image_dec += """<img id="alien" src="static/members/media/pink.png" alt="pink" height="0" width="0"/>"""
             image_dec += """<img id="rover" src="static/members/media/rover.png" alt="logo" height="0" width="0"/>"""
 
             printout = image_dec
