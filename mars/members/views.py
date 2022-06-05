@@ -47,8 +47,12 @@ def query(request):
 
         try:
             image_dec = """<img id="terrain" src="static/members/media/terrain.jpg" alt="terrain" height="0" width="0"/>"""
-            image_dec += """<img id="alien" src="static/members/media/pink.png" alt="pink" height="0" width="0"/>"""
-            image_dec += """<img id="rover" src="static/members/media/rover.png" alt="logo" height="0" width="0"/>"""
+            image_dec += """{% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />"""
+            image_dec += """ {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />"""
+            image_dec += """ {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />"""
+            image_dec += """{% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />"""
+            image_dec += """{% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />"""
+            image_dec += """{% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />"""
 
             printout = image_dec
 
@@ -86,7 +90,7 @@ def query(request):
                                                     <script>
                                                     var c = document.getElementById(\"""" + str(i) + str(j) + """\");
                                                     var ctx = c.getContext("2d");
-                                                    var img = document.getElementById("alien");
+                                                    var img = document.getElementById("blue");
                                                     ctx.drawImage(img,0,0,50,50);
                                                     </script>"""
                         elif tilenum[str(i)+str(j)] == "2":
