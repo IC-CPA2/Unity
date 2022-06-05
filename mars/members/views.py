@@ -48,8 +48,8 @@ def query(request):
         try:
             image_dec = """<img id="terrain" src="static/members/media/terrain.jpg" alt="terrain" height="0" width="0"/>"""
             image_dec += """{% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />"""
-            image_dec += """ {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />"""
-            image_dec += """ {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />"""
+            image_dec += """{% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />"""
+            image_dec += """{% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />"""
             image_dec += """{% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />"""
             image_dec += """{% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />"""
             image_dec += """{% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />"""
