@@ -1,6 +1,11 @@
     {% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
-    {% load static %} <img id="alien" src="{% static "blog/media/alien.png" %}" alt="alien" height="0" width="0" />
+    {% load static %} <img id="question" src="{% static "blog/media/question.png" %}" alt="question" height="0" width="0" />
+    {% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
+    {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
+    {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
+    {% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
     {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
     {% load extras %}
     <style>
         .grid-container {
@@ -184,7 +189,7 @@
                 <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
                 <input type="text" id="dist" name="dist" value="0"><br>
                 <div class="slidecontainer">
-                    <input type="range" min="0" max="360" value="0" id="myRange" step="90" name="angle">
+                    <input type="range" min="0" max="360" value="0" id="myRange" step="45" name="angle">
                     <br><font size="3"> <span id="slide"></span>º </font>
                 </div>
                 <input type="submit" value="Submit" onclick="refreshScreen()">
@@ -216,12 +221,39 @@
                         var img = document.getElementById("terrain");
                         ctx.drawImage(img,0,0,50,50);
                     </script>
+                    <script>
+                        var c = document.getElementById({{i}}{{j}});
+                        var ctx = c.getContext("2d");
+                        var img = document.getElementById("question");
+                        ctx.drawImage(img,0,0,50,50);
+                    </script>
                         <!-- {{aliens|index:i|index:j}} -->
                         {% if aliens|index:i|index:j == 0 %}
                             <script>
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
-                                var img = document.getElementById("alien");
+                                var img = document.getElementById("pink");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 3 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("green");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 4 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("blue");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 5 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("red");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
                         {% elif aliens|index:i|index:j == 2 %}

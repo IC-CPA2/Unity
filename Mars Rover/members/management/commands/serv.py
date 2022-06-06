@@ -84,15 +84,16 @@ try:
         print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
         conn,address = s.accept()   
         iterator = len(live_database.objects.all())
+
         if iterator == 0:
-            insert_vals = live_database(tile_num=curr_sq,tile_info="N",last_visited=1)
+            insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
             insert_vals.save()
         curr_dir = os.getcwd()
-        file_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+        file_path = curr_dir+"\\blog\\text_files\\distance.txt"
         file_path = file_path.replace("\\","/")
         f = open(file_path,"r")
         #reading angle changes. 
-        dist = int(f.readline())
+        # dist = int(f.readline())
         print("reading angle to send to CONTROL")
         head_angle = int(f.readline())#reads second line containing angle field. 
         f.close()
@@ -100,9 +101,9 @@ try:
 
         ##TCP protocols to send the values back will be used. 
         print("stuff in database",live_database.objects.all().values())
-        observed_tile = choose_next("45",curr_sq)
+        observed_tile = choose_next(head_angle,curr_sq)
         print("Sending this Message: ",observed_tile)
-        cmsg = str("45"+","+curr_sq+","+observed_tile)
+        cmsg = str(head_angle+","+curr_sq+","+observed_tile)
         #THE HEAD ANGLE SHOULD BE WRITTEN INTO THE TABLE.
 
         # cmsg = cmsg.decode();
@@ -119,10 +120,22 @@ try:
             old_last_sq = live_database.objects.get(last_visited=1)
             old_last_sq.last_visited = 0
             old_last_sq.save()
-            new_sq = live_database(tile_num=curr_sq,tile_info="N",last_visited=1)
+            new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
             new_sq.save()
         elif content == "PA":
             new_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
+            #cannot visit new thingies. 
+            new_sq.save()
+        elif content == "GA":
+            new_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
+            #cannot visit new thingies. 
+            new_sq.save()
+        elif content == "BA":
+            new_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
+            #cannot visit new thingies. 
+            new_sq.save()
+        elif content == "RA":
+            new_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
             #cannot visit new thingies. 
             new_sq.save()
         elif content == "HHH":
