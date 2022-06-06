@@ -102,8 +102,9 @@ try:
         ##TCP protocols to send the values back will be used. 
         print("stuff in database",live_database.objects.all().values())
         observed_tile = choose_next(head_angle,curr_sq)
-        print("Sending this Message: ",observed_tile)
-        cmsg = str(head_angle+","+curr_sq+","+observed_tile)
+        cmsg = str(head_angle+","+curr_sq+","+observed_tile+">")
+        print("S",cmsg)
+
         #THE HEAD ANGLE SHOULD BE WRITTEN INTO THE TABLE.
 
         # cmsg = cmsg.decode();
