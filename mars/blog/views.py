@@ -13,36 +13,6 @@ import hashlib
 
 no = 9
 
-posts = [
-    {
-        'author': 'CoreyMS',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    },
-    {
-        'author': 'Jane Doe',
-    }
-]
-
 modes = ["Slow", "Fast"]
 
 def base(request):
@@ -106,9 +76,10 @@ def about(request):
             direction.append("Left: " + str(i[1:]))
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
-    file_path = curr_dir+"\\blog\\text_files\\wifi.txt"
-    file_path = file_path.replace("\\","/")
 
+
+    wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+    wifi_path = wifi_path.replace("\\","/")
     w = open(file_path, "r")
     wifi = w.readline()
     w.close()
@@ -164,15 +135,19 @@ def distance(request):
     file_path = file_path.replace("\\","/")
     w = open(file_path, "r")
     wifi = w.readline()
+    print(wifi)
     w.close()
     
     if request.method == 'POST':
         distance = request.POST["dist"]
         direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
-        direction_path = file_path.replace("\\","/")
+        direction_path = direction_path.replace("\\","/")
+
+        dis_path = curr_dir+"\\blog\\text_files\\distance.txt"
+        dis_path = dis_path.replace("\\","/")
 
         angle = request.POST["angle"]
-        f = open (direction_path, "w")
+        f = open (dis_path, "w")
         f.write(distance+ "\n" + angle)
         f.close()
 
