@@ -60,7 +60,7 @@ input									source_ready;
 output								source_sop;
 output								source_eop;
 
-// conduit export
+// conduit export this is for the SPI connection and outputs of module
 input                         mode;
 input		[15:0]					received_data_spi;
 output	[15:0]						outbuffer;
@@ -84,22 +84,23 @@ wire [7:0]   red_out, green_out, blue_out;
 
 wire         sop, eop, in_valid, out_ready;
 ////////////////////////////////////////////////////////////////////////
-///Declaring variables for HSV conversion
-wire [7:0] hue_init , hue_mid, min , max ,  sat, value, hue;
+// CONVERTING FROM RGB TO HSV
+wire [7:0] hue_init , hue_mid, min , max ,  sat, value, hue , dif;
 
 assign max = (red >blue) ? ((red>green) ? red : green) : (blue > green) ? blue : green; // max(R,G,B)
 assign value = max;    // val = MAX
 assign min = (red < blue) ? ((red<green) ? red : green) : (blue < green) ? blue : green;
-assign sat = (value != 0) ? (value - min)* 255 / value : 0;
+assign dif = value - min; 
+assign sat = (value != 0) ? (dif)* 255 / value : 0;
 
 
-// base hue 
-assign hue_init = (red == green && red == blue) ? 0 :((value != red)? (value != green) ? (((240*((value - min))+ (60* (red - green)))/(value-min))>>1):
-                ((120*(value-min)+60*(blue - red))/(value - min)): 
-                (blue < green) ? ((60*(green - blue)/(value - min))): (((360*(value-min) +(60*(green - blue)))/(value - min))));
+// base hue  (based on OPENCV algorithm for converting RGB to HSV 
+assign hue_init = (red == green && red == blue) ? 0 :((value != red)? (value != green) ? (((240*(dif)+ (60* (red - green)))/dif)):
+                ((120*dif+60*(blue - red))/dif): 
+                (blue < green) ? ((60*(green - blue)/dif)): (((360*dif +(60*(green - blue)))/dif)));
 assign hue_mid = (hue_init<0) ? hue_init + 360 : hue_init;
 	 
-assign hue = hue_mid>>1;
+assign hue = hue_mid>>1;  // HSV scaled 0 : 180
 
 					 
 /// Detect  areas
@@ -234,7 +235,7 @@ end
 	
 // COLOUR DETECTION USING MIXTURE OF HUES AND RGB CONDITIONS
 
-assign   pink_detect     = (((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+assign   pink_detect     = (((hue >= 0 && hue <= 15)||(hue >= 164 && hue <= 180)) && value > 120 && sat > 110);
 assign   orange_detect  = (hue >= 15 && hue <= 30 && value > 120 && sat > 110);
 assign   blue_detect    = ((blue>green-20) && (blue>red) && ~pink_detect && ~orange_detect );//(hue >= 55 && hue <= 85 && saturation >= 51 && sat <= 89 && value >= 76 && value <= 240);
 assign   red_detect    = ((red>green+30) && (red>blue+30) && ~pink_detect && ~orange_detect);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
@@ -582,16 +583,8 @@ wire msg_buf_empty;
 reg [31:0] distance_r, distance_y, distance_g, distance_b, distance_grey;
 `define RED_BOX_MSG_ID "RBB"
 
-wire[6:0] ratio1,ratio2;
-assign ratio1 = 16'd79;
-assign ratio2 = 16'd20;
-
-wire [12:0] constan;
-assign constan = 16'd7443;
 
 
-//((732 * (79/20))/147) =19.66 ish 19
- // -> 14.9
 reg [15:0] outt_r, outt_y;
 
 //79/20 = 3.95 -> 3
@@ -692,6 +685,11 @@ begin
 	begin
 		reg_status <= 8'b0;
 		bb_col <= BB_COL_DEFAULT;
+		bb_col_r <= BB_COL_DEFAULT_RED;
+		bb_col_o <= BB_COL_DEFAULT_ORANGE;
+		bb_col_b <= BB_COL_DEFAULT_BLUE;
+		bb_col_p <= BB_COL_DEFAULT_PINK;
+		bb_col_g <= BB_COL_DEFAULT_GREEN;
 	end
 	else begin
 		if(s_chipselect & s_write) begin
@@ -733,4 +731,3 @@ assign msg_buf_rd = s_chipselect & s_read & ~read_d & ~msg_buf_empty & (s_addres
 reg	[23:0]	bb_col_r, bb_col_b, bb_col_o, bb_col_p , bb_col_g;
 
 endmodule
-
