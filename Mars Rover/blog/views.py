@@ -49,7 +49,7 @@ def about(request):
             labeled_tile = sel_val[i]["tile_num"]
             info_rec = sel_val[i]["tile_info"]
             if info_rec == "T":
-                traversed[labeled_tile] = 6
+                traversed[labeled_tile] = 7
             elif info_rec == "PA":
                 traversed[labeled_tile] = 0
             elif info_rec == "GA":
@@ -58,6 +58,8 @@ def about(request):
                 traversed[labeled_tile] = 4
             elif info_rec == "RA":
                 traversed[labeled_tile] = 5
+            elif info_rec == "RA":
+                traversed[labeled_tile] = 6
         filt_cond = live_database.objects.get(last_visited=1)
         tmp = filt_cond.tile_num
         print(tmp)
@@ -165,7 +167,7 @@ def distance(request):
             info_rec = sel_val[i]["tile_info"]
             print (info_rec)
             if info_rec == "T":
-                traversed[labeled_tile] = 6
+                traversed[labeled_tile] = 7
             elif info_rec == "PA":
                 traversed[labeled_tile] = 0
             elif info_rec == "GA":
@@ -174,6 +176,8 @@ def distance(request):
                 traversed[labeled_tile] = 4
             elif info_rec == "RA":
                 traversed[labeled_tile] = 5
+            elif info_rec == "OA":
+                traversed[labeled_tile] = 6
         filt_cond = live_database.objects.get(last_visited=1)
         tmp = filt_cond.tile_num
         print(tmp)
@@ -208,6 +212,12 @@ def distance(request):
                 # print("failing",int(storer-(storer%10))/10)
                 x_coord = (storer-(storer%10))/10
                 ali[int(x_coord)][storer%10] = 6
+            elif traversed[key] == 7:
+                storer = int(key)
+                # print("debug",storer)
+                # print("failing",int(storer-(storer%10))/10)
+                x_coord = (storer-(storer%10))/10
+                ali[int(x_coord)][storer%10] = 7
         storer = int(tmp)
         x_pos = (storer-(storer%10))/10
         ali[int(x_pos)][storer%10] = 2

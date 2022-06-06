@@ -3,6 +3,7 @@
 {% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
 {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
 {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
+{% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
 {% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
 {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
 {% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
@@ -153,12 +154,13 @@
     <div class="item2">{% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
     </div>
     <div class="scrollbox">
-        <font size="5"> Log: </font>
+        3
+        <!-- <font size="5"> Log: </font>
         <br>
         {% for i in directions %}
             {{i}}
             <br>
-        {% endfor %}
+        {% endfor %} -->
     </div>
     <div class="item4">
         <form>
@@ -270,6 +272,17 @@
                             var img = document.getElementById("red");
                             ctx.drawImage(img,0,0,50,50);
                         </script>
+                    {% elif aliens|index:i|index:j == 6 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("orange");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
                     {% elif aliens|index:i|index:j == 2 %}
                         <script>
                             var c = document.getElementById({{i}}{{j}});
@@ -281,7 +294,7 @@
                             var img = document.getElementById("rover");
                             ctx.drawImage(img,0,0,50,50);
                         </script>
-                    {% elif aliens|index:i|index:j == 6 %}
+                    {% elif aliens|index:i|index:j == 7 %}
                         <script>
                             var c = document.getElementById({{i}}{{j}});
                             var ctx = c.getContext("2d");

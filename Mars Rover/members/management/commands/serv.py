@@ -138,6 +138,10 @@ try:
             new_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
             #cannot visit new thingies. 
             new_sq.save()
+        elif content == "OA":
+            new_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
+            #cannot visit new thingies. 
+            new_sq.save()
         elif content == "HHH":
             break
         

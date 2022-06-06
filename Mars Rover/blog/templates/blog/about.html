@@ -153,12 +153,13 @@
         <div class="item2">{% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
         </div>
         <div class="scrollbox">
-            <font size="5"> Log: </font>
+            3
+            <!-- <font size="5"> Log: </font>
             <br>
             {% for i in directions %}
                 {{i}}
                 <br>
-            {% endfor %}
+            {% endfor %} -->
         </div>
         <div class="item4">
             <form>
@@ -232,11 +233,19 @@
                             <script>
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
                                 var img = document.getElementById("pink");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
                         {% elif aliens|index:i|index:j == 3 %}
                             <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
                                 var img = document.getElementById("green");
@@ -246,6 +255,10 @@
                             <script>
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
                                 var img = document.getElementById("blue");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
@@ -253,11 +266,19 @@
                             <script>
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
                                 var img = document.getElementById("red");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
                         {% elif aliens|index:i|index:j == 2 %}
                             <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
                                 var img = document.getElementById("rover");
