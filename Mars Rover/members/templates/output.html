@@ -1,0 +1,33 @@
+<body style="background-color:#B5F0C4;">
+</body>
+
+<table border='1'>
+    <tr>
+      <th>Map_ID</th>
+      <th>Date</th>
+      <th>Map_Size</th>
+    </tr>
+    {% for x in posts %}
+      <tr>
+        <td>{{ x.map_id }}</td>
+          <td>{{ x.date_time }}</td>
+        <td>{{ x.map_size }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <form action="/members/search" method="POST">
+    {% csrf_token %}
+    <br>
+    <label for="map">Map ID:</label><br>
+    <input type="text" id="map" name="mapid" required><br>
+    <input type="submit" value="Submit" onclick="">
+
+    <script>
+      
+    </script>
+
+  </form>
+
+  <button onclick="location.href = '/about'">Home</button>
+  <br>

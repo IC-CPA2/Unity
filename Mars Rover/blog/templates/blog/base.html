@@ -3,8 +3,21 @@
 <form action="login/" method="post">
 {% csrf_token %}
 CODE<br>
-<input name="last">
+<input name="last" required>
 <br><br>
 <input type="submit" value="Submit">
-</form>
+
+<script>
+  window.setInterval('refresh()', 10000); 	
+  // Call a function every 10000 milliseconds 
+  // (OR 10 seconds).
+
+  // Refresh or reload page.
+  function refresh() {
+      window .location.reload();
+  }
+</script>
+
+
 </center>
+
