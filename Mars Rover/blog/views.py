@@ -20,9 +20,7 @@ def base(request):
     return redirect('/home')
 
 def home(request):
-    context = {
-        'posts': posts
-    }
+    context = { }
     return render(request, 'blog/home.html', context)
 
 def about(request):
