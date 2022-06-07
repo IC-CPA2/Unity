@@ -26,8 +26,10 @@ module EEE_IMGPROC(
 	source_eop,
 	
 	// conduit
-	mode
-	
+	mode,
+	outbuffer,
+	received_data_spi,
+	received_data_byte_received
 );
 
 
@@ -60,7 +62,9 @@ output								source_eop;
 
 // conduit export
 input                         mode;
-
+input		[15:0]					received_data_spi;
+output	[15:0]						outbuffer;
+input									received_data_byte_received;
 ////////////////////////////////////////////////////////////////////////
 //
 parameter IMAGE_W = 11'd640;
@@ -73,49 +77,15 @@ parameter BB_COL_DEFAULT_BLUE = 24'h0000ff;
 parameter BB_COL_DEFAULT_ORANGE = 24'hde9a07;
 parameter BB_COL_DEFAULT_PINK   = 24'hffbafd;  
 parameter BB_COL_DEFAULT_GREEN   = 24'h00ff00; 
-// pink 8'hff, 8'hba, 8'hfd     orange  {8'hde, 8'h9a, 8'h7}
+
 
 wire [7:0]   red, green, blue, grey;
 wire [7:0]   red_out, green_out, blue_out;
 
 wire         sop, eop, in_valid, out_ready;
 ////////////////////////////////////////////////////////////////////////
-// CONVERTING RGB TO HSV ////////////////
-
+///Declaring variables for HSV conversion
 wire [7:0] hue_init , hue_mid, min , max ,  sat, value, hue;
-
-// obtain the max and min of RGB
-//always_ff begin
-//    if(red >= green && red >= blue) begin   // Red is max 
-//        max = red;
-//    end
-//    else if(blue >= green && blue >= red) begin //  Blue is max
-//        max = blue;
-//    end
-//    else begin          // Green is max
-//        max = green;
-//    end
-//	 
-//    if(red <= green && red <= blue) begin   // Red is min
-//        min = red;
-//    end
-//    else if(blue <= green && blue <= red) begin   // Blue is min
-//        min = blue;
-//    end
-//    else begin     // Green is min
-//        min = green;
-//    end
-//	 
-//	 // determine sat
-//	 
-//	 if (value != 0) begin
-//			sat = (value-min)*255/value;
-//	 end
-//	 else begin
-//			sat = 0;
-//	 end
-//end
-
 
 assign max = (red >blue) ? ((red>green) ? red : green) : (blue > green) ? blue : green; // max(R,G,B)
 assign value = max;    // val = MAX
@@ -139,7 +109,17 @@ reg prev_o0, prev_o1 , prev_o2 ,prev_o3, prev_o4;  // last 5 orange detects
 reg prev_b0, prev_b1 , prev_b2 ,prev_b3, prev_b4;  // last 5 blue detects
 reg prev_p0, prev_p1 , prev_p2 ,prev_p3, prev_p4;  // last 5 pink detects
 reg prev_g0, prev_g1 , prev_g2 ,prev_g3, prev_g4;  // last 5 green detects
-
+reg [7:0] prev_red, prev_green, prev_blue;
+reg [7:0] prev_red1, prev_green1, prev_blue1;
+reg [7:0] prev_red2, prev_green2, prev_blue2;
+reg [7:0] prev_red3, prev_green3, prev_blue3;
+reg [7:0] prev_red4, prev_green4, prev_blue4;
+reg [7:0] prev_red5, prev_green5, prev_blue5;
+reg [7:0] prev_red6, prev_green6, prev_blue6;
+reg [7:0] prev_red7, prev_green7, prev_blue7;
+reg [7:0] prev_red8, prev_green8, prev_blue8;
+reg [7:0] prev_red9, prev_green9, prev_blue9;
+reg [7:0] prev_red10, prev_green10, prev_blue10;
 initial begin
 	prev_r0 <=0;
 	prev_r1 <=0;
@@ -205,6 +185,50 @@ always@(posedge clk) begin
 	prev_g3 <=prev_g2;
 	prev_g4 <= prev_g3;
 	
+	prev_red <= red;
+	prev_green <= green;
+	prev_blue <= blue;
+	
+	prev_red1 <= prev_red;
+	prev_green1 <= prev_green;
+	prev_blue1 <= prev_blue;
+	
+	prev_red2 <= prev_red1;
+	prev_green2 <= prev_green1;
+	prev_blue2 <= prev_blue1;
+	
+	prev_red3 <= prev_red2;
+	prev_green3 <= prev_green2;
+	prev_blue3 <= prev_blue2;
+
+	prev_red4 <= prev_red3;
+	prev_green4 <= prev_green3;
+	prev_blue4 <= prev_blue3;
+	
+	prev_red5 <= prev_red4;
+	prev_green5 <= prev_green4;
+	prev_blue5 <= prev_blue4;
+	
+	prev_red6 <= prev_red5;
+	prev_green6 <= prev_green5;
+	prev_blue6 <= prev_blue5;
+	
+	prev_red7 <= prev_red6;
+	prev_green7 <= prev_green6;
+	prev_blue7 <= prev_blue6;
+	
+	prev_red8 <= prev_red7;
+	prev_green8 <= prev_green7;
+	prev_blue8 <= prev_blue7;
+	
+	prev_red9 <= prev_red8;
+	prev_green9 <= prev_green8;
+	prev_blue9 <= prev_blue8;
+	
+	prev_red10 <= prev_red9;
+	prev_green10 <= prev_green9;
+	prev_blue10 <= prev_blue9;
+	
 end
 	
 	
@@ -234,19 +258,22 @@ assign red_high  =  (red_detect && prev_r0 && prev_r1 && prev_r2 && prev_r3  && 
 	
 // Show bounding box RED
 wire [23:0] new_image; //, new_image_r, new_image_b, new_image,p, new_immage_o;
-wire bb_active_r , bb_active_b, bb_active_p , bb_active_o , bb_active_g;
+wire bb_active_r , bb_active_b, bb_active_p , bb_active_o , bb_active_g, struct_active;
 assign bb_active_r = (x == left_r) | (x == right_r) | (y == top_r) | (y == bottom_r);
 assign bb_active_p = (x == left_p) | (x == right_p) | (y == top_p) | (y == bottom_p);
 assign bb_active_b = (x == left_b) | (x == right_b) | (y == top_b) | (y == bottom_b);
 assign bb_active_o = (x == left_o) | (x == right_o) | (y == top_o) | (y == bottom_o);
 assign bb_active_g = (x == left_g) | (x == right_g) | (y == top_g) | (y == bottom_g);
+//assign struct_active = (x == struct1) | (x == struct2) | (x == struct3) | (x == struct4);
+
 //assign new_image_r = bb_active_r ? bb_col_r : red_high;
 
 assign new_image  =  (bb_active_r) ? bb_col_r  
 	: ((bb_active_p)? bb_col_p
 	: ((bb_active_b)? bb_col_b
 	: ((bb_active_o)? bb_col_o
-	: red_high)));
+	: ((struct_bound)? BB_COL_DEFAULT_GREEN
+	: red_high))));
 
 // Switch output pixels depending on mode switch
 // Don't modify the start-of-packet word - it's a packet discriptor
@@ -257,7 +284,7 @@ assign {red_out, green_out, blue_out} = (mode & ~sop & packet_video) ? new_image
 reg [10:0] x, y;
 reg packet_video;
 always@(posedge clk) begin
-	if (sop) begin
+	if (sop && in_valid) begin
 		x <= 11'h0;
 		y <= 11'h0;
 		packet_video <= (blue[3:0] == 3'h0);
@@ -273,8 +300,65 @@ always@(posedge clk) begin
 	end
 end
 
+reg [10:0] struct1, struct2, struct3, struct4;
+reg [23:0] prevpix;
+wire prev10blckdetect;
+wire blckdetect;
+wire prev10whtedetect;
+wire whtedetect;
+wire struct_detect;
+wire struct_bound;
+assign prev10blckdetect = (prev_red10 <= 78 && prev_green10 <= 78 && prev_blue10 <= 78) && (prev_green10 - prev_red10 < 20) && (prev_green10 - prev_blue10 < 20);
+assign prev10whtedetect = (prev_red10 >= 60 && prev_green10 >= 80 && prev_blue10 >= 60) && (prev_green10 - prev_red10 < 20) && (prev_green10 - prev_blue10 < 20);
+assign blckdetect = (red <= 78 && green <= 78 && blue <= 78) && (green - red < 20) && (green - blue < 20);
+assign whtedetect = (red >= 60 && green >= 80 && blue >= 60) && (green - red < 20) && (green - blue < 20);
+assign struct_detect = (prev10blckdetect && !prev10whtedetect && !blckdetect && whtedetect) || (!prev10blckdetect && prev10whtedetect && blckdetect && !whtedetect);
+assign struct_bound = (x==struct1 || x==struct2 || x==struct3 || x==struct4);
+
+always@(posedge clk) begin
+	prevpix <= {red,green,blue};
+	if (sop  && in_valid) begin
+		struct1 <= 0;
+		struct2 <= 0;
+		struct3 <= 0;
+		struct4 <= 0;
+		// prevpix <= {red,green,blue};
+	end
+	if(in_valid && (struct1==0 || struct2==0 || struct3==0 || struct4==0)) begin
+		if(struct_detect) begin
+			if(struct1==0) begin
+				struct1 <= x;
+			end
+			else if(struct2==0 && x-struct1>50 && struct1!=0) begin
+				struct2 <= x;
+			end
+			else if(struct3==0 && x-struct2>50 && struct2!=0) begin
+				struct3 <= x;
+			end
+			else if(struct4==0 && x-struct3>50 && struct3!=0) begin
+				struct4 <= x;
+			end
+		end
+	end
+end
+
+
 //Find first and last  pixels
 reg [10:0] x_min_r, y_min_r, x_max_r, y_max_r;
+reg [10:0] x_min_rt,x_max_rt;
+
+//test for red triple bound
+reg [10:0] xb1max, xb1min, xb2max, xb2min, xb3max, xb3min;
+
+//other bounds
+reg [10:0] xb1max_r, xb1min_r, xb2max_r, xb2min_r, xb3max_r, xb3min_r;
+reg [10:0] xb1max_o, xb1min_o, xb2max_o, xb2min_o, xb3max_o, xb3min_o;
+reg [10:0] xb1max_b, xb1min_b, xb2max_b, xb2min_b, xb3max_b, xb3min_b;
+reg [10:0] xb1max_p, xb1min_p, xb2max_p, xb2min_p, xb3max_p, xb3min_p;
+reg [10:0] xb1max_g, xb1min_g, xb2max_g, xb2min_g, xb3max_g, xb3min_g; 
+
+
+
 reg [10:0] x_min_o, y_min_o, x_max_o, y_max_o;
 reg [10:0] x_min_b, y_min_b, x_max_b, y_max_b;
 reg [10:0] x_min_p, y_min_p, x_max_p, y_max_p;
@@ -285,92 +369,555 @@ assign bound_orange = orange_detect && prev_o0 && prev_o1 && prev_o2 && prev_o3 
 assign bound_red = red_detect && prev_r0 && prev_r1 && prev_r2 && prev_r3  && prev_r4;
 assign bound_blue = blue_detect && prev_b0 && prev_b1 && prev_b2 && prev_b3;
 assign bound_pink = pink_detect && prev_p0 && prev_p1 && prev_p2 && prev_p3  && prev_p4;
-assign bound_green = green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3  && prev_g4;
+assign bound_green = green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3  && prev_g4;  
 
-// RED BOX
+//red synthesized divide and conquer
+reg [10:0] r00min, r00max, r10min, r10max, r20min, r20max, r30min, r30max, r40min, r40max, r50min, r50max, r60min, r60max, r70min, r70max;
+reg [10:0] r01min, r01max, r11min, r11max, r21min, r21max, r31min, r31max;
+reg [10:0] r02min, r02max, r12min, r12max;
 always@(posedge clk) begin
-	if ((bound_red && in_valid)) begin	//Update bounds when the pixel is red
-		if (x < x_min_r) x_min_r <= x;
-		if (x > x_max_r) x_max_r <= x;
-		if (y < y_min_r) y_min_r <= y;
-		y_max_r <= y;
+	if (sop & in_valid) begin
+		r00min <= 999;
+		r10min <= 999;
+		r20min <= 999;
+		r30min <= 999;
+		r40min <= 999;
+		r50min <= 999;
+		r60min <= 999;
+		r70min <= 999;
+		r00max <= 0;
+		r10max <= 0;
+		r20max <= 0;
+		r30max <= 0;
+		r40max <= 0;
+		r50max <= 0;
+		r60max <= 0;
+		r70max <= 0;
 	end
-	if (sop & in_valid) begin	//Reset bounds on start of packet
-		x_min_r <= IMAGE_W-11'h1;
-		x_max_r <= 0;
-		y_min_r <= IMAGE_H-11'h1;
-		y_max_r <= 0;
+	else begin
+		if ((bound_red && in_valid)) begin
+			if (x<80) begin
+				if (x>r00max) r00max <= x;
+				if (x<r00min) r00min <= x;
+			end
+			else if (x<160) begin
+				if (x>r10max) r00max <= x;
+				if (x<r10min) r00min <= x;
+			end
+			else if (x<240) begin
+				if (x>r20max) r00max <= x;
+				if (x<r20min) r00min <= x;
+			end
+			else if (x<320) begin
+				if (x>r30max) r00max <= x;
+				if (x<r30min) r00min <= x;
+			end
+			else if (x<400) begin
+				if (x>r40max) r00max <= x;
+				if (x<r40min) r00min <= x;
+			end
+			else if (x<480) begin
+				if (x>r50max) r00max <= x;
+				if (x<r50min) r00min <= x;
+			end
+			else if (x<560) begin
+				if (x>r60max) r00max <= x;
+				if (x<r60min) r00min <= x;
+			end
+			else if (x<640) begin
+				if (x>r70max) r00max <= x;
+				if (x<r70min) r00min <= x;
+			end
+		end
 	end
+	
+	if (r00max - r00min < 0 ) begin
+		r01max <= r10max;
+		r01min <= r10min;
+	end
+	else if (r10max - r10min < 0 ) begin
+		r01max <= r00max;
+		r01min <= r00min;
+	end
+	else begin
+		if (r10min - r00max < 10) begin
+			r01min <= r00min;
+			r01max <= r10max;
+		end
+		else if (r10max - r10min > r00max - r00min) begin
+			r01max <= r10max;
+			r01min <= r10min;
+		end
+		else begin
+			r01max <= r00max;
+			r01min <= r00min;
+		end
+	end
+	
+	if (r20max - r20min < 0 ) begin
+		r11max <= r30max;
+		r11min <= r30min;
+	end
+	else if (r30max - r30min < 0 ) begin
+		r11max <= r20max;
+		r11min <= r20min;
+	end
+	else begin
+		if (r30min - r20max < 10) begin
+			r11min <= r20min;
+			r11max <= r10max;
+		end
+		else if (r30max - r30min > r20max - r20min) begin
+			r11max <= r30max;
+			r11min <= r30min;
+		end
+		else begin
+			r11max <= r20max;
+			r11min <= r20min;
+		end
+	end
+	
+	if (r40max - r40min < 0 ) begin
+		r21max <= r50max;
+		r21min <= r50min;
+	end
+	else if (r50max - r50min < 0 ) begin
+		r21max <= r40max;
+		r21min <= r40min;
+	end
+	else begin
+		if (r50min - r40max < 10) begin
+			r21min <= r40min;
+			r21max <= r50max;
+		end
+		else if (r50max - r50min > r40max - r40min) begin
+			r21max <= r50max;
+			r21min <= r50min;
+		end
+		else begin
+			r21max <= r40max;
+			r21min <= r40min;
+		end
+	end
+	
+	if (r60max - r60min < 0 ) begin
+		r31max <= r70max;
+		r31min <= r70min;
+	end
+	else if (r70max - r70min < 0 ) begin
+		r31max <= r60max;
+		r31min <= r60min;
+	end
+	else begin
+		if (r70min - r60max < 10) begin
+			r31min <= r60min;
+			r31max <= r70max;
+		end
+		else if (r70max - r70min > r60max - r60min) begin
+			r31max <= r70max;
+			r31min <= r70min;
+		end
+		else begin
+			r31max <= r60max;
+			r31min <= r60min;
+		end
+	end
+	
+	if (r01max - r01min < 0 ) begin
+		r02max <= r11max;
+		r02min <= r11min;
+	end
+	else if (r11max - r11min < 0 ) begin
+		r02max <= r01max;
+		r02min <= r01min;
+	end
+	else begin
+		if (r11min - r01max < 10) begin
+			r02min <= r01min;
+			r02max <= r11max;
+		end
+		else if (r11max - r11min > r01max - r01min) begin
+			r02max <= r11max;
+			r02min <= r11min;
+		end
+		else begin
+			r02max <= r01max;
+			r02min <= r01min;
+		end
+	end
+	
+	if (r21max - r21min < 0 ) begin
+		r12max <= r31max;
+		r12min <= r31min;
+	end
+	else if (r31max - r31min < 0 ) begin
+		r12max <= r21max;
+		r12min <= r21min;
+	end
+	else begin
+		if (r31min - r21max < 10) begin
+			r12min <= r21min;
+			r12max <= r11max;
+		end
+		else if (r31max - r31min > r21max - r21min) begin
+			r12max <= r31max;
+			r12min <= r31min;
+		end
+		else begin
+			r12max <= r21max;
+			r12min <= r21min;
+		end
+	end
+	
+	if (r02max - r02min < 0 ) begin
+		x_max_r <= r12max;
+		x_min_r <= r12min;
+	end
+	else if (r12max - r12min < 0 ) begin
+		x_max_r <= r02max;
+		x_min_r <= r02min;
+	end
+	else begin
+		if (r12min - r02max < 10) begin
+			x_min_r <= r02min;
+			x_max_r <= r12max;
+		end
+		else if (r12max - r12min > r02max - r02min) begin
+			x_max_r <= r12max;
+			x_min_r <= r12min;
+		end
+		else begin
+			x_max_r <= r02max;
+			x_min_r <= r02min;
+		end
+	end
+	
 end
-
 // BLUE BOX
 always@(posedge clk) begin
-	if ((bound_blue && in_valid)) begin	//Update bounds when the pixel is blue
-		if (x < x_min_b) x_min_b <= x;
-		if (x > x_max_b) x_max_b <= x;
-		if (y < y_min_b) y_min_b <= y;
-		y_max_b <= y;
-	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_b <= IMAGE_W-11'h1;
 		x_max_b <= 0;
 		y_min_b <= IMAGE_H-11'h1;
 		y_max_b <= 0;
+		xb1max_b <= 0;
+		xb1min_b <= 210;
+		xb2max_b <= 210;
+		xb2min_b <= 420;
+		xb3max_b <= 420;
+		xb3min_b <= 640;
+	end
+	
+	if ((bound_blue && in_valid && x<210)) begin	//Update bounds when the pixel is red
+		if (x < xb1min_b && (xb1min_b - x < 5 || xb1min_b == 210)) xb1min_b <= x;
+		if (x > xb1max_b && (x-xb1max_b < 5 || xb1max_b == 0)) xb1max_b <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_blue && in_valid && x<420)) begin	//Update bounds when the pixel is red
+		if (x < xb2min_b && (xb2min_b - x < 5 || xb2min_b == 420)) xb2min_b <= x;
+		if (x > xb2max_b && (x-xb2max_b < 5 || xb2max_b == 210)) xb2max_b <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_blue && in_valid && x<640)) begin	//Update bounds when the pixel is red
+		if (x < xb3min_b && (xb3min_b - x < 5 || xb3min_b == 640)) xb3min_b <= x;
+		if (x > xb3max_b && (x-xb3max_b < 5 || xb3max_b == 420)) xb3max_b <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	
+	if (xb3max_b - xb3min_b > xb2max_b - xb1min_b && xb3max_b - xb3min_b > xb1max_b - xb1min_b) begin
+		x_max_b <= xb3max_b;
+		if (xb3min_b == 420 && xb2max_b == 419) begin
+			if (xb2min_b == 210) begin
+				x_min_b <= xb1min_b;
+			end
+			else begin
+				x_min_b <= xb2min_b;
+			end
+		end
+		else begin
+			x_min_b <= xb3min_b;
+		end
+	end
+	
+	else if (xb2max_b - xb2min_b > xb3max_b - xb3min_b && xb2max_b - xb2min_b > xb1max_b - xb1min_b) begin
+		if (xb2min_b == 210 && xb1max_b == 219) begin
+			x_min_b <= xb1min_b;
+		end
+		else begin
+			x_min_b <= xb2min_b;
+		end
+		if (xb2max_b == 419) begin
+			x_max_b <= xb3max_b; 
+		end
+		else begin
+			x_max_b <= xb2max_b;
+		end
+	end
+	
+	else if (xb1max_b - xb1min_b > xb2max_b - xb2min_b && xb1max_b - xb1min_b > xb3max_b - xb3min_b) begin
+		x_min_b <= xb1min_b;
+		if (xb1max_b == 209 && xb2min_b == 210) begin
+			if (xb2max_b == 419) begin
+				x_max_b <= xb3max_b;
+			end
+			else begin
+				x_max_b <= xb2max_b;
+			end
+		end
+		else begin
+			x_max_b <= xb1max_b;
+		end
+	end
+	else begin
+		x_max_b <= 0;
+		x_min_b <= 0;
 	end
 end
 
 // ORANGE BOX
 always@(posedge clk) begin
-	if ((bound_orange && in_valid)) begin	//Update bounds when the pixel is orange
-		if (x < x_min_o) x_min_o <= x;
-		if (x > x_max_o) x_max_o <= x;
-		if (y < y_min_o) y_min_o <= y;
-		y_max_o <= y;
-	end
-	if (sop & in_valid) begin	//Reset bounds on start of packet
+if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_o <= IMAGE_W-11'h1;
 		x_max_o <= 0;
 		y_min_o <= IMAGE_H-11'h1;
 		y_max_o <= 0;
+		xb1max_o <= 0;
+		xb1min_o <= 210;
+		xb2max_o <= 210;
+		xb2min_o <= 420;
+		xb3max_o <= 420;
+		xb3min_o <= 640;
+	end
+	
+	if ((bound_orange && in_valid && x<210)) begin	//Update bounds when the pixel is red
+		if (x < xb1min_o && (xb1min_o - x < 5 || xb1min_o == 210)) xb1min_o <= x;
+		if (x > xb1max_o && (x-xb1max_o < 5 || xb1max_o == 0)) xb1max_o <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_orange && in_valid && x<420)) begin	//Update bounds when the pixel is red
+		if (x < xb2min_o && (xb2min_o - x < 5 || xb2min_o == 420)) xb2min_o <= x;
+		if (x > xb2max_o && (x-xb2max_o < 5 || xb2max_o == 210)) xb2max_o <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_orange && in_valid && x<640)) begin	//Update bounds when the pixel is red
+		if (x < xb3min_o && (xb3min_o - x < 5 || xb3min_o == 640)) xb3min_o <= x;
+		if (x > xb3max_o && (x-xb3max_o < 5 || xb3max_o == 420)) xb3max_o <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	
+	if (xb3max_o - xb3min_o > xb2max_o - xb1min_o && xb3max_o - xb3min_o > xb1max_o - xb1min_o) begin
+		x_max_o <= xb3max_o;
+		if (xb3min_o == 420 && xb2max_o == 419) begin
+			if (xb2min_o == 210) begin
+				x_min_o <= xb1min_o;
+			end
+			else begin
+				x_min_o <= xb2min_o;
+			end
+		end
+		else begin
+			x_min_o <= xb3min_o;
+		end
+	end
+	
+	else if (xb2max_o - xb2min_o > xb3max_o - xb3min_o && xb2max_o - xb2min_o > xb1max_o - xb1min_o) begin
+		if (xb2min_o == 210 && xb1max_o == 219) begin
+			x_min_o <= xb1min_o;
+		end
+		else begin
+			x_min_o <= xb2min_o;
+		end
+		if (xb2max == 419) begin
+			x_max_o <= xb3max_o; 
+		end
+		else begin
+			x_max_o <= xb2max_o;
+		end
+	end
+	
+	else if (xb1max_o - xb1min_o > xb3max_o - xb3min_o && xb1max_o - xb1min_o > xb2max_o - xb2min_o) begin
+		x_min_o <= xb1min_o;
+		if (xb1max_o == 209 && xb2min_o == 210) begin
+			if (xb2max_o == 419) begin
+				x_max_o <= xb3max_o;
+			end
+			else begin
+				x_max_o <= xb2max_o;
+			end
+		end
+		else begin
+			x_max_o <= xb1max_o;
+		end
+	end
+	else begin
+		x_max_o <= 0;
+		x_min_o <= 0;
 	end
 end
 
 // PINK BOX
 always@(posedge clk) begin
-	if ((bound_pink && in_valid)) begin	//Update bounds when the pixel is pink
-		if (x < x_min_p) x_min_p <= x;
-		if (x > x_max_p) x_max_p <= x;
-		if (y < y_min_p) y_min_p <= y;
-		y_max_p <= y;
-	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_p <= IMAGE_W-11'h1;
-		x_max_p<= 0;
+		x_max_p <= 0;
 		y_min_p <= IMAGE_H-11'h1;
 		y_max_p <= 0;
+		xb1max_p <= 105;
+		xb1min_p <= 104;
+		xb2max_p <= 315;
+		xb2min_p <= 314;
+		xb3max_p <= 530;
+		xb3min_p <= 529;
+	end
+	else begin
+		if ((bound_pink && in_valid && x<210)) begin	//Update bounds when the pixel is red
+			if (x < xb1min_p) xb1min_p <= x;
+			if (x > xb1max_p) xb1max_p <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_pink && in_valid && x<420)) begin	//Update bounds when the pixel is red
+			if (x < xb2min_p) xb2min_p <= x;
+			if (x > xb2max_p) xb2max_p <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_pink && in_valid)) begin	//Update bounds when the pixel is red
+			if (x < xb3min_p) xb3min_p <= x;
+			if (x > xb3max_p) xb3max_p <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		if (((xb3max_p - xb3min_p) > (xb2max_p - xb2min_p)) && ((xb3max_p - xb3min_p) > (xb1max_p - xb1min_p))) begin //b3 biggest
+			x_max_p <= xb3max_p;
+			if (xb3min_p - xb2max_p < 10) begin //condition when ball overlap 2nd boundary
+				x_min_p <= xb2min_p;
+			end
+			else begin
+				x_min_p <= xb3min_p;
+			end
+		end
+		else if ((xb2max_p - xb2min_p > xb3max_p - xb3min_p) && (xb2max_p - xb2min_p > xb1max_p - xb1min_p) )begin //b2 biggest
+			if (xb2min_p - xb1max_p < 10) begin // condition when ball overalap first boundary
+				x_min_p <= xb1min_p;
+			end
+			else begin
+				x_min_p <= xb2min_p;
+			end
+			
+			if (xb3min_p - xb2max_p < 10) begin //condition when ball overlap second boundary
+				x_max_p <= xb3max_p; 
+			end
+			else begin
+				x_max_p <= xb2max_p;
+			end
+		end
+		else if ((xb1max_p - xb1min_p > xb3max_p - xb3min_p) && (xb1max_p - xb1min_p > xb2max_p - xb2min_p)) begin //b1 biggest
+			x_min_p <= xb1min_p;
+			if (xb2min_p - xb1max_p < 10) begin //condition when ball overlap first boundary
+				x_max_p <= xb2max_p;
+			end
+			else begin
+				x_max_p <= xb1max_p;
+			end
+		end
+		else begin
+			x_max_p <= 0;
+			x_min_p <= 0;
+		end
 	end
 end
 
 // GREEN BOX
 always@(posedge clk) begin
-	if ((bound_green && in_valid)) begin	//Update bounds when the pixel is pink
-		if (x < x_min_g) x_min_g <= x;
-		if (x > x_max_g) x_max_g <= x;
-		if (y < y_min_g) y_min_g <= y;
-		y_max_g <= y;
-	end
 	if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_min_g <= IMAGE_W-11'h1;
-		x_max_g<= 0;
+		x_max_g <= 0;
 		y_min_g <= IMAGE_H-11'h1;
 		y_max_g <= 0;
+		xb1max_g <= 0;
+		xb1min_g <= 210;
+		xb2max_g <= 210;
+		xb2min_g <= 420;
+		xb3max_g <= 420;
+		xb3min_g <= 640;
+	end
+	
+	if ((bound_green && in_valid && x<210)) begin	//Update bounds when the pixel is red
+		if (x < xb1min_g && (xb1min_g - x < 5 || xb1min_g == 210)) xb1min_g <= x;
+		if (x > xb1max_g && (x-xb1max_g < 5 || xb1max_g == 0)) xb1max_g <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_green && in_valid && x<420)) begin	//Update bounds when the pixel is red
+		if (x < xb2min_g && (xb2min_g - x < 5 || xb2min_g == 420)) xb2min_g <= x;
+		if (x > xb2max_g && (x-xb2max_g < 5 || xb2max_g == 210)) xb2max_g <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	else if ((bound_green && in_valid && x<640)) begin	//Update bounds when the pixel is red
+		if (x < xb3min_g && (xb3min_g - x < 5 || xb3min_g == 640)) xb3min_g <= x;
+		if (x > xb3max_g && (x-xb3max_g < 5 || xb3max_g == 420)) xb3max_g <= x;
+		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+		//y_max_r <= y_min_r + (x_max_r - x_min_r);
+	end
+	
+	if (xb3max_g - xb3min_g > xb2max_g - xb1min_g && xb3max_g - xb3min_g > xb1max_g - xb1min_g) begin
+		x_max_g <= xb3max_g;
+		if (xb3min_g == 420 && xb2max_g == 419) begin
+			if (xb2min_g == 210) begin
+				x_min_g <= xb1min_g;
+			end
+			else begin
+				x_min_g <= xb2min_g;
+			end
+		end
+		else begin
+			x_min_g <= xb3min_g;
+		end
+	end
+	
+	else if (xb2max_g - xb2min_g > xb3max_g - xb3min_g && xb2max_g - xb2min_g > xb1max_g - xb1min_g) begin
+		if (xb2min_g == 210 && xb1max_g == 219) begin
+			x_min_g <= xb1min_g;
+		end
+		else begin
+			x_min_g <= xb2min_g;
+		end
+		if (xb2max_g == 419) begin
+			x_max_g <= xb3max_g; 
+		end
+		else begin
+			x_max_g <= xb2max_g;
+		end
+	end
+	
+	else begin
+		x_min_g <= xb1min_g;
+		if (xb1max_g == 209 && xb2min_g == 210) begin
+			if (xb2max_g == 419) begin
+				x_max_g <= xb3max_g;
+			end
+			else begin
+				x_max_g <= xb2max_g;
+			end
+		end
+		else begin
+			x_max_g <= xb1max_g;
+		end
 	end
 end
 
 
 
 
-//Process bounding box at the end of the frame.
+//Process bounding box at the end of the frame.16 8 4 2 1
 reg [1:0] msg_state;
 reg [10:0] left_r, right_r, top_r, bottom_r;
 reg [10:0] left_b, right_b, top_b, bottom_b;
@@ -424,6 +971,83 @@ always@(posedge clk) begin
 	if (msg_state != 2'b00) msg_state <= msg_state + 2'b01;
 
 end
+
+reg [2:0] color; //000 - none, 001 - red, 010 - blue, 011 - orange, 100 - pink, 101 - green
+reg [11:0] xcoord;
+reg [11:0] ycoord;
+reg [11:0] dist;
+reg [15:0] msg;
+
+always@(posedge clk) begin
+
+	color <= 000;
+	xcoord <= 0;
+	ycoord <= 0;
+	dist <= 100;
+	
+	if (right_r - left_r > dist && right_r - left_r < 750) begin
+		color <= 001;
+		xcoord <= right_r;
+		ycoord <= top_r;
+		dist <= right_r - left_r;
+	end
+	
+	else if (right_b - left_b > dist && right_b - left_b < 750) begin
+		color <= 010;
+		xcoord <= right_b;
+		ycoord <= top_b;
+		dist <= right_b - left_b;
+	end
+	
+	else if (right_o - left_o > dist && right_o - left_o < 750) begin
+		color <= 011;
+		xcoord <= right_o;
+		ycoord <= top_o;
+		dist <= right_o - left_o;
+	end
+	
+	else if (right_p - left_p > dist && right_p - left_p < 750) begin
+		color <= 100;
+		xcoord <= right_p;
+		ycoord <= top_p;
+		dist <= right_p - left_p;
+	end
+	
+	else if (right_g - left_g > dist && right_g - left_g < 750) begin
+		color <= 101;
+		xcoord <= right_g;
+		ycoord <= top_g;
+		dist <= right_g - left_g;
+	end
+	
+	if (red_detect) begin
+		color <= 001;
+	end
+	else if (blue_detect) begin
+		color <= 010;
+	end
+	else if (orange_detect) begin
+		color <= 011;
+	end
+	else if (pink_detect) begin
+		color <= 100;
+	end
+	else if (green_detect) begin
+		color <= 101;
+	end
+	
+	if ((((struct2- struct1) - (struct3 - struct2) < 100 ) || ((struct2- struct1) - (struct3 - struct2) > -100 )) && (struct2 - struct1>150)) begin
+		color <= 111;
+	end
+	if ((((struct3- struct2) - (struct4 - struct3) < 100 ) || ((struct3- struct2) - (struct4 - struct3) > -100 )) && (struct3 - struct2 > 150)) begin
+		color <= 111;
+	end
+	
+	msg <= {xcoord[10:7],ycoord[10:7],dist[10:6],color};
+	
+end
+
+assign outbuffer = msg;
 	
 //Generate output messages for CPU
 reg [31:0] msg_buf_in; 
@@ -432,13 +1056,27 @@ reg msg_buf_wr;
 wire msg_buf_rd, msg_buf_flush;
 wire [7:0] msg_buf_size;
 wire msg_buf_empty;
-
+reg [31:0] distance_r, distance_y, distance_g, distance_b, distance_grey;
 `define RED_BOX_MSG_ID "RBB"
+
+wire[6:0] ratio1,ratio2;
+assign ratio1 = 16'd79;
+assign ratio2 = 16'd20;
+
+wire [12:0] constan;
+assign constan = 16'd7443;
+
+
+//((732 * (79/20))/147) =19.66 ish 19
+ // -> 14.9
+reg [15:0] outt_r, outt_y;
+
+//79/20 = 3.95 -> 3
 
 always@(*) begin	//Write words to FIFO as state machine advances
 	case(msg_state)
 		2'b00: begin
-			msg_buf_in = 32'b0;
+			msg_buf_in = 32'd0; //Bottom right coordinate
 			msg_buf_wr = 1'b0;
 		end
 		2'b01: begin
@@ -446,12 +1084,20 @@ always@(*) begin	//Write words to FIFO as state machine advances
 			msg_buf_wr = 1'b1;
 		end
 		2'b10: begin
-			msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
-			msg_buf_wr = 1'b1;
+			//msg_buf_in = {5'b0, x_min, 5'b0, y_min};	//Top left coordinate
+			outt_r = distance_y[15:0];
+			outt_y = distance_r[15:0];
+			/*for (i = 0; i < 16; i = i+1)begin
+				out = out >> 1;
+			end
+			*/
+			msg_buf_in = distance_g; //Bottom right coordinate
+			msg_buf_wr = 1'b1; //changed!!!!!!!!!!
 		end
 		2'b11: begin
-			msg_buf_in = {5'b0, x_max, 5'b0, y_max}; //Bottom right coordinate
-			msg_buf_wr = 1'b1;
+			//msg_buf_in = {5'b0, x_max, 5'b0, y_max};	//Top left coordinate
+			msg_buf_in = distance_r; //Bottom right coordinate
+			msg_buf_wr = 1'b1;  //REPLACED WITH DISTANCE
 		end
 	endcase
 end
@@ -515,7 +1161,7 @@ STREAM_REG #(.DATA_WIDTH(26)) out_reg (
 // Process write
 
 reg  [7:0]   reg_status;
-reg	[23:0]	bb_col_r, bb_col_b, bb_col_o, bb_col_p , bb_col , bb_col_g;
+reg	[23:0]	bb_col;
 
 always @ (posedge clk)
 begin
@@ -566,6 +1212,6 @@ end
 //Fetch next word from message buffer after read from READ_MSG
 assign msg_buf_rd = s_chipselect & s_read & ~read_d & ~msg_buf_empty & (s_address == `READ_MSG);
 						
-
+reg	[23:0]	bb_col_r, bb_col_b, bb_col_o, bb_col_p , bb_col_g;
 
 endmodule
