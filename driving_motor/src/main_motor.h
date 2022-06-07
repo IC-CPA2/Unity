@@ -29,18 +29,18 @@ Developed with ROB-9457
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 21 //18
+#define AIN1 21 // 18
 #define BIN1 17
-#define AIN2 14 //5
+#define AIN2 14 // 5
 #define BIN2 16
-#define PWMA 22 //19
+#define PWMA 22 // 19
 #define PWMB 4
 #define STBY 9
 
 // these constants are used to allow you to make your motor configuration
 // line up with function names like forward.  Value can be 1 or -1
-const int offsetA = -1; //motor right
-const int offsetB = 1; //motor left
+const int offsetA = -1; // motor right
+const int offsetB = 1;  // motor left
 
 // Initializing motors.  The library will allow you to initialize as many
 // motors as you have memory for.  If you are using functions like forward
@@ -49,128 +49,139 @@ const int offsetB = 1; //motor left
 Motor motorRight = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motorLeft = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
+// for storing speed values
 
-//for storing speed values
-
-struct speed {
+struct speed
+{
   int left, right;
 };
 
+// definition of the motor class
 
-//definition of the motor class
-
-class Motors{
+class Motors
+{
 
 private:
+  typedef struct speed MotorSpeeds;
 
-typedef struct speed MotorSpeeds;
+  int convert_to_duration(int distance, int speed)
+  {
+    double prop = 1; // need to measure this experimentally
+    double x = prop * (distance / speed);
+    return (int)x; // might not work
+  }
 
-int convert_to_duration(int distance,int speed){
-  double prop = 1; //need to measure this experimentally
-  double x = prop * (distance/speed);
-  return (int)x; //might not work
-}
+  // the input error here has to be the total_x_translation during straight drive
+  MotorSpeeds speed_straightness_control(int speed, int error)
+  {
 
+    MotorSpeeds speeds;
 
-//TODO: implement straightness control
+    // corrigate path if needed
 
-MotorSpeeds speed_straightness_control(int speed, int error){
+    double corrig_const = 1; // adjust this to based on trial and error
 
-MotorSpeeds speeds;
+    double corrigation = Maths.log(1 + abs(error));
 
-//corrigate path if needed
+    if (error > 0)
+    {
 
-// if(error != 0 ){
+      speeds.left = corrigation * speed;
+      speeds.right = speed;
+    }
+    else if (error < 0)
+    {
 
-// } else {
+      speeds.left = speed;
+      speeds.right = corrigation * speeds;
+    }
+    else
+    {
 
-// }
+      speeds.left = speed;
+      speeds.right = speed;
+    }
 
-speeds.left = speed; //change these
-speeds.right = speed; //change these
+    return speeds;
+  }
 
-return speeds;
+  void drive_straight(int speed, int duration, int error)
+  {
 
-}
+    MotorSpeeds speeds;
+    // the input error here has to be the total_x_translation during straight drive
+    speeds = speed_straightness_control(speed, error);
 
-void drive_straight(int speed, int duration,int error){
+    // Use of the drive function which takes as arguements the speed
+    // and optional duration.  A negative speed will cause it to go
+    // backwards.  Speed can be from -255 to 255.  Also use of the
+    // brake function which takes no arguements.
 
-  MotorSpeeds speeds;
+    motorRight.drive(speeds.right, duration);
+    motorLeft.drive(speeds.left, duration);
+  }
 
-  speeds = speed_straightness_control(speed, error);
+  void drive_steer(int angle, bool left)
+  {
 
-  
-  // Use of the drive function which takes as arguements the speed
-  // and optional duration.  A negative speed will cause it to go
-  // backwards.  Speed can be from -255 to 255.  Also use of the
-  // brake function which takes no arguements.
+    motorLeft.brake();
+    motorRight.brake();
+    // conversion from angle to duration
 
-  motorRight.drive(speeds.right, duration);
-  motorLeft.drive(speeds.left, duration);
+    int turning_prop = 12.2;
 
-}
+    int duration = angle * turning_prop; // change this
 
-void drive_steer(int angle, bool left){
+    int speed = 150;
 
-motorLeft.brake();
-motorRight.brake();
-//conversion from angle to duration
+    int turn_direction = -1;
+    // which way to turn
+    if (left)
+    {
+      turn_direction = 1;
+    }
 
-int turning_prop = 12.2;
+    motorLeft.drive(turn_direction * speed, 1);
 
-int duration = angle*turning_prop; // change this
+    motorRight.drive(-turn_direction * speed, duration);
 
-int speed = 150;
-
-int turn_direction = -1;
-//which way to turn
-if (left){
-  turn_direction = 1;
-}
-
-  motorLeft.drive(turn_direction*speed, 1);
-
-  motorRight.drive(-turn_direction*speed, duration);
-
-  motorLeft.brake();
-  motorRight.brake();
-
-}
-
-
+    motorLeft.brake();
+    motorRight.brake();
+  }
 
 public:
   int speed;
   int distance;
   int turning_angle;
   int error;
-  
-//method to move forward
-  void forward(int speed,int error){
-  int duration = 1000; //default value
 
- //convert speed from range(-10,10) to (-255,255)
-  speed = speed * (255/10);
-  //generate duration to control the motors
-  duration = convert_to_duration(distance, speed);
- 
-  drive_straight(speed,duration, error);
+  // method to move forward
+  void forward(int speed, int error)
+  {
+    int duration = 1000; // default value
+
+    // convert speed from range(-10,10) to (-255,255)
+    speed = speed * (255 / 10);
+    // generate duration to control the motors
+    duration = convert_to_duration(distance, speed);
+
+    drive_straight(speed, duration, error);
   }
 
-  //method to brake
+  // method to brake
 
-  void brake(){
+  void brake()
+  {
     motorLeft.brake();
     motorRight.brake();
   }
 
-//TODO: implement turning function
-  void turn(int turning_angle, bool left){
+  // TODO: implement turning function
+  void turn(int turning_angle, bool left)
+  {
 
-  drive_steer(turning_angle, left);
-
+    drive_steer(turning_angle, left);
   }
-
 };
 
 // void motors_control(int speed,int distance,int turning_angle, int error)
