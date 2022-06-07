@@ -371,227 +371,76 @@ assign bound_blue = blue_detect && prev_b0 && prev_b1 && prev_b2 && prev_b3;
 assign bound_pink = pink_detect && prev_p0 && prev_p1 && prev_p2 && prev_p3  && prev_p4;
 assign bound_green = green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3  && prev_g4;  
 
-//red synthesized divide and conquer
-reg [10:0] r00min, r00max, r10min, r10max, r20min, r20max, r30min, r30max, r40min, r40max, r50min, r50max, r60min, r60max, r70min, r70max;
-reg [10:0] r01min, r01max, r11min, r11max, r21min, r21max, r31min, r31max;
-reg [10:0] r02min, r02max, r12min, r12max;
 always@(posedge clk) begin
-	if (sop & in_valid) begin
-		r00min <= 999;
-		r10min <= 999;
-		r20min <= 999;
-		r30min <= 999;
-		r40min <= 999;
-		r50min <= 999;
-		r60min <= 999;
-		r70min <= 999;
-		r00max <= 0;
-		r10max <= 0;
-		r20max <= 0;
-		r30max <= 0;
-		r40max <= 0;
-		r50max <= 0;
-		r60max <= 0;
-		r70max <= 0;
+	if (sop & in_valid) begin	//Reset bounds on start of packet
+		x_min_r <= IMAGE_W-11'h1;
+		x_max_r <= 0;
+		y_min_r <= IMAGE_H-11'h1;
+		y_max_r <= 0;
+		xb1max_r <= 105;
+		xb1min_r <= 104;
+		xb2max_r <= 315;
+		xb2min_r <= 314;
+		xb3max_r <= 530;
+		xb3min_r <= 529;
 	end
 	else begin
-		if ((bound_red && in_valid)) begin
-			if (x<80) begin
-				if (x>r00max) r00max <= x;
-				if (x<r00min) r00min <= x;
+		if ((bound_red && in_valid && x<210)) begin	//Update bounds when the pixel is red
+			if (x < xb1min_r || xb1min_r == 104) xb1min_r <= x;
+			if (x > xb1max_r || xb1max_r == 105) xb1max_r <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_red && in_valid && x<420)) begin	//Update bounds when the pixel is red
+			if (x < xb2min_r || xb2min_r == 314) xb2min_r <= x;
+			if (x > xb2max_r || xb2max_r == 315) xb2max_r <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_red && in_valid)) begin	//Update bounds when the pixel is red
+			if (x < xb3min_r || xb3min_r == 529) xb3min_r <= x;
+			if (x > xb3max_r || xb3max_r == 530) xb3max_r <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		if (((xb3max_r - xb3min_r) > (xb2max_r - xb2min_r)) && ((xb3max_r - xb3min_r) > (xb1max_r - xb1min_r))) begin //b3 biggest
+			x_max_r <= xb3max_r;
+			if (xb3min_r - xb2max_r < 10) begin //condition when ball overlap 2nd boundary
+				x_min_r <= xb2min_r;
 			end
-			else if (x<160) begin
-				if (x>r10max) r00max <= x;
-				if (x<r10min) r00min <= x;
-			end
-			else if (x<240) begin
-				if (x>r20max) r00max <= x;
-				if (x<r20min) r00min <= x;
-			end
-			else if (x<320) begin
-				if (x>r30max) r00max <= x;
-				if (x<r30min) r00min <= x;
-			end
-			else if (x<400) begin
-				if (x>r40max) r00max <= x;
-				if (x<r40min) r00min <= x;
-			end
-			else if (x<480) begin
-				if (x>r50max) r00max <= x;
-				if (x<r50min) r00min <= x;
-			end
-			else if (x<560) begin
-				if (x>r60max) r00max <= x;
-				if (x<r60min) r00min <= x;
-			end
-			else if (x<640) begin
-				if (x>r70max) r00max <= x;
-				if (x<r70min) r00min <= x;
+			else begin
+				x_min_r <= xb3min_r;
 			end
 		end
-	end
-	
-	if (r00max - r00min < 0 ) begin
-		r01max <= r10max;
-		r01min <= r10min;
-	end
-	else if (r10max - r10min < 0 ) begin
-		r01max <= r00max;
-		r01min <= r00min;
-	end
-	else begin
-		if (r10min - r00max < 10) begin
-			r01min <= r00min;
-			r01max <= r10max;
+		else if ((xb2max_r - xb2min_r > xb3max_r - xb3min_r) && (xb2max_r - xb2min_r > xb1max_r - xb1min_r))begin //b2 biggest
+			if (xb2min_r - xb1max_r < 10) begin // condition when ball overalap first boundary
+				x_min_r <= xb1min_r;
+			end
+			else begin
+				x_min_r <= xb2min_r;
+			end
+			
+			if (xb3min_r - xb2max_r < 10) begin //condition when ball overlap second boundary
+				x_max_r <= xb3max_r; 
+			end
+			else begin
+				x_max_r <= xb2max_r;
+			end
 		end
-		else if (r10max - r10min > r00max - r00min) begin
-			r01max <= r10max;
-			r01min <= r10min;
+		else if ((xb1max_r - xb1min_r > xb3max_r - xb3min_r) && (xb1max_r- xb1min_r > xb2max_r - xb2min_r)) begin //b1 biggest
+			x_min_r <= xb1min_r;
+			if (xb2min_r - xb1max_r < 10) begin //condition when ball overlap first boundary
+				x_max_r <= xb2max_r;
+			end
+			else begin
+				x_max_r <= xb1max_r;
+			end
 		end
 		else begin
-			r01max <= r00max;
-			r01min <= r00min;
+			x_max_r <= 0;
+			x_min_r <= 0;
 		end
 	end
-	
-	if (r20max - r20min < 0 ) begin
-		r11max <= r30max;
-		r11min <= r30min;
-	end
-	else if (r30max - r30min < 0 ) begin
-		r11max <= r20max;
-		r11min <= r20min;
-	end
-	else begin
-		if (r30min - r20max < 10) begin
-			r11min <= r20min;
-			r11max <= r10max;
-		end
-		else if (r30max - r30min > r20max - r20min) begin
-			r11max <= r30max;
-			r11min <= r30min;
-		end
-		else begin
-			r11max <= r20max;
-			r11min <= r20min;
-		end
-	end
-	
-	if (r40max - r40min < 0 ) begin
-		r21max <= r50max;
-		r21min <= r50min;
-	end
-	else if (r50max - r50min < 0 ) begin
-		r21max <= r40max;
-		r21min <= r40min;
-	end
-	else begin
-		if (r50min - r40max < 10) begin
-			r21min <= r40min;
-			r21max <= r50max;
-		end
-		else if (r50max - r50min > r40max - r40min) begin
-			r21max <= r50max;
-			r21min <= r50min;
-		end
-		else begin
-			r21max <= r40max;
-			r21min <= r40min;
-		end
-	end
-	
-	if (r60max - r60min < 0 ) begin
-		r31max <= r70max;
-		r31min <= r70min;
-	end
-	else if (r70max - r70min < 0 ) begin
-		r31max <= r60max;
-		r31min <= r60min;
-	end
-	else begin
-		if (r70min - r60max < 10) begin
-			r31min <= r60min;
-			r31max <= r70max;
-		end
-		else if (r70max - r70min > r60max - r60min) begin
-			r31max <= r70max;
-			r31min <= r70min;
-		end
-		else begin
-			r31max <= r60max;
-			r31min <= r60min;
-		end
-	end
-	
-	if (r01max - r01min < 0 ) begin
-		r02max <= r11max;
-		r02min <= r11min;
-	end
-	else if (r11max - r11min < 0 ) begin
-		r02max <= r01max;
-		r02min <= r01min;
-	end
-	else begin
-		if (r11min - r01max < 10) begin
-			r02min <= r01min;
-			r02max <= r11max;
-		end
-		else if (r11max - r11min > r01max - r01min) begin
-			r02max <= r11max;
-			r02min <= r11min;
-		end
-		else begin
-			r02max <= r01max;
-			r02min <= r01min;
-		end
-	end
-	
-	if (r21max - r21min < 0 ) begin
-		r12max <= r31max;
-		r12min <= r31min;
-	end
-	else if (r31max - r31min < 0 ) begin
-		r12max <= r21max;
-		r12min <= r21min;
-	end
-	else begin
-		if (r31min - r21max < 10) begin
-			r12min <= r21min;
-			r12max <= r11max;
-		end
-		else if (r31max - r31min > r21max - r21min) begin
-			r12max <= r31max;
-			r12min <= r31min;
-		end
-		else begin
-			r12max <= r21max;
-			r12min <= r21min;
-		end
-	end
-	
-	if (r02max - r02min < 0 ) begin
-		x_max_r <= r12max;
-		x_min_r <= r12min;
-	end
-	else if (r12max - r12min < 0 ) begin
-		x_max_r <= r02max;
-		x_min_r <= r02min;
-	end
-	else begin
-		if (r12min - r02max < 10) begin
-			x_min_r <= r02min;
-			x_max_r <= r12max;
-		end
-		else if (r12max - r12min > r02max - r02min) begin
-			x_max_r <= r12max;
-			x_min_r <= r12min;
-		end
-		else begin
-			x_max_r <= r02max;
-			x_min_r <= r02min;
-		end
-	end
-	
 end
 // BLUE BOX
 always@(posedge clk) begin
@@ -600,80 +449,69 @@ always@(posedge clk) begin
 		x_max_b <= 0;
 		y_min_b <= IMAGE_H-11'h1;
 		y_max_b <= 0;
-		xb1max_b <= 0;
-		xb1min_b <= 210;
-		xb2max_b <= 210;
-		xb2min_b <= 420;
-		xb3max_b <= 420;
-		xb3min_b <= 640;
+		xb1max_b <= 105;
+		xb1min_b <= 104;
+		xb2max_b <= 315;
+		xb2min_b <= 314;
+		xb3max_b <= 530;
+		xb3min_b <= 529;
 	end
-	
-	if ((bound_blue && in_valid && x<210)) begin	//Update bounds when the pixel is red
-		if (x < xb1min_b && (xb1min_b - x < 5 || xb1min_b == 210)) xb1min_b <= x;
-		if (x > xb1max_b && (x-xb1max_b < 5 || xb1max_b == 0)) xb1max_b <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	else if ((bound_blue && in_valid && x<420)) begin	//Update bounds when the pixel is red
-		if (x < xb2min_b && (xb2min_b - x < 5 || xb2min_b == 420)) xb2min_b <= x;
-		if (x > xb2max_b && (x-xb2max_b < 5 || xb2max_b == 210)) xb2max_b <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	else if ((bound_blue && in_valid && x<640)) begin	//Update bounds when the pixel is red
-		if (x < xb3min_b && (xb3min_b - x < 5 || xb3min_b == 640)) xb3min_b <= x;
-		if (x > xb3max_b && (x-xb3max_b < 5 || xb3max_b == 420)) xb3max_b <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	
-	if (xb3max_b - xb3min_b > xb2max_b - xb1min_b && xb3max_b - xb3min_b > xb1max_b - xb1min_b) begin
-		x_max_b <= xb3max_b;
-		if (xb3min_b == 420 && xb2max_b == 419) begin
-			if (xb2min_b == 210) begin
+	else begin
+		if ((bound_blue && in_valid && x<210)) begin	//Update bounds when the pixel is red
+			if (x < xb1min_b || xb1min_b == 104) xb1min_b <= x;
+			if (x > xb1max_b || xb1max_b == 105) xb1max_b <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_blue && in_valid && x<420)) begin	//Update bounds when the pixel is red
+			if (x < xb2min_b || xb2min_b == 314) xb2min_b <= x;
+			if (x > xb2max_b || xb2max_b == 315) xb2max_b <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_blue && in_valid)) begin	//Update bounds when the pixel is red
+			if (x < xb3min_b || xb3min_b == 529) xb3min_b <= x;
+			if (x > xb3max_b || xb3max_b == 530) xb3max_b <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		if (((xb3max_b - xb3min_b) > (xb2max_b - xb2min_b)) && ((xb3max_b - xb3min_b) > (xb1max_b - xb1min_b))) begin //b3 biggest
+			x_max_b <= xb3max_b;
+			if (xb3min_b - xb2max_b < 10) begin //condition when ball overlap 2nd boundary
+				x_min_b <= xb2min_b;
+			end
+			else begin
+				x_min_b <= xb3min_b;
+			end
+		end
+		else if ((xb2max_b - xb2min_b > xb3max_b - xb3min_b) && (xb2max_b - xb2min_b > xb1max_b - xb1min_b))begin //b2 biggest
+			if (xb2min_b - xb1max_b < 10) begin // condition when ball overalap first boundary
 				x_min_b <= xb1min_b;
 			end
 			else begin
 				x_min_b <= xb2min_b;
 			end
-		end
-		else begin
-			x_min_b <= xb3min_b;
-		end
-	end
-	
-	else if (xb2max_b - xb2min_b > xb3max_b - xb3min_b && xb2max_b - xb2min_b > xb1max_b - xb1min_b) begin
-		if (xb2min_b == 210 && xb1max_b == 219) begin
-			x_min_b <= xb1min_b;
-		end
-		else begin
-			x_min_b <= xb2min_b;
-		end
-		if (xb2max_b == 419) begin
-			x_max_b <= xb3max_b; 
-		end
-		else begin
-			x_max_b <= xb2max_b;
-		end
-	end
-	
-	else if (xb1max_b - xb1min_b > xb2max_b - xb2min_b && xb1max_b - xb1min_b > xb3max_b - xb3min_b) begin
-		x_min_b <= xb1min_b;
-		if (xb1max_b == 209 && xb2min_b == 210) begin
-			if (xb2max_b == 419) begin
-				x_max_b <= xb3max_b;
+			
+			if (xb3min_b - xb2max_b < 10) begin //condition when ball overlap second boundary
+				x_max_b <= xb3max_b; 
 			end
 			else begin
 				x_max_b <= xb2max_b;
 			end
 		end
-		else begin
-			x_max_b <= xb1max_b;
+		else if ((xb1max_b - xb1min_b > xb3max_b - xb3min_b) && (xb1max_b - xb1min_b > xb2max_b - xb2min_b)) begin //b1 biggest
+			x_min_b <= xb1min_b;
+			if (xb2min_b - xb1max_b < 10) begin //condition when ball overlap first boundary
+				x_max_b <= xb2max_b;
+			end
+			else begin
+				x_max_b <= xb1max_b;
+			end
 		end
-	end
-	else begin
-		x_max_b <= 0;
-		x_min_b <= 0;
+		else begin
+			x_max_b <= 0;
+			x_min_b <= 0;
+		end
 	end
 end
 
@@ -684,80 +522,69 @@ if (sop & in_valid) begin	//Reset bounds on start of packet
 		x_max_o <= 0;
 		y_min_o <= IMAGE_H-11'h1;
 		y_max_o <= 0;
-		xb1max_o <= 0;
-		xb1min_o <= 210;
-		xb2max_o <= 210;
-		xb2min_o <= 420;
-		xb3max_o <= 420;
-		xb3min_o <= 640;
+		xb1max_o <= 105;
+		xb1min_o <= 104;
+		xb2max_o <= 315;
+		xb2min_o <= 314;
+		xb3max_o <= 530;
+		xb3min_o <= 529;
 	end
-	
-	if ((bound_orange && in_valid && x<210)) begin	//Update bounds when the pixel is red
-		if (x < xb1min_o && (xb1min_o - x < 5 || xb1min_o == 210)) xb1min_o <= x;
-		if (x > xb1max_o && (x-xb1max_o < 5 || xb1max_o == 0)) xb1max_o <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	else if ((bound_orange && in_valid && x<420)) begin	//Update bounds when the pixel is red
-		if (x < xb2min_o && (xb2min_o - x < 5 || xb2min_o == 420)) xb2min_o <= x;
-		if (x > xb2max_o && (x-xb2max_o < 5 || xb2max_o == 210)) xb2max_o <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	else if ((bound_orange && in_valid && x<640)) begin	//Update bounds when the pixel is red
-		if (x < xb3min_o && (xb3min_o - x < 5 || xb3min_o == 640)) xb3min_o <= x;
-		if (x > xb3max_o && (x-xb3max_o < 5 || xb3max_o == 420)) xb3max_o <= x;
-		//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
-		//y_max_r <= y_min_r + (x_max_r - x_min_r);
-	end
-	
-	if (xb3max_o - xb3min_o > xb2max_o - xb1min_o && xb3max_o - xb3min_o > xb1max_o - xb1min_o) begin
-		x_max_o <= xb3max_o;
-		if (xb3min_o == 420 && xb2max_o == 419) begin
-			if (xb2min_o == 210) begin
+	else begin
+		if ((bound_orange && in_valid && x<210)) begin	//Update bounds when the pixel is red
+			if (x < xb1min_o || xb1min_o == 104) xb1min_o <= x;
+			if (x > xb1max_o || xb1max_o == 105) xb1max_o <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_orange && in_valid && x<420)) begin	//Update bounds when the pixel is red
+			if (x < xb2min_o || xb2min_o == 314) xb2min_o <= x;
+			if (x > xb2max_o || xb2max_o == 315) xb2max_o <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		else if ((bound_orange && in_valid)) begin	//Update bounds when the pixel is red
+			if (x < xb3min_o || xb3min_o == 529) xb3min_o <= x;
+			if (x > xb3max_o || xb3max_o == 530) xb3max_o <= x;
+			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
+			//y_max_r <= y_min_r + (x_max_r - x_min_r);
+		end
+		if (((xb3max_o - xb3min_o) > (xb2max_o - xb2min_o)) && ((xb3max_o - xb3min_o) > (xb1max_o - xb1min_o))) begin //b3 biggest
+			x_max_o <= xb3max_o;
+			if (xb3min_o - xb2max_o < 10) begin //condition when ball overlap 2nd boundary
+				x_min_o <= xb2min_o;
+			end
+			else begin
+				x_min_o <= xb3min_o;
+			end
+		end
+		else if ((xb2max_o - xb2min_o > xb3max_o - xb3min_o) && (xb2max_o - xb2min_o > xb1max_o - xb1min_o) )begin //b2 biggest
+			if (xb2min_o - xb1max_o < 10) begin // condition when ball overalap first boundary
 				x_min_o <= xb1min_o;
 			end
 			else begin
 				x_min_o <= xb2min_o;
 			end
-		end
-		else begin
-			x_min_o <= xb3min_o;
-		end
-	end
-	
-	else if (xb2max_o - xb2min_o > xb3max_o - xb3min_o && xb2max_o - xb2min_o > xb1max_o - xb1min_o) begin
-		if (xb2min_o == 210 && xb1max_o == 219) begin
-			x_min_o <= xb1min_o;
-		end
-		else begin
-			x_min_o <= xb2min_o;
-		end
-		if (xb2max == 419) begin
-			x_max_o <= xb3max_o; 
-		end
-		else begin
-			x_max_o <= xb2max_o;
-		end
-	end
-	
-	else if (xb1max_o - xb1min_o > xb3max_o - xb3min_o && xb1max_o - xb1min_o > xb2max_o - xb2min_o) begin
-		x_min_o <= xb1min_o;
-		if (xb1max_o == 209 && xb2min_o == 210) begin
-			if (xb2max_o == 419) begin
-				x_max_o <= xb3max_o;
+			
+			if (xb3min_o - xb2max_o < 10) begin //condition when ball overlap second boundary
+				x_max_o <= xb3max_o; 
 			end
 			else begin
 				x_max_o <= xb2max_o;
 			end
 		end
-		else begin
-			x_max_o <= xb1max_o;
+		else if ((xb1max_o - xb1min_o > xb3max_o - xb3min_o) && (xb1max_o - xb1min_o > xb2max_o - xb2min_o)) begin //b1 biggest
+			x_min_o <= xb1min_o;
+			if (xb2min_o - xb1max_o < 10) begin //condition when ball overlap first boundary
+				x_max_o <= xb2max_o;
+			end
+			else begin
+				x_max_o <= xb1max_o;
+			end
 		end
-	end
-	else begin
-		x_max_o <= 0;
-		x_min_o <= 0;
+		else begin
+			x_max_o <= 0;
+			x_min_o <= 0;
+		end
 	end
 end
 
@@ -777,20 +604,20 @@ always@(posedge clk) begin
 	end
 	else begin
 		if ((bound_pink && in_valid && x<210)) begin	//Update bounds when the pixel is red
-			if (x < xb1min_p) xb1min_p <= x;
-			if (x > xb1max_p) xb1max_p <= x;
+			if (x < xb1min_p || xb1min_p == 104) xb1min_p <= x;
+			if (x > xb1max_p || xb1max_p == 105) xb1max_p <= x;
 			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
 			//y_max_r <= y_min_r + (x_max_r - x_min_r);
 		end
 		else if ((bound_pink && in_valid && x<420)) begin	//Update bounds when the pixel is red
-			if (x < xb2min_p) xb2min_p <= x;
-			if (x > xb2max_p) xb2max_p <= x;
+			if (x < xb2min_p || xb2min_p == 314) xb2min_p <= x;
+			if (x > xb2max_p || xb2max_p == 315) xb2max_p <= x;
 			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
 			//y_max_r <= y_min_r + (x_max_r - x_min_r);
 		end
 		else if ((bound_pink && in_valid)) begin	//Update bounds when the pixel is red
-			if (x < xb3min_p) xb3min_p <= x;
-			if (x > xb3max_p) xb3max_p <= x;
+			if (x < xb3min_p || xb3min_p == 529) xb3min_p <= x;
+			if (x > xb3max_p || xb3max_p == 530) xb3max_p <= x;
 			//if (y < y_min_r && (y_min_r - y <5||y_min_r == IMAGE_H-11'h1)) y_min_r <= y;
 			//y_max_r <= y_min_r + (x_max_r - x_min_r);
 		end
@@ -977,6 +804,7 @@ reg [11:0] xcoord;
 reg [11:0] ycoord;
 reg [11:0] dist;
 reg [15:0] msg;
+reg [12:0] structdist;
 
 always@(posedge clk) begin
 
@@ -1035,12 +863,19 @@ always@(posedge clk) begin
 	else if (green_detect) begin
 		color <= 101;
 	end
-	
 	if ((((struct2- struct1) - (struct3 - struct2) < 100 ) || ((struct2- struct1) - (struct3 - struct2) > -100 )) && (struct2 - struct1>150)) begin
 		color <= 111;
+		structdist <= struct2-struct1;
+		xcoord[10:7] <= structdist[12:9];
+		ycoord[10:7] <= structdist[8:5];
+		dist[10:6] <= structdist[4:0];
 	end
 	if ((((struct3- struct2) - (struct4 - struct3) < 100 ) || ((struct3- struct2) - (struct4 - struct3) > -100 )) && (struct3 - struct2 > 150)) begin
 		color <= 111;
+		structdist <= struct3-struct2;
+		xcoord[10:7] <= structdist[12:9];
+		ycoord[10:7] <= structdist[8:5];
+		dist[10:6] <= structdist[4:0];
 	end
 	
 	msg <= {xcoord[10:7],ycoord[10:7],dist[10:6],color};
