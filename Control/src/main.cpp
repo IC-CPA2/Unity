@@ -10,29 +10,15 @@
 #define CS 5
 #define RST_PIN 4
 #define SS_PIN 2
-// IPAddress local_IP(192, 168, 14, 184);
-// IPAddress gateway(192, 168, 14, 224);
-// IPAddress subnet(255, 255, 255, 0);
-// IPAddress primaryDNS(8, 8, 8, 8);
-// IPAddress secondaryDNS(8, 8, 4, 4);
+
 WiFiClient client;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
-const char *ssid = "JamesO";
+const char *ssid = "JamesO";//the ssid field here is the name of your wifi
 const char *password = "123456789";
 const uint16_t port = 12001;
 // const char *host = "192.168.14.148";
-const char *host = "192.168.137.1";
-
-// IPAddress gateway(192, 168, 14, 224);
-// IPAddress subnet(255, 255, 255, 0);
-// IPAddress primaryDNS(8, 8, 8, 8);
-// IPAddress secondaryDNS(8, 8, 4, 4);
-// WiFiClient client;
-// MFRC522 mfrc522(SS_PIN, RST_PIN);
-// const char *ssid = "kelvinmang";
-// const char *password = "98300683";
-// const uint16_t port = 12000;
-// const char *host = "192.168.14.148";
+const char *host = "192.168.137.1";//this is the host address of the LAN 
+//you extract it by going ipconfig on your own desktop.
 void initWiFi()
 {
   WiFi.mode(WIFI_STA);
@@ -43,16 +29,12 @@ void initWiFi()
     Serial.print('.');
     delay(1000);
   }
-  // Serial.println(WiFi.localIP());
 }
 void setup()
 {
   Serial.begin(115200);
   SPI.begin();
   mfrc522.PCD_Init();
-  // if(!WiFi.config(local_IP,gateway,subnet,primaryDNS,secondaryDNS)){
-  //  Serial.println("STA Failed to configure");
-  // }
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
@@ -65,38 +47,19 @@ void loop()
   if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval))
   {
     Serial.print(millis());
-    Serial.println("Reconnecting to Wifi....");
+    Serial.println("Need To Reconnect....");
     WiFi.disconnect();
     initWiFi();
     previousMillis = currentMillis;
   }
-  Serial.println("debug1)");
-  // Serial.println(client.connect(host, port));
   bool connected;
   std::string msg;
   connected = client.connect(host, port);
-  // while (i==0){
-  //   Serial.println("Enter While Loop");
-  //   connected = true;
-  //     while (client.available())
-  //     {
-  //       i = 1;
-  //       Serial.println("WHAT's Not READ");
-  //       char c = client.read();
-  //       if(c=='>'){
-  //         i=1;
-  //       }
-  //       msg.push_back(c);
-  //       Serial.print(c);
-  //     }
-  //   }
-  // std::cout<<msg<<std::endl;
   int i = 0;
   while (i==0)
   {
     if (!connected)
     {
-      Serial.println("debug2)");
       Serial.println("connection to host server failed");
       delay(1000);
       return;
@@ -114,10 +77,8 @@ void loop()
     }
     // client.stop();
     delay(1000);
-    Serial.println("debug4)");
   }
 }
-// Profile picture of Setiawan, Matthew.
 
 
 // #include <Arduino.h>
