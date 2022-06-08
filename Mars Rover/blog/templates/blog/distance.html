@@ -169,6 +169,7 @@
         {% csrf_token %}
             <select name="modes" id="modes">
                 <option value="Manual">Manual</option>
+                <option value="Discovery">Discovery</option>
                 <option value="Autonomous">Autonomous</option>
             </select>
             <br>
@@ -186,7 +187,7 @@
         <button onClick="window.location.reload();">Refresh</button>
     </div>
     <div class="item6">
-        <form action="/about/distance" method="POST">
+        <form action="" method="POST">
             {% csrf_token %}
             <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
             <input type="text" id="dist" name="dist" value="0"><br>
@@ -194,7 +195,7 @@
                 <input type="range" min="0" max="360" value="0" id="myRange" step="45" name="angle">
                 <br><font size="3"> <span id="slide"></span>º </font>
             </div>
-            <input type="submit" value="Submit" onclick="refreshScreen()">
+            <input type="submit" value="Submit" onclick="refreshMap()">
 
             <script>
                 var slider = document.getElementById("myRange");
@@ -355,7 +356,11 @@
     <div class="item12">12</div>
     <div class="item13">13</div>
 
-    
+    <script>
+        window.setInterval('refresh()', 5000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
 
-
-
+        // Refresh or reload page.
+        function refresh() {
+            window .location.reload();
+        }
+    </script>

@@ -14,7 +14,28 @@ import hashlib
 
 no = 9
 
-modes = ["Slow", "Fast"]
+
+def reduce (hundred):
+  x = 0
+  y = 0
+  for i in range(len(hundred)):
+    for j in range(len(hundred[i])):
+      if hundred[i][j] == 2:
+        x = i
+        y = j
+
+  output = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
+
+  startx = x-4
+  starty = y-4
+
+  for k in range(9):
+    for l in range(9):
+      if (k + startx < len(hundred) and l + starty < len(hundred)):
+        output[k][l] = hundred[startx+k][starty+l]
+
+  return output
+
 
 def base(request):
     return redirect('/home')
@@ -270,6 +291,8 @@ def distance(request):
 
     directionFile = []
     direction = []
+    direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
+    direction_path = direction_path.replace("\\","/")
     direc = open(direction_path, "r")
     for x in direc:
         directionFile.append(x)
@@ -285,6 +308,14 @@ def distance(request):
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
 
+    image_file =  curr_dir + "\\blog\\text_files\\image.txt"
+    image_file = image_file.replace("\\","/")
+
+    imagef = open (image_file, "r")
+
+    
+
+
     context = {
         'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
         'battery': batteryLvl,
@@ -294,3 +325,32 @@ def distance(request):
     } 
 
     return render(request, 'blog/distance.html', context)
+
+def ajax (request):
+    context = {
+        'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+    } 
+    # image_dec = """<img id="terrain" src="static/members/media/terrain.jpg" alt="terrain" height="0" width="0"/>"""
+    # image_dec += """<img id="question" src="static/blog/media/question.jpg" alt="question" height="0" width="0"/> """
+
+    # printout = ""
+    # printout += image_dec
+    # printout += """<div>"""
+    # for i in (n+1 for n in range(9)):
+    #     for j in (n+1 for n in range(9)):
+    #         printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+    #                                     style="border:0.5px solid #000000;">
+    #                                  </canvas>
+    #                                  <script>
+    #                                      var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+    #                                      var ctx = c.getContext("2d");
+    #                                      var img = document.getElementById("terrain");
+    #                                      ctx.drawImage(img,0,0,50,50);
+    #                                  </script>"""
+    #     printout = printout + "<br>"
+
+    # printout = printout + "</div>"
+
+    # return HttpResponse(printout)
+    return render(request, 'blog/ajax.html', context)
+
