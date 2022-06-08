@@ -234,25 +234,42 @@ end
 	
 // COLOUR DETECTION USING MIXTURE OF HUES AND RGB CONDITIONS
 
-assign   pink_detect     = (((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
-assign   orange_detect  = (hue >= 15 && hue <= 30 && value > 120 && sat > 110);
-assign   blue_detect    = ((blue>green-20) && (blue>red) && ~pink_detect && ~orange_detect );//(hue >= 55 && hue <= 85 && saturation >= 51 && sat <= 89 && value >= 76 && value <= 240);
-assign   red_detect    = ((red>green+30) && (red>blue+30) && ~pink_detect && ~orange_detect);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+
+wire rgb;
+assign rgb = (red>green) && (green>blue);
+assign pink_detect = ((hue>=1 && hue <= 10) && (sat>=161 && sat <= 191) && (value>=178 && value <= 255))
+|| ((hue>=4 && hue <= 15) && (sat>=130 && sat <= 194) && (value>=249 && value <= 255));//(hue>=2 && hue <=16) && (sat>=117 && sat<=210) && (value>=200);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+
+assign orange_detect  = ((hue>=20 && hue <= 30) && (sat>=107 && sat <= 228) && (value>=248 && value <= 255))
+||((hue >= 15 && hue <= 25 && value > 160 && sat > 175));//(hue >= 15 && hue <= 30 && value > 120 && sat > 110);
+
+assign blue_detect    = ((hue>=61 && hue <= 92) && (sat>=60 && sat <= 163) && (value>=46 && value <= 123))
+||((hue>=60 && hue <= 90) && (sat>=61 && sat <= 121) && (value>=119 && value <= 236));//((blue>green-20) && (blue>red) && ~pink_detect && ~orange_detect ) || (hue >= 55 && hue <= 85 && sat >= 51 && sat <= 89 && value >= 76 && value <= 240);
+
+assign   red_detect    = ((hue>=5 && hue <= 13) && (sat>=187 && sat <= 254) && (value>=83 && value <= 180))
+|| ((hue>=6 && hue <= 15) && (sat>=178 && sat <= 234) && (value>=200 && value <= 255))
+|| ((hue>=6 && hue <=18) && (sat>=190 && sat<= 250) && (value>=130 && value<=240)); //(rgb && (red>green+30) && (red>blue+30) && ~pink_detect && ~orange_detect);//(((hue >= 0 && hue <= 15)||(hue >= 165 && hue <= 180)) && value > 120 && sat > 110);
+
 assign 	green_detect = ((green>blue+10) && (green>red+30) && (45 <= hue & hue <= 65));
+
 assign   any_detect = ((pink_detect || orange_detect || blue_detect || red_detect || green_detect ));
 
 
 
 // Find boundary of cursor box
+wire in_range;
+assign in_range = (y>159);
+
+
 
 // Highlight detected areas
 wire [23:0] red_high;
 assign grey = green[7:1] + red[7:2] + blue[7:2]; //Grey = green/2 + red/4 + blue/4
-assign red_high  =  (red_detect && prev_r0 && prev_r1 && prev_r2 && prev_r3  && prev_r4) ? {8'hff,8'h0,8'h0} 
-	: ((blue_detect && prev_b0 && prev_b1 && prev_b2 && prev_b3)? {8'h0,8'h0,8'hff} 
-	: ((orange_detect && prev_o0 && prev_o1 && prev_o2 && prev_o3 && prev_o4)? {8'hde, 8'h9a, 8'h7}
-	: ((pink_detect && prev_p0 && prev_p1 && prev_p2 && prev_p3 && prev_p4)? {8'hff, 8'hba, 8'hfd}
-	: ((green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3 && prev_g4)? {8'h00, 8'hff, 8'h00}
+assign red_high  =  (red_detect && prev_r0 && prev_r1 && prev_r2 && in_range) ? {8'hff,8'h0,8'h0} 
+	: ((blue_detect && prev_b0 && prev_b1 && prev_b2 && prev_b3 && in_range)? {8'h0,8'h0,8'hff} 
+	: ((orange_detect && prev_o0 && prev_o1 && prev_o2 && prev_o3 && prev_o4 && in_range)? {8'hde, 8'h9a, 8'h7}
+	: ((pink_detect && prev_p0 && prev_p1 && prev_p2 && prev_p3 && prev_p4 && in_range)? {8'hff, 8'hba, 8'hfd}
+	: ((green_detect && prev_g0 && prev_g1 && prev_g2 && prev_g3 && prev_g4 && in_range)? {8'h00, 8'hff, 8'h00}
 	: {grey,grey,grey}))));
 
 	
