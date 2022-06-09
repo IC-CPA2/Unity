@@ -5,7 +5,7 @@
 
 
 //total translation of the rover
-int total_translation_x,total_translation_y;
+double total_translation_x,total_translation_y;
 
 Motors motors;
 
@@ -35,11 +35,13 @@ total_translation_x,total_translation_y = optical_measurements();
     int error = 0; //calculate this based on total_translations and knowledge on the current direction
 
     //motors_control(rover_speed,rover_translation,rover_rotation_angle,error);
-    if(coord_y > 1){
+    if(coord_y > 10000){
         motors.brake();
     }else{
-        //motors.forward(-100,0);
+        Serial.println("total translation x:");
+        Serial.println(coord_x);
+       motors.forward(3,coord_x);
         //motors.turn(90);
-        motors.turn(90,false);
+        //motors.turn(90,false);
     }
 }
