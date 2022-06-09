@@ -121,25 +121,53 @@ try:
             new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
             new_sq.save()
         elif content == "PA":
-            new_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
+            # new_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
             #cannot visit new thingies. 
-            new_sq.save()
+            new_sq = live_database.objects.get(tile_num=observed_tile)
+            if len(new_sq) == 0:
+              two_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
+              two_sq.save()
+            else:
+              new_sq.tile_info = "PA"
+              new_sq.save()
+
         elif content == "GA":
             new_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
             #cannot visit new thingies. 
+            if len(new_sq) == 0:
+              two_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
+              two_sq.save()
+            else:
+              new_sq.tile_info = "GA"
+              new_sq.save()
             new_sq.save()
         elif content == "BA":
             new_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
+            if len(new_sq) == 0:
+              two_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
+              two_sq.save()
+            else:
+              new_sq.tile_info = "BA"
+              new_sq.save()
             #cannot visit new thingies. 
-            new_sq.save()
         elif content == "RA":
             new_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
+            if len(new_sq) == 0:
+              two_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
+              two_sq.save()
+            else:
+              new_sq.tile_info = "RA"
+              new_sq.save()
             #cannot visit new thingies. 
-            new_sq.save()
         elif content == "OA":
             new_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
             #cannot visit new thingies. 
-            new_sq.save()
+            if len(new_sq) == 0:
+              two_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
+              two_sq.save()
+            else:
+              new_sq.tile_info = "OA"
+              new_sq.save()
         elif content == "HHH":
             break
         
