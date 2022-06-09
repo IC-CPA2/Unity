@@ -53,10 +53,17 @@ class Command(BaseCommand):
         pass
     def handle(self,*args, **options):
         iterator = len(live_database.objects.all())
+        live_database.objects.all().delete()
 
-        if iterator == 0:
-            insert_vals = live_database(tile_num="33",tile_info="PA",last_visited=0)
-            # insert_vals.save()
+
+        insert_vals = live_database(tile_num="3939",tile_info="T",last_visited=0)
+        insert_vals.save()
+        ins_valst = live_database(tile_num="4040",tile_info="PA",last_visited=0)
+        ins_valst.save()
+        ins_th = live_database(tile_num="4639",tile_info="OA",last_visited=0)
+        ins_th.save()
+        ins_valst = live_database(tile_num = "4039",tile_info="T",last_visited=1)
+        ins_valst.save()
             # insert_vals2 = live_database(tile_num="44",tile_info="T",last_visited=1)
             # insert_vals2.save()
             # insert_vals3 = live_database(tile_num="12",tile_info="PA",last_visited=0)
@@ -90,10 +97,9 @@ class Command(BaseCommand):
         # change = live_database.objects.get(last_visited=1)
         # change.last_visited = 0
         # change.save()
-        live_database.objects.all().delete()
 
         #can be responsible for wiping databases. 
-        print("AFT",live_database.objects.values())
+        print("AFTER",live_database.objects.all().values())
     
 
 
