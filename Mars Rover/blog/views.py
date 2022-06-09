@@ -199,11 +199,6 @@ def distance(request):
                 if len(tile) > 0:
                     database[i][j] = tile.tile_info
 
-    
-
-
-
-
         for i in range(0,len(sel_val)):
             labeled_tile = sel_val[i]["tile_num"]
             info_rec = sel_val[i]["tile_info"]
