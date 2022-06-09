@@ -1,4 +1,6 @@
 #include <SPI.h>
+//#include <main_motor.h>
+//#include <main_sensor.h>
 
 #define VSPI_MISO   MISO
 #define VSPI_MOSI   MOSI
@@ -15,6 +17,8 @@ uint16_t spi_returnval;
 void calcDistance();
 void resetCounter();
 
+int drivebreak = 1;
+
 void setup() {
   Serial.begin(9600);
   pinMode(VSPI_SS, OUTPUT);
@@ -29,17 +33,17 @@ void loop(){
   int pinkcount = 1;
   int orangecount = 1;
 
-  int reddist = 0;
-  int bluedist = 0;
-  int pinkdist = 0;
-  int orgdist = 0;
+  int reddist = 1;
+  int bluedist = 1;
+  int pinkdist = 1;
+  int orgdist = 1;
 
   int redpos = 0;
   int bluepos = 0;
   int pinkpos = 0;
   int orgpos = 0;
   
-  int buildingcount = 0;
+  int buildingcount = 1;
   int buildingdist = 0;
 
   for(int i=0; i<10000; i++){
@@ -61,48 +65,81 @@ void loop(){
       nocol++;
     }
     else if(col==1){
-      redcount++;
-      reddist = reddist + dist;
+      if(dist!=0 && ((i>1000 && abs((reddist/redcount)-dist)<50)||i<1000)){
+        redcount++;
+        reddist = reddist + dist;
+      }
       redpos = redpos + pos;
     }
     else if(col==2){
-      bluecount++;
-      bluedist = bluedist + dist;
+      if(dist!=0 && ((i>1000 && abs((bluedist/bluecount)-dist)<50)||i<1000)){
+        bluecount++;
+        bluedist = bluedist + dist;
+      }
       bluepos = bluepos + pos;
     }
     else if(col==3){
-      orangecount++;
-      orgdist = orgdist + dist;
+      if(dist!=0 && ((i>1000 && abs((orgdist/orangecount)-dist)<50)||i<1000)){
+        orangecount++;
+        orgdist = orgdist + dist;
+      }
       orgpos = orgpos + pos;
     }
     else if(col==4){
-      pinkcount++;
-      pinkdist = pinkdist + dist;
+      if(dist!=0 && ((i>1000 && abs((pinkdist/pinkcount)-dist)<50)||i<1000)){
+        pinkcount++;
+        pinkdist=pinkdist+dist;
+      }
       pinkpos = pinkpos + pos;
     }
     else if(col==7){
-      buildingcount++
+      buildingcount++;
       buildingdist = buildingdist + dist;
     }
   }
-  Serial.println("Red: ");
-  Serial.println(reddist/redcount);
-  Serial.println(redpos/redcount);
 
-  Serial.println("Orange: ");
-  Serial.println(orgdist/orgcount);
-  Serial.println(orgpos/orgcount);
-
-  Serial.println("Pink: ");
-  Serial.println(pinkdist/pinkcount);
-  Serial.println(pinkpos/pinkcount);
-
-  Serial.println("Blue: ");
-  Serial.println(bluedist/bluecount);
-  Serial.println(bluepos/bluecount);
-
-  Serial.println("Building: ");
-  Serial.println(buildingdist/buildingcount);
+  int reddistf = 2670/(reddist/redcount);
+  int orgdistf = 2670/(orgdist/orangecount);
+  int pinkdistf = 2670/(pinkdist/pinkcount);
+  int bluedistf = 2670/(bluedist/bluecount);
+  int maindistf = 1000;
   
+  if((pinkdistf < 40) && (reddistf < 40)){
+    Serial.println("Red Ball");
+    Serial.print(pinkdistf);
+    Serial.println(" cm");
+    Serial.println(redpos/redcount);
+    maindistf = pinkdistf;
+  }
+  else if(pinkdistf < 40 && pinkdistf > 5){
+    Serial.println("Pink Ball");
+    Serial.print(pinkdistf);
+    Serial.println(" cm");
+    Serial.println(pinkpos/pinkcount);
+    maindistf = pinkdistf;
+  }
+  else if(orgdistf < 50){
+    Serial.println("Orange Ball");
+    Serial.print(orgdistf);
+    Serial.println(" cm");
+    Serial.println(orgpos/orangecount);
+    maindistf = orgdistf;
+  }
+  else if(bluedistf < 50){
+    Serial.println("Blue Ball");
+    Serial.print(bluedistf);
+    Serial.println(" cm");
+    Serial.println(bluepos/bluecount);
+    Serial.println(bluecount);
+  }
+  else {
+    Serial.println("No Ball");
+  }/*
+  if(maindistf < 10){
+    motors.brake();
+    motors.turn(90,false);
+  }
+  else{
+     motors.forward(2,0);
+ }*/
 }
-
