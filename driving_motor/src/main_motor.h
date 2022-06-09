@@ -1,20 +1,16 @@
 
-
 /******************************************************************************
 TestRun.ino
 TB6612FNG H-Bridge Motor Driver Example code
 Michelle @ SparkFun Electronics
 8/20/16
 https://github.com/sparkfun/SparkFun_TB6612FNG_Arduino_Library
-
 Uses 2 motors to show examples of the functions in the library.  This causes
 a robot to do a little 'jig'.  Each movement has an equal and opposite movement
 so assuming your motors are balanced the bot should end up at the same place it
 started.
-
 Resources:
 TB6612 SparkFun Library
-
 Development environment specifics:
 Developed on Arduino 1.6.4
 Developed with ROB-9457
@@ -72,28 +68,31 @@ private:
   }
 
   // the input error here has to be the total_x_translation during straight drive
-  MotorSpeeds speed_straightness_control(int speed, int error)
+  MotorSpeeds speed_straightness_control(int speed, double error)
   {
+Serial.println("straightness is controlled, the error is:");
+Serial.println(error);
+Serial.println("----------");
 
     MotorSpeeds speeds;
 
     // corrigate path if needed
 
-    double corrig_const = 1; // adjust this to based on trial and error
+    double corrig_const = 1/2; // adjust this to based on trial and error
 
-    double corrigation = Maths.log(1 + abs(error));
+    double corrigation = 1 + corrig_const * log(1 + abs(error));
 
-    if (error > 0)
+    if (error < 0)
     {
 
       speeds.left = corrigation * speed;
-      speeds.right = speed;
+      speeds.right = 0;
     }
-    else if (error < 0)
+    else if (error > 0)
     {
 
-      speeds.left = speed;
-      speeds.right = corrigation * speeds;
+      speeds.left = 0;
+      speeds.right = corrigation * speed;
     }
     else
     {
@@ -105,11 +104,13 @@ private:
     return speeds;
   }
 
-  void drive_straight(int speed, int duration, int error)
+  void drive_straight(int speed, int duration, double error)
   {
 
     MotorSpeeds speeds;
     // the input error here has to be the total_x_translation during straight drive
+    Serial.println("speed is controlled, the error is:");
+Serial.println(error);
     speeds = speed_straightness_control(speed, error);
 
     // Use of the drive function which takes as arguements the speed
@@ -128,7 +129,7 @@ private:
     motorRight.brake();
     // conversion from angle to duration
 
-    int turning_prop = 12.2;
+    int turning_prop = 12.6;
 
     int duration = angle * turning_prop; // change this
 
@@ -153,12 +154,12 @@ public:
   int speed;
   int distance;
   int turning_angle;
-  int error;
+  double error;
 
   // method to move forward
-  void forward(int speed, int error)
+  void forward(int speed, double error)
   {
-    int duration = 1000; // default value
+    int duration = 10; // default value
 
     // convert speed from range(-10,10) to (-255,255)
     speed = speed * (255 / 10);
