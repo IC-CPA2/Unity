@@ -18,8 +18,7 @@ class all_info(models.Model):
 class live_database(models.Model):
     ##Attributes: Current Coordinates, Past-visited, Order-Visited.
     #Could maybe try and stop early and render map accordingly.
-    tile_num = models.CharField(max_length=50)
+    tile_num = models.CharField(max_length=50, primary_key=True)
     tile_info = models.CharField(max_length=100)
     #tile info denotes Alien, not Alien etc. 
-    order = models.AutoField(primary_key=True)#this can be the 
     last_visited = models.BooleanField()

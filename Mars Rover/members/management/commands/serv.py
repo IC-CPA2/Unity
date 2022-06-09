@@ -16,10 +16,11 @@ from django.core.management.base import BaseCommand
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 if len(live_database.objects.all()) == 0:
-    curr_sq = "33"
+    curr_sq = "55"
 else:
     query = live_database.objects.get(last_visited=1)
     curr_sq = query.tile_num 
+
 class Command(BaseCommand):
     help = 'import booms'
     def add_arguments(self, parser):
@@ -35,45 +36,41 @@ def choose_next(ang_inp,curr_sq):
     | | | | | | | | | 2
     | | | | | | | | | 3
     """
-    end_x = 8
-    end_y = 8 
-    # end_coords = int(str(end_x)+str(end_y))
-    #temproary fix
     new_val = int(curr_sq)
-    if ang_inp == "0" and (new_val)>=10:
-        #movement condition. 
-        # new_val -= 1
-        new_val -= 10
-    if ang_inp == "45" and (new_val>end_x) and (new_val%10)<end_x:
-        # new_val += 9
-        new_val -= 9
-    elif ang_inp == "90" and (new_val%10)<end_x:
-        # new_val += 10
-        new_val += 1
-
-    elif ang_inp == "135" and (new_val%10)<end_x and(new_val)<end_y*10:
-        # new_val += 11
-        new_val += 11
-
-    elif ang_inp == "180" and (new_val<end_y*10):
-        # new_val += 1
-        new_val += 10
-    elif ang_inp == "225" and (new_val%10)>0 and (new_val<end_y*10):#complete if conditions
-        # new_val -= 9
-        new_val += 9
-
-    elif ang_inp == "270" and (new_val%10>0):
-        # new_val -= 10
-        new_val -= 1
-
-    elif ang_inp == "315" and (new_val>=end_x) and (new_val%10)>=1:
-        # new_val -= 11 
-        new_val -= 11
-    else:
-        print("No Operation/ Special Condition.")
-
+    new_val = large_grid(ang_inp,new_val)
     return str(new_val)
     #based on existing head angles decide how to maneuveur rover. 
+
+    
+def large_grid(angle,curr_tile):
+  #takes in a 4 string input. The maximum map size assuming rover is 15cm 
+  #We know this to be a total of about 15m which should be more than adequate.
+  #scale factors can be adjusted accordingly. New maps and terrains can be handled thereafter. 
+      new_tile = curr_tile
+      if angle == "0" and curr_tile>=1100:
+        #movement condition. 
+        new_tile -= 100
+      elif angle == "45" and curr_tile%100<69 and curr_tile>=1110:
+          new_tile -= 99
+      elif angle == "90":
+        if curr_tile %100<69:
+          new_tile = curr_tile+1
+        else:
+          new_tile = curr_tile
+      elif angle == "135" and new_tile <6900 and new_tile%100<69:
+        new_tile = curr_tile+101
+      elif angle == "180" and new_tile<6900:
+        new_tile = curr_tile+100
+      elif angle == "225":
+      #complete if conditions
+        new_tile = curr_tile+99
+      elif angle == "270" and curr_tile%100>11:
+        new_tile -= 1        
+      elif angle == "315":
+        new_tile -= 101
+      else:
+        new_tile = curr_tile
+      return str(new_tile)
 
 # #could have server trying to push to database. 
 s.bind(('0.0.0.0', 12000))

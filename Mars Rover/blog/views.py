@@ -143,8 +143,8 @@ def about(request):
     w.close()
 
     context = {
-        'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
-        'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
+        # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
+        # 'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
         'counter': ['1','2','3','4','5','6','7','8','9'],
         'battery': batteryLvl,
         'aliens': ali,
@@ -179,10 +179,31 @@ def distance(request):
     img = []
     ali = [[1]*9 for i in range(9)]
     db_length = len(live_database.objects.all())
+    database = [[1]*59 for i in range(59)]
     traversed = {}
+
+    
+
+            
+
+
     if db_length >0:
         print("DATABASE LENGTH >1 ")
         sel_val = live_database.objects.all().values()
+        
+    
+        for i in range (10,69):
+            for j in range(10,69):
+                key = str(i)+str(j)
+                tile = live_database.objects.filter(tile_num=key).values()
+                if len(tile) > 0:
+                    database[i][j] = tile.tile_info
+
+    
+
+
+
+
         for i in range(0,len(sel_val)):
             labeled_tile = sel_val[i]["tile_num"]
             info_rec = sel_val[i]["tile_info"]
@@ -243,6 +264,14 @@ def distance(request):
         x_pos = (storer-(storer%10))/10
         ali[int(x_pos)][storer%10] = 2
 
+    
+    ## if (rover coord) on the edge
+    ## shift to centre (traversed[55] = 2)
+    ## use func to get 4 coords around the rover 
+    ## add them to the corresponding side of the rover
+    ## OR look thru database instead, rmb the prev val
+    ## of the rover position and find values 4 coords away
+    ## using the keys (tile_num)
 
 
     # ali = [[0]*9 for i in range(9)]
@@ -316,15 +345,16 @@ def distance(request):
     # imagef = open (image_file, "r")
 
     context = {
-        'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
-        'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
+        # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
+        # 'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
+        'counter': ['1','2','3','4','5','6','7','8','9'],
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
         'wifis': wifi
     } 
 
-    return render(request, 'blog/distance.html', context)
+    return render(request, 'blog/about.html', context)
 
 def ajax (request):
     context = {
