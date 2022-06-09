@@ -50,12 +50,12 @@
 #define ADNS3080_PRODUCT_ID_VAL        0x17
 
 
-int total_x = 0;
-int total_y = 0;
+int total_rover_x = 0;
+int total_rover_y = 0;
 
 
-int total_x1 = 0;
-int total_y1 = 0;
+int total_rover_x1 = 0;
+int total_rover_y1 = 0;
 
 
 int x=0;
@@ -64,11 +64,13 @@ int y=0;
 int a=0;
 int b=0;
 
-int distance_x=0;
-int distance_y=0;
+int rover_distance_x=0;
+int rover_distance_y=0;
 
-int coord_x=0;
-int coord_y=0;
+int rover_angle = 0;
+
+double abs_coord_x=0;
+double abs_coord_y=0;
 
 volatile byte movementflag=0;
 volatile int xydat[2];
@@ -228,7 +230,21 @@ char asciiart(int k)
 
 byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
-int optical_measurements()
+
+struct rover {
+  int dx, dy, rover_angle;
+  double coord_x, coord_y;
+
+};
+
+int calc_abs_coords(int rover_dx, int rover_dy, int rover_angle) {
+  rover Rover;
+  
+}
+
+
+
+double optical_measurements()
 {
  #if 0
 /*
@@ -280,30 +296,30 @@ int optical_measurements()
   delay(100);
 
 
-    distance_x = convTwosComp(md.dx);
-    distance_y = convTwosComp(md.dy);
+    rover_distance_x = convTwosComp(md.dx);
+    rover_distance_y = convTwosComp(md.dy);
 
-total_x1 = total_x1 + distance_x;
-total_y1 = total_y1 + distance_y;
+total_rover_x1 = total_rover_x1 + rover_distance_x;
+total_rover_y1 = total_rover_y1 + rover_distance_y;
 
-total_x = total_x1/157;
-total_y = total_y1/157;
+total_rover_x = total_rover_x1/157;
+total_rover_y = total_rover_y1/157;
 
-coord_x = total_x1/157;
-coord_y = total_y1/157;
+abs_coord_x = total_rover_x1;
+abs_coord_y = total_rover_y1;
 
 
 Serial.print('\n');
 
 
-Serial.println("Coordinate_x = " + String(coord_x));
+Serial.println("Coordinate_x = " + String(abs_coord_x));
 
-Serial.println("Coordinate_y = " + String(coord_y));
+Serial.println("Coordinate_y = " + String(abs_coord_y));
 Serial.print('\n');
 
-  delay(250);
+  delay(50);
 
   #endif
 
-  return coord_x, coord_y;
+  return abs_coord_x, abs_coord_y;
 }
