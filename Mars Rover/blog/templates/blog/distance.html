@@ -211,10 +211,10 @@
     </div>
     <div class="item7">7
     </div>
-    <div class="item8">
-        {% for i in counter %}
-            {% for j in counter %}
-                <canvas id={{i}}{{j}} width="50" height="50"
+    <div class="item8" id = "gridmap">
+        {% for i in x %}
+            {% for j in y %}
+                <canvas id={{i}}{{j}} width="40" height="40"
                     style="border:0.5px solid #000000;">
                 </canvas>
 
@@ -222,13 +222,12 @@
                     var c = document.getElementById({{i}}{{j}});
                     var ctx = c.getContext("2d");
                     var img = document.getElementById("terrain");
-                    ctx.drawImage(img,0,0,50,50);
+                    ctx.drawImage(img,0,0,40,40);
                     var c = document.getElementById({{i}}{{j}});
                     var ctx = c.getContext("2d");
                     var img = document.getElementById("question");
-                    ctx.drawImage(img,0,5,50,40);
+                    ctx.drawImage(img,0,5,40,30);
                 </script>
-                    <!-- {{aliens|index:i|index:j}} -->
                     {% if aliens|index:i|index:j == 0 %}
                         <script>
                             var c = document.getElementById({{i}}{{j}});

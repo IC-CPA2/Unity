@@ -64,7 +64,7 @@ def about(request):
         
         # print("DATABASE LENGTH >1 ")
         sel_val = live_database.objects.all().values()
-        for i in range(0,len(sel_val)):
+        for i in range(0, len(sel_val)):
             labeled_tile = sel_val[i]["tile_num"]
             info_rec = sel_val[i]["tile_info"]
             if info_rec == "T":
@@ -77,7 +77,7 @@ def about(request):
                 traversed[labeled_tile] = 4
             elif info_rec == "RA":
                 traversed[labeled_tile] = 5
-            elif info_rec == "RA":
+            elif info_rec == "OA":
                 traversed[labeled_tile] = 6
         filt_cond = live_database.objects.get(last_visited=1)
         tmp = filt_cond.tile_num
@@ -143,7 +143,9 @@ def about(request):
     w.close()
 
     context = {
-        'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
+        'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
+        'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
+        'counter': ['1','2','3','4','5','6','7','8','9'],
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
@@ -308,16 +310,14 @@ def distance(request):
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
 
-    image_file =  curr_dir + "\\blog\\text_files\\image.txt"
-    image_file = image_file.replace("\\","/")
+    # image_file =  curr_dir + "\\blog\\text_files\\image.txt"
+    # image_file = image_file.replace("\\","/")
 
-    imagef = open (image_file, "r")
-
-    
-
+    # imagef = open (image_file, "r")
 
     context = {
-        'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9'], 
+        'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
+        'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,

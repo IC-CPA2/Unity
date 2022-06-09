@@ -215,9 +215,9 @@
         <div class="item7">7
         </div>
         <div class="item8" id = "gridmap">
-            {% for i in counter %}
-                {% for j in counter %}
-                    <canvas id={{i}}{{j}} width="50" height="50"
+            {% for i in x %}
+                {% for j in y %}
+                    <canvas id={{i}}{{j}} width="40" height="40"
                         style="border:0.5px solid #000000;">
                     </canvas>
                  
@@ -230,7 +230,7 @@
                         console.log({{i}}{{j}})
                         var ctx = c.getContext("2d");
                         var img = document.getElementById("question");
-                        ctx.drawImage(img,0,0,50,50);
+                        ctx.drawImage(img,0,5,40,30);
                     </script>
                         {% if aliens|index:i|index:j == 0 %}
                             <script>
@@ -332,9 +332,6 @@
                     xhttp.send();
                     console.log('refresh was clicked')
                 }
-
-
-
             </script>
         </div>  
         <div class="item9">
