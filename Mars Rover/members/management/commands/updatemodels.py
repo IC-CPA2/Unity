@@ -52,11 +52,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         pass
     def handle(self,*args, **options):
+        #made some modifications to handle the iterator.
         iterator = len(live_database.objects.all())
         # live_database.objects.all().delete()
-        test = live_database.objects.get(tile_num="4040")
-        print(test)
-        print("also impor",len(test))
+        # test = live_database.objects.filter(tile_num="4545")
+        # print(test)
+    
+        # print("also impor",len(test))
+
 
 
 

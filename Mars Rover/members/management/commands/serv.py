@@ -16,7 +16,7 @@ from django.core.management.base import BaseCommand
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 if len(live_database.objects.all()) == 0:
-    curr_sq = "55"
+    curr_sq = "4040"
 else:
     query = live_database.objects.get(last_visited=1)
     curr_sq = query.tile_num 
@@ -115,7 +115,7 @@ try:
             print("Client Sent",content)
         if content == "T":
             curr_sq = observed_tile
-            old_last_sq = live_database.objects.get(last_visited=1)
+            old_last_sq = live_database.objects.filter(last_visited=1)
             old_last_sq.last_visited = 0
             old_last_sq.save()
             new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
@@ -123,7 +123,7 @@ try:
         elif content == "PA":
             # new_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
             #cannot visit new thingies. 
-            new_sq = live_database.objects.get(tile_num=observed_tile)
+            new_sq = live_database.objects.filter(tile_num=observed_tile)
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
                 two_sq.save()
@@ -132,7 +132,7 @@ try:
                 new_sq.save()
 
         elif content == "GA":
-            new_sq = live_database.objects.get(tile_num=observed_tile)
+            new_sq = live_database.objects.filter(tile_num=observed_tile)
             #cannot visit new thingies. 
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
@@ -142,7 +142,7 @@ try:
                 new_sq.save()
             new_sq.save()
         elif content == "BA":
-            new_sq = live_database.objects.get(tile_num=observed_tile)
+            new_sq = live_database.objects.filter(tile_num=observed_tile)
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
                 two_sq.save()
@@ -151,7 +151,7 @@ try:
                 new_sq.save()
             #cannot visit new thingies. 
         elif content == "RA":
-            new_sq = live_database.objects.get(tile_num=observed_tile)
+            new_sq = live_database.objects.filter(tile_num=observed_tile)
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
                 two_sq.save()
@@ -160,7 +160,7 @@ try:
                 new_sq.save()
             #cannot visit new thingies. 
         elif content == "OA":
-            new_sq = live_database.objects.get(tile_num=observed_tile)
+            new_sq = live_database.objects.filter(tile_num=observed_tile)
             #cannot visit new thingies. 
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
