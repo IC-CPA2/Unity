@@ -287,6 +287,13 @@
                                 var img = document.getElementById("orange");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
+                        {% elif aliens|index:i|index:j == 7 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
                         {% elif aliens|index:i|index:j == 2 %}
                             <script>
                                 var c = document.getElementById({{i}}{{j}});

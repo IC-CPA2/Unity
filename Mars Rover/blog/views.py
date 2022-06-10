@@ -56,6 +56,7 @@ def about(request):
     f.close()
 
     img = []
+    database = [[1]*59 for i in range(59)]
 
     ali = [[1]*9 for i in range(9)]
     db_length = len(live_database.objects.all())
@@ -64,38 +65,67 @@ def about(request):
         
         # print("DATABASE LENGTH >1 ")
         sel_val = live_database.objects.all().values()
-        for i in range(0, len(sel_val)):
-            labeled_tile = sel_val[i]["tile_num"]
-            info_rec = sel_val[i]["tile_info"]
-            if info_rec == "T":
-                traversed[labeled_tile] = 7
-            elif info_rec == "PA":
-                traversed[labeled_tile] = 0
-            elif info_rec == "GA":
-                traversed[labeled_tile] = 3
-            elif info_rec == "BA":
-                traversed[labeled_tile] = 4
-            elif info_rec == "RA":
-                traversed[labeled_tile] = 5
-            elif info_rec == "OA":
-                traversed[labeled_tile] = 6
-        filt_cond = live_database.objects.get(last_visited=1)
-        tmp = filt_cond.tile_num
-        print(tmp)
-        for key in traversed:#this for loop will be used to create the map for the aliens. 
-            if traversed[key] == 0:
-                storer = int(key)
-                # print("debug",storer)
-                # print("failing",int(storer-(storer%10))/10)
-                x_coord = (storer-(storer%10))/10
-                ali[int(x_coord)][storer%10] = 0
-        storer = int(tmp)
-        x_pos = (storer-(storer%10))/10
-        ali[int(x_pos)][storer%10] = 2
+
+        for i in range (10,69):
+            for j in range(10,69):
+                key = str(i)+str(j)
+                tile = live_database.objects.filter(tile_num=key).values()
+                filt_cond = live_database.objects.get(last_visited=1)
+
+                if len(tile) > 0:
+                    tile = live_database.objects.get(tile_num=key)
+                    # print (tile.tile_info)
+                    info = tile.tile_info
+                    if (info == "T"):
+                        database[i][j] = 7
+                    elif (info == "PA"):
+                        database[i][j] = 0
+                    elif (info == "GA"):
+                        database[i][j] = 3
+                    elif (info == "BA"):
+                        database[i][j] = 4
+                    elif (info == "RA"):
+                        database[i][j] = 5
+                    elif (info == "OA"):
+                        database[i][j] = 6
+
+                if key == filt_cond.tile_num:
+                    database[i][j] = 2
+                
+                
+        ali = reduce(database)           
+        # print (ali)
 
 
+        # for i in range(0, len(sel_val)):
+        #     labeled_tile = sel_val[i]["tile_num"]
+        #     info_rec = sel_val[i]["tile_info"]
+        #     if info_rec == "T":
+        #         traversed[labeled_tile] = 7
+        #     elif info_rec == "PA":
+        #         traversed[labeled_tile] = 0
+        #     elif info_rec == "GA":
+        #         traversed[labeled_tile] = 3
+        #     elif info_rec == "BA":
+        #         traversed[labeled_tile] = 4
+        #     elif info_rec == "RA":
+        #         traversed[labeled_tile] = 5
+        #     elif info_rec == "OA":
+        #         traversed[labeled_tile] = 6
+        # filt_cond = live_database.objects.get(last_visited=1)
+        # tmp = filt_cond.tile_num
+        # print(tmp)
+        # for key in traversed:#this for loop will be used to create the map for the aliens. 
+        #     if traversed[key] == 0:
+        #         storer = int(key)
+        #         # print("debug",storer)
+        #         # print("failing",int(storer-(storer%10))/10)
+        #         x_coord = (storer-(storer%10))/10
+        #         # ali[int(x_coord)][storer%10] = 0
+        # # storer = int(tmp)
+        # # x_pos = (storer-(storer%10))/10
+        # # ali[int(x_pos)][storer%10] = 2
 
-    
     # #edit value of ali at each position to get the current position. 
     # file_path = curr_dir+"\\blog\\text_files\\image.txt"
     # file_path = file_path.replace("\\","/")
@@ -182,12 +212,8 @@ def distance(request):
     database = [[1]*59 for i in range(59)]
     traversed = {}
 
-    
-
-            
-
-
     if db_length >0:
+        print ("HELLO")
         print("DATABASE LENGTH >1 ")
         sel_val = live_database.objects.all().values()
         
@@ -198,6 +224,8 @@ def distance(request):
                 tile = live_database.objects.filter(tile_num=key).values()
                 if len(tile) > 0:
                     database[i][j] = tile.tile_info
+
+        print (database)
 
         for i in range(0,len(sel_val)):
             labeled_tile = sel_val[i]["tile_num"]
@@ -254,10 +282,10 @@ def distance(request):
                 # print("debug",storer)
                 # print("failing",int(storer-(storer%10))/10)
                 x_coord = (storer-(storer%10))/10
-                ali[int(x_coord)][storer%10] = 7
-        storer = int(tmp)
-        x_pos = (storer-(storer%10))/10
-        ali[int(x_pos)][storer%10] = 2
+                # ali[int(x_coord)][storer%10] = 7
+        # storer = int(tmp)
+        # x_pos = (storer-(storer%10))/10
+        # ali[int(x_pos)][storer%10] = 2
 
     
     ## if (rover coord) on the edge

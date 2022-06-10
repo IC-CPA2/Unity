@@ -41,7 +41,7 @@ def choose_next(ang_inp,curr_sq):
     return str(new_val)
     #based on existing head angles decide how to maneuveur rover. 
 
-    
+
 def large_grid(angle,curr_tile):
   #takes in a 4 string input. The maximum map size assuming rover is 15cm 
   #We know this to be a total of about 15m which should be more than adequate.
@@ -125,49 +125,49 @@ try:
             #cannot visit new thingies. 
             new_sq = live_database.objects.get(tile_num=observed_tile)
             if len(new_sq) == 0:
-              two_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
-              two_sq.save()
+                two_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
+                two_sq.save()
             else:
-              new_sq.tile_info = "PA"
-              new_sq.save()
+                new_sq.tile_info = "PA"
+                new_sq.save()
 
         elif content == "GA":
-            new_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
+            new_sq = live_database.objects.get(tile_num=observed_tile)
             #cannot visit new thingies. 
             if len(new_sq) == 0:
-              two_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
-              two_sq.save()
+                two_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
+                two_sq.save()
             else:
-              new_sq.tile_info = "GA"
-              new_sq.save()
+                new_sq.tile_info = "GA"
+                new_sq.save()
             new_sq.save()
         elif content == "BA":
-            new_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
+            new_sq = live_database.objects.get(tile_num=observed_tile)
             if len(new_sq) == 0:
-              two_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
-              two_sq.save()
+                two_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
+                two_sq.save()
             else:
-              new_sq.tile_info = "BA"
-              new_sq.save()
+                new_sq.tile_info = "BA"
+                new_sq.save()
             #cannot visit new thingies. 
         elif content == "RA":
-            new_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
+            new_sq = live_database.objects.get(tile_num=observed_tile)
             if len(new_sq) == 0:
-              two_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
-              two_sq.save()
+                two_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
+                two_sq.save()
             else:
-              new_sq.tile_info = "RA"
-              new_sq.save()
+                new_sq.tile_info = "RA"
+                new_sq.save()
             #cannot visit new thingies. 
         elif content == "OA":
-            new_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
+            new_sq = live_database.objects.get(tile_num=observed_tile)
             #cannot visit new thingies. 
             if len(new_sq) == 0:
-              two_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
-              two_sq.save()
+                two_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
+                two_sq.save()
             else:
-              new_sq.tile_info = "OA"
-              new_sq.save()
+                new_sq.tile_info = "OA"
+                new_sq.save()
         elif content == "HHH":
             break
         
