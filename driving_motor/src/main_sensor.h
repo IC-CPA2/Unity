@@ -326,9 +326,10 @@ void optical_measurements()
 
   Serial.print('\n');
 
-  Serial.println("Coordinate_x = " + String(abs_coord_x));
+  Serial.println("Coordinate_x = " + String(roverUnity.pos_x));
 
-  Serial.println("Coordinate_y = " + String(abs_coord_y));
+  Serial.println("Coordinate_y = " + String(roverUnity.pos_y));
+   Serial.println("head angle = " + String(roverUnity.head_angle));
   Serial.print('\n');
 
 
