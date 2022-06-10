@@ -54,7 +54,7 @@ class Command(BaseCommand):
     def handle(self,*args, **options):
         #made some modifications to handle the iterator.
         iterator = len(live_database.objects.all())
-        # live_database.objects.all().delete()
+        live_database.objects.all().delete()
         # test = live_database.objects.filter(tile_num="4545")
         # print(test)
     

@@ -4,6 +4,7 @@
     {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
     {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
     {% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
+    {% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
     {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
     {% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
     {% load extras %}
@@ -14,13 +15,13 @@
             grid-template-columns: auto auto auto auto auto auto;
             gap: 10px;
             background-color: #ffffff00;
-            padding: 10px;
+            /* padding: 10px; */
         }
 
         .grid-container > div {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.476);
             text-align: center;
-            padding: 20px 0;
+            padding: 10px 0;
             font-size: 20px;
         }
         
@@ -35,39 +36,9 @@
             grid-area: 5 / 1 / 5 / 3;
         }
 
-        .item9 {
-            grid-area: 4 / 6 / 6 / 6;
+        .item6 {
+            /* grid-area: 3 / 6 / 5 / 6; */
             font-size: 20px;
-        }
-
-        .buttons{
-            margin: auto auto;
-            display:grid;
-            grid-template-columns: 50px 50px 50px;
-            grid-row: 50px 50px;
-            grid-column-gap: 20px;
-            grid-row-gap: 20px;
-            padding-top: 10%;
-            padding-left: 10%;
-        }
-        .buttonup{
-            grid-column: 2 / span 1;
-            grid-row: 1 / span 1;
-        }
-
-        .buttondown{
-
-            grid-column: 2 / span 1;
-            grid-row: 2 / span 1;
-        }
-
-        .buttonleft{
-            grid-column: 1 / span 1;
-            grid-row: 2 / span 1;
-        }
-        .buttonright{
-            grid-column: 3 / span 1;
-            grid-row: 2 / span 1;
         }
 
         .slidecontainer {
@@ -129,40 +100,61 @@
             height: 30px;
             background-color: #F05760;
         }
+
+        .control-centre{
+            display: grid;
+            grid-template-columns: 50px 50px 50px;
+            grid-template-rows: 50px 50px 50px;
+            padding-left: 60px;
+        }
+
+        .control-buttons{
+            /* border: 1px solid rgba(0, 0, 0, 0.8); */
+            padding: 20px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .conbtn {
+            border: 0px;
+            background-color: rgba(255, 255, 255, 0);
+            cursor: pointer;
+            padding: 0%;
+        }
+
+        .conbtn:hover {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            opacity: 50%;
+        }
         
     </style>
 
     <div class="grid-container">
 
-        <body style="background-color:#B5F0C4;">
+        <body style="background-color:#98d696;">
         </body>
         
         <div class="item1">
             Wifi Status:
             <br>
+            <br>
             {% if wifis == "0" or wifis == "1" or wifis == "2" %}
-                {% load static %} <img id="none" src="{% static "blog/media/none.png" %}" alt="wifibad" height="100" width="110" />
+                {% load static %} <img id="none" src="{% static "blog/media/none.png" %}" alt="wifibad" height="90" width="100" />
             {% elif wifis == "3" or wifis == "4" %}
-                {% load static %} <img id="weak" src="{% static "blog/media/weak.png" %}" alt="wifiok" height="100" width="110" />
+                {% load static %} <img id="weak" src="{% static "blog/media/weak.png" %}" alt="wifiok" height="90" width="100" />
             {% elif wifis == "5" or wifis == "6" or wifi == "7" %}
-                {% load static %} <img id="mid" src="{% static "blog/media/mid.png" %}" alt="wifimid" height="100" width="110" />
+                {% load static %} <img id="mid" src="{% static "blog/media/mid.png" %}" alt="wifimid" height="90" width="100" />
             {% elif wifis == "8" or wifis == "9" or wifis == "10" %}
-                {% load static %} <img id="good" src="{% static "blog/media/good.png" %}" alt="wifigood" height="100" width="110" />
+                {% load static %} <img id="good" src="{% static "blog/media/good.png" %}" alt="wifigood" height="90" width="100" />
             {% endif %}
 
         </div>
-        <div class="item2">{% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
+        <div class="item2">
+            {% load static %} <img id="logo" src="{% static "blog/media/logo.png" %}" alt="logo" height="200" width="200" />
         </div>
-        <div class="scrollbox">
-            3
-            <!-- <font size="5"> Log: </font>
-            <br>
-            {% for i in directions %}
-                {{i}}
-                <br>
-            {% endfor %} -->
-        </div>
-        <div class="item4">
+        <div class="item3">
             <form>
             <h5>Mode</h5>
             <form action="" method="post">
@@ -177,21 +169,50 @@
             <input type="submit" value="Submit">
             </form>
         </div>
-        <div class="item5"><br>
-            <button type="button" onclick="resetMap()">Reset</button>
-            <br>
-            <br>
-            <button onclick="location.href = '/members'"> View database</button>
-            <br>
-            <br>
-            <button onClick="window.location.reload();">Refresh</button>
-            
-            <br>
-            <!-- <button type="button" onclick="refreshMap()">Request data</button> -->
-        </div>
-        <div class="item6">
+        <div class="item4">
             <form action="/about/distance" method="post">
                 {% csrf_token %}
+                <div class="control-centre">
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="315"> <img src="{% static "blog/media/tl.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="0"> <img src="{% static "blog/media/up.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="45"> <img src="{% static "blog/media/tr.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="270"> <img src="{% static "blog/media/left.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        {% load static %} <img id="centre" src="{% static "blog/media/centre.png" %}" alt="centre" height="20" width="20" />
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="90"> <img src="{% static "blog/media/right.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="225"> <img src="{% static "blog/media/bl.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="180"> <img src="{% static "blog/media/down.png" %}"  width="20" height="20"/> </conbutton>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="conbtn" name="angle" value="135"> <img src="{% static "blog/media/br.png" %}"  width="20" height="20" /> </button>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+                <!-- {% csrf_token %}
                 <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
                 <input type="text" id="dist" name="dist" value="0"><br>
                 <div class="slidecontainer">
@@ -209,7 +230,29 @@
                     slider.oninput = function() {
                     output.innerHTML = this.value;
                     }    
-                </script>
+                </script> -->
+            </form>
+        </div>
+        <div class="item5"><br>
+            <button type="button" onclick="resetMap()">Reset</button>
+            <br>
+            <br>
+            <button onclick="location.href = '/members'"> View database</button>
+            <br>
+            <br>
+            <button onClick="window.location.reload();">Refresh</button>
+            
+            <br>
+            <!-- <button type="button" onclick="refreshMap()">Request data</button> -->
+        </div>
+        <div class="item6">
+            <form action="" method="post">
+                {% csrf_token %}
+                <label for="map_name"> Save Map As: </label><br><br>
+                <input type="text" id="map_name" required> 
+                <br>
+                <br>
+                <input type="submit" value="Submit">
             </form>
         </div>
         <div class="item7">7
@@ -310,6 +353,9 @@
                 <br>
             {% endfor %}
             <script>
+                function updateDiv(){ 
+                    $( "#gridmap" ).load(window.location.href + " #gridmap" );
+                }
                 function resetMap(){
                     for (i = 1; i<10; i++){
                         for (j = 1; j<10; j++){
@@ -342,14 +388,7 @@
             </script>
         </div>  
         <div class="item9">
-            <h5>Save Map</h5>
-            <form action="" method="post">
-                {% csrf_token %}
-                <label for="map_name"> Save As: </label><br><br>
-                <input type="text" id="map_name" required> 
-                <br>
-                <input type="submit" value="Submit">
-            </form>
+            9
         </div>
         <div class="item10">
             <style>
@@ -374,7 +413,7 @@
         <div class="item13">13</div>
 
         <script>
-            window.setInterval('refresh()', 10000000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+            window.setInterval('refresh()', 3000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
 
             // Refresh or reload page.
             function refresh() {

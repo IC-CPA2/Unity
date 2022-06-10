@@ -115,7 +115,7 @@ try:
             print("Client Sent",content)
         if content == "T":
             curr_sq = observed_tile
-            old_last_sq = live_database.objects.filter(last_visited=1)
+            old_last_sq = live_database.objects.get(last_visited=1)
             old_last_sq.last_visited = 0
             old_last_sq.save()
             new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
@@ -128,6 +128,7 @@ try:
                 two_sq = live_database(tile_num=observed_tile,tile_info="PA",last_visited=0)
                 two_sq.save()
             else:
+                new_sq = live_database.objects.get(tile_num=observed_tile)
                 new_sq.tile_info = "PA"
                 new_sq.save()
 
@@ -138,15 +139,16 @@ try:
                 two_sq = live_database(tile_num=observed_tile,tile_info="GA",last_visited=0)
                 two_sq.save()
             else:
+                new_sq = live_database.objects.get(tile_num=observed_tile)
                 new_sq.tile_info = "GA"
                 new_sq.save()
-            new_sq.save()
         elif content == "BA":
             new_sq = live_database.objects.filter(tile_num=observed_tile)
             if len(new_sq) == 0:
                 two_sq = live_database(tile_num=observed_tile,tile_info="BA",last_visited=0)
                 two_sq.save()
             else:
+                new_sq = live_database.objects.get(tile_num=observed_tile)
                 new_sq.tile_info = "BA"
                 new_sq.save()
             #cannot visit new thingies. 
@@ -156,6 +158,7 @@ try:
                 two_sq = live_database(tile_num=observed_tile,tile_info="RA",last_visited=0)
                 two_sq.save()
             else:
+                new_sq = live_database.objects.get(tile_num=observed_tile)
                 new_sq.tile_info = "RA"
                 new_sq.save()
             #cannot visit new thingies. 
@@ -166,6 +169,7 @@ try:
                 two_sq = live_database(tile_num=observed_tile,tile_info="OA",last_visited=0)
                 two_sq.save()
             else:
+                new_sq = live_database.objects.get(tile_num=observed_tile)
                 new_sq.tile_info = "OA"
                 new_sq.save()
         elif content == "HHH":
