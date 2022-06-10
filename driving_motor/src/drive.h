@@ -44,6 +44,8 @@ public:
         {
             turned_angle = turned_angle + optical_angle_turned(); // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
             RoverMotors.turn(turnLeft);                           // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+        Serial.println("Turning!" + String(turned_angle));
+        
         }
         roverUnity.head_angle = roverUnity.head_angle + turned_angle;
 
