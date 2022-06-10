@@ -58,6 +58,11 @@ class Motors
 {
 
 private:
+
+  double last_heading_error = 0;
+  double Kd, Kp, KD, correction;
+  
+  
   typedef struct speed MotorSpeeds;
 
   int convert_to_duration(int distance, int speed)
@@ -70,29 +75,45 @@ private:
   // the input error here has to be the total_x_translation during straight drive
   MotorSpeeds speed_straightness_control(int speed, double error)
   {
-Serial.println("straightness is controlled, the error is:");
-Serial.println(error);
-Serial.println("----------");
+    Serial.println("straightness is controlled, the error is:");
+    Serial.println(error);
+    Serial.println("----------");
 
     MotorSpeeds speeds;
 
+    //let's initialise the PD constants
+
+    Kd = 1;
+
+    Kp = 1;
+
     // corrigate path if needed
 
-    double corrig_const = 1/2; // adjust this to based on trial and error
+    //double corrig_const = 1 / 2; // adjust this to based on trial and error
 
-    double corrigation = 1 + corrig_const * log(1 + abs(error));
+    //double corrigation = 1 + corrig_const * log(1 + abs(error));
+
+    //PD controller
+
+    KD = (error - last_heading_error) * speed;
+
+    correction = Kd*KD + Kp*error;
+
+
 
     if (error < 0)
     {
 
-      speeds.left = corrigation * speed;
-      speeds.right = 0;
+      //speeds.left = corrigation * speed;
+      speeds.left = speed + correction;
+      speeds.right = speed;
     }
     else if (error > 0)
     {
 
-      speeds.left = 0;
-      speeds.right = corrigation * speed;
+      speeds.left = speed;
+      //speeds.right = corrigation * speed;
+      speeds.right = speed + correction;
     }
     else
     {
@@ -100,6 +121,8 @@ Serial.println("----------");
       speeds.left = speed;
       speeds.right = speed;
     }
+
+    last_heading_error = error;
 
     return speeds;
   }
@@ -110,7 +133,7 @@ Serial.println("----------");
     MotorSpeeds speeds;
     // the input error here has to be the total_x_translation during straight drive
     Serial.println("speed is controlled, the error is:");
-Serial.println(error);
+    Serial.println(error);
     speeds = speed_straightness_control(speed, error);
 
     // Use of the drive function which takes as arguements the speed
@@ -152,7 +175,7 @@ Serial.println(error);
 
 public:
   int speed;
-  int distance;
+  int distance = 1; // IT MIGHT NOT WORK
   int turning_angle;
   double error;
 
@@ -177,8 +200,26 @@ public:
     motorRight.brake();
   }
 
-  // TODO: implement turning function
-  void turn(int turning_angle, bool left)
+  // NOTE: this function is open-loop, do not use in production!
+  void turn(bool turnLeft)
+  {
+    int speed = 3;
+
+    if (turnLeft)
+    {
+      motorLeft.drive(-speed, 1);
+
+      motorRight.drive(speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(speed, 1);
+
+      motorRight.drive(-speed, 1);
+    }
+  };
+
+  void turn_angle(int turning_angle, bool left)
   {
 
     drive_steer(turning_angle, left);

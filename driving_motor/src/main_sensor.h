@@ -1,112 +1,110 @@
 //#include <Arduino.h> maybe we need it???
 #include <SPI.h>
 
+#include <cmath>
+
+#include <math.h>
 
 // these pins may be different on different boards
 
-#define PIN_SS        5 //originally 5
-#define PIN_MISO      19 //originally 19
-#define PIN_MOSI      23
-#define PIN_SCK       18 //originally 18
+#define PIN_SS 5    // originally 5
+#define PIN_MISO 19 // originally 19
+#define PIN_MOSI 23
+#define PIN_SCK 18 // originally 18
 
-#define PIN_MOUSECAM_RESET     35
-#define PIN_MOUSECAM_CS        5 //originally 5
+#define PIN_MOUSECAM_RESET 35
+#define PIN_MOUSECAM_CS 5 // originally 5
 
-#define ADNS3080_PIXELS_X                 30
-#define ADNS3080_PIXELS_Y                 30
+#define ADNS3080_PIXELS_X 30
+#define ADNS3080_PIXELS_Y 30
 
-#define ADNS3080_PRODUCT_ID            0x00
-#define ADNS3080_REVISION_ID           0x01
-#define ADNS3080_MOTION                0x02
-#define ADNS3080_DELTA_X               0x03
-#define ADNS3080_DELTA_Y               0x04
-#define ADNS3080_SQUAL                 0x05
-#define ADNS3080_PIXEL_SUM             0x06
-#define ADNS3080_MAXIMUM_PIXEL         0x07
-#define ADNS3080_CONFIGURATION_BITS    0x0a
-#define ADNS3080_EXTENDED_CONFIG       0x0b
-#define ADNS3080_DATA_OUT_LOWER        0x0c
-#define ADNS3080_DATA_OUT_UPPER        0x0d
-#define ADNS3080_SHUTTER_LOWER         0x0e
-#define ADNS3080_SHUTTER_UPPER         0x0f
-#define ADNS3080_FRAME_PERIOD_LOWER    0x10
-#define ADNS3080_FRAME_PERIOD_UPPER    0x11
-#define ADNS3080_MOTION_CLEAR          0x12
-#define ADNS3080_FRAME_CAPTURE         0x13
-#define ADNS3080_SROM_ENABLE           0x14
-#define ADNS3080_FRAME_PERIOD_MAX_BOUND_LOWER      0x19
-#define ADNS3080_FRAME_PERIOD_MAX_BOUND_UPPER      0x1a
-#define ADNS3080_FRAME_PERIOD_MIN_BOUND_LOWER      0x1b
-#define ADNS3080_FRAME_PERIOD_MIN_BOUND_UPPER      0x1c
-#define ADNS3080_SHUTTER_MAX_BOUND_LOWER           0x1e
-#define ADNS3080_SHUTTER_MAX_BOUND_UPPER           0x1e
-#define ADNS3080_SROM_ID               0x1f
-#define ADNS3080_OBSERVATION           0x3d
-#define ADNS3080_INVERSE_PRODUCT_ID    0x3f
-#define ADNS3080_PIXEL_BURST           0x40
-#define ADNS3080_MOTION_BURST          0x50
-#define ADNS3080_SROM_LOAD             0x60
+#define ADNS3080_PRODUCT_ID 0x00
+#define ADNS3080_REVISION_ID 0x01
+#define ADNS3080_MOTION 0x02
+#define ADNS3080_DELTA_X 0x03
+#define ADNS3080_DELTA_Y 0x04
+#define ADNS3080_SQUAL 0x05
+#define ADNS3080_PIXEL_SUM 0x06
+#define ADNS3080_MAXIMUM_PIXEL 0x07
+#define ADNS3080_CONFIGURATION_BITS 0x0a
+#define ADNS3080_EXTENDED_CONFIG 0x0b
+#define ADNS3080_DATA_OUT_LOWER 0x0c
+#define ADNS3080_DATA_OUT_UPPER 0x0d
+#define ADNS3080_SHUTTER_LOWER 0x0e
+#define ADNS3080_SHUTTER_UPPER 0x0f
+#define ADNS3080_FRAME_PERIOD_LOWER 0x10
+#define ADNS3080_FRAME_PERIOD_UPPER 0x11
+#define ADNS3080_MOTION_CLEAR 0x12
+#define ADNS3080_FRAME_CAPTURE 0x13
+#define ADNS3080_SROM_ENABLE 0x14
+#define ADNS3080_FRAME_PERIOD_MAX_BOUND_LOWER 0x19
+#define ADNS3080_FRAME_PERIOD_MAX_BOUND_UPPER 0x1a
+#define ADNS3080_FRAME_PERIOD_MIN_BOUND_LOWER 0x1b
+#define ADNS3080_FRAME_PERIOD_MIN_BOUND_UPPER 0x1c
+#define ADNS3080_SHUTTER_MAX_BOUND_LOWER 0x1e
+#define ADNS3080_SHUTTER_MAX_BOUND_UPPER 0x1e
+#define ADNS3080_SROM_ID 0x1f
+#define ADNS3080_OBSERVATION 0x3d
+#define ADNS3080_INVERSE_PRODUCT_ID 0x3f
+#define ADNS3080_PIXEL_BURST 0x40
+#define ADNS3080_MOTION_BURST 0x50
+#define ADNS3080_SROM_LOAD 0x60
 
-#define ADNS3080_PRODUCT_ID_VAL        0x17
-
+#define ADNS3080_PRODUCT_ID_VAL 0x17
 
 int total_rover_x = 0;
 int total_rover_y = 0;
 
-
 int total_rover_x1 = 0;
 int total_rover_y1 = 0;
 
+int x = 0;
+int y = 0;
 
-int x=0;
-int y=0;
+int a = 0;
+int b = 0;
 
-int a=0;
-int b=0;
-
-int rover_distance_x=0;
-int rover_distance_y=0;
+int rover_distance_x = 0;
+int rover_distance_y = 0;
 
 int rover_angle = 0;
 
-double abs_coord_x=0;
-double abs_coord_y=0;
+double abs_coord_x = 0;
+double abs_coord_y = 0;
 
-volatile byte movementflag=0;
+volatile byte movementflag = 0;
 volatile int xydat[2];
 
-
-int convTwosComp(int b){
-  //Convert from 2's complement
-  if(b & 0x80){
+int convTwosComp(int b)
+{
+  // Convert from 2's complement
+  if (b & 0x80)
+  {
     b = -1 * ((b ^ 0xff) + 1);
-    }
-  return b;
   }
-
+  return b;
+}
 
 int tdistance = 0;
 
-
 void mousecam_reset()
 {
-  digitalWrite(PIN_MOUSECAM_RESET,HIGH);
+  digitalWrite(PIN_MOUSECAM_RESET, HIGH);
   delay(1); // reset pulse >10us
-  digitalWrite(PIN_MOUSECAM_RESET,LOW);
+  digitalWrite(PIN_MOUSECAM_RESET, LOW);
   delay(35); // 35ms from reset to functional
 }
 
-
 int mousecam_init()
 {
-  pinMode(PIN_MOUSECAM_RESET,OUTPUT);
-  pinMode(PIN_MOUSECAM_CS,OUTPUT);
+  pinMode(PIN_MOUSECAM_RESET, OUTPUT);
+  pinMode(PIN_MOUSECAM_CS, OUTPUT);
 
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  digitalWrite(PIN_MOUSECAM_CS, HIGH);
 
   mousecam_reset();
 
-  return 1; 
+  return 1;
 }
 
 void mousecam_write_reg(int reg, int val)
@@ -114,7 +112,7 @@ void mousecam_write_reg(int reg, int val)
   digitalWrite(PIN_MOUSECAM_CS, LOW);
   SPI.transfer(reg | 0x80);
   SPI.transfer(val);
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  digitalWrite(PIN_MOUSECAM_CS, HIGH);
   delayMicroseconds(50);
 }
 
@@ -124,34 +122,33 @@ int mousecam_read_reg(int reg)
   SPI.transfer(reg);
   delayMicroseconds(75);
   int ret = SPI.transfer(0xff);
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  digitalWrite(PIN_MOUSECAM_CS, HIGH);
   delayMicroseconds(1);
   return ret;
 }
 
 struct MD
 {
- byte motion;
- char dx, dy;
- byte squal;
- word shutter;
- byte max_pix;
+  byte motion;
+  char dx, dy;
+  byte squal;
+  word shutter;
+  byte max_pix;
 };
-
 
 void mousecam_read_motion(struct MD *p)
 {
   digitalWrite(PIN_MOUSECAM_CS, LOW);
   SPI.transfer(ADNS3080_MOTION_BURST);
   delayMicroseconds(75);
-  p->motion =  SPI.transfer(0xff);
-  p->dx =  SPI.transfer(0xff);
-  p->dy =  SPI.transfer(0xff);
-  p->squal =  SPI.transfer(0xff);
-  p->shutter =  SPI.transfer(0xff)<<8;
-  p->shutter |=  SPI.transfer(0xff);
-  p->max_pix =  SPI.transfer(0xff);
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  p->motion = SPI.transfer(0xff);
+  p->dx = SPI.transfer(0xff);
+  p->dy = SPI.transfer(0xff);
+  p->squal = SPI.transfer(0xff);
+  p->shutter = SPI.transfer(0xff) << 8;
+  p->shutter |= SPI.transfer(0xff);
+  p->max_pix = SPI.transfer(0xff);
+  digitalWrite(PIN_MOUSECAM_CS, HIGH);
   delayMicroseconds(5);
 }
 
@@ -159,7 +156,7 @@ void mousecam_read_motion(struct MD *p)
 // you must call mousecam_reset() after this if you want to go back to normal operation
 int mousecam_frame_capture(byte *pdata)
 {
-  mousecam_write_reg(ADNS3080_FRAME_CAPTURE,0x83);
+  mousecam_write_reg(ADNS3080_FRAME_CAPTURE, 0x83);
 
   digitalWrite(PIN_MOUSECAM_CS, LOW);
 
@@ -171,82 +168,102 @@ int mousecam_frame_capture(byte *pdata)
   int count;
   int timeout = 0;
   int ret = 0;
-  for(count = 0; count < ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y; )
+  for (count = 0; count < ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y;)
   {
     pix = SPI.transfer(0xff);
     delayMicroseconds(10);
-    if(started==0)
+    if (started == 0)
     {
-      if(pix&0x40)
+      if (pix & 0x40)
         started = 1;
       else
       {
         timeout++;
-        if(timeout==100)
+        if (timeout == 100)
         {
           ret = -1;
           break;
         }
       }
     }
-    if(started==1)
+    if (started == 1)
     {
-      pdata[count++] = (pix & 0x3f)<<2; // scale to normal grayscale byte range
+      pdata[count++] = (pix & 0x3f) << 2; // scale to normal grayscale byte range
     }
   }
 
-  digitalWrite(PIN_MOUSECAM_CS,HIGH);
+  digitalWrite(PIN_MOUSECAM_CS, HIGH);
   delayMicroseconds(14);
 
   return ret;
-}
+};
 
 void optical_setup()
 {
-  pinMode(PIN_SS,OUTPUT);
-  pinMode(PIN_MISO,INPUT);
-  pinMode(PIN_MOSI,OUTPUT);
-  pinMode(PIN_SCK,OUTPUT);
+  pinMode(PIN_SS, OUTPUT);
+  pinMode(PIN_MISO, INPUT);
+  pinMode(PIN_MOSI, OUTPUT);
+  pinMode(PIN_SCK, OUTPUT);
 
   SPI.begin();
   SPI.setClockDivider(SPI_CLOCK_DIV32);
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
 
-  Serial.begin(9600); //this
+  Serial.begin(9600); // this
 
-  if(mousecam_init()==-1)
+  if (mousecam_init() == -1)
   {
     Serial.println("Mouse cam failed to init");
-    while(1);
+    while (1)
+      ;
   }
 }
 
 char asciiart(int k)
 {
   static char foo[] = "WX86*3I>!;~:,`. ";
-  return foo[k>>4];
+  return foo[k >> 4];
 }
 
 byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
+// DEFINE STRUCT ROVER
 
-struct rover {
-  int dx, dy, rover_angle;
-  double coord_x, coord_y;
-
+struct Rover
+{
+  int dx, dy, head_angle;
+  // double distance_X, distance_y,  PROBABLY NOT NEEDED?!?!?!
+  double pos_x, pos_y;
 };
 
-int calc_abs_coords(int rover_dx, int rover_dy, int rover_angle) {
-  rover Rover;
-  
-}
+// struct AbsCoords
+// {
+//   int pos_x, pos_y;
+// };
 
+// definition of our global ROVER struct
 
+Rover roverUnity;
 
-double optical_measurements()
+void calc_abs_coords()
 {
- #if 0
+  // assign roverUnity new values here
+
+  int dx = roverUnity.dx;
+  int dy = roverUnity.dy;
+  int head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+
+  roverUnity.pos_x = sin(head_angle_radians) + roverUnity.pos_x;
+
+  roverUnity.pos_y = cos(head_angle_radians) + roverUnity.pos_y;
+
+  // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
+};
+
+void optical_measurements()
+{
+#if 0
 /*
     if(movementflag){
 
@@ -275,7 +292,7 @@ double optical_measurements()
   Serial.println();
   delay(250);
 
-  #else
+#else
 
   // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
   // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
@@ -283,43 +300,68 @@ double optical_measurements()
   int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
-  for(int i=0; i<md.squal/4; i++)
+  for (int i = 0; i < md.squal / 4; i++)
     Serial.print('*');
   Serial.print(' ');
-  Serial.print((val*100)/351);
+  Serial.print((val * 100) / 351);
   Serial.print(' ');
-  Serial.print(md.shutter); Serial.print(" (");
-  Serial.print((int)convTwosComp(md.dx)); Serial.print(',');
-  Serial.print((int)convTwosComp(md.dy)); Serial.println(')');
+  Serial.print(md.shutter);
+  Serial.print(" (");
+  Serial.print((int)convTwosComp(md.dx));
+  Serial.print(',');
+  Serial.print((int)convTwosComp(md.dy));
+  Serial.println(')');
 
   // Serial.println(md.max_pix);
   delay(100);
 
+  roverUnity.dx = convTwosComp(md.dx);
+  roverUnity.dy = convTwosComp(md.dy);
 
-    rover_distance_x = convTwosComp(md.dx);
-    rover_distance_y = convTwosComp(md.dy);
+  // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
+  // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
 
-total_rover_x1 = total_rover_x1 + rover_distance_x;
-total_rover_y1 = total_rover_y1 + rover_distance_y;
+  // total_rover_x = total_rover_x1 / 157;
+  // total_rover_y = total_rover_y1 / 157;
 
-total_rover_x = total_rover_x1/157;
-total_rover_y = total_rover_y1/157;
+  Serial.print('\n');
 
-abs_coord_x = total_rover_x1;
-abs_coord_y = total_rover_y1;
+  Serial.println("Coordinate_x = " + String(abs_coord_x));
 
-
-Serial.print('\n');
+  Serial.println("Coordinate_y = " + String(abs_coord_y));
+  Serial.print('\n');
 
 
-Serial.println("Coordinate_x = " + String(abs_coord_x));
-
-Serial.println("Coordinate_y = " + String(abs_coord_y));
-Serial.print('\n');
 
   delay(50);
 
-  #endif
+#endif
+};
 
-  return abs_coord_x, abs_coord_y;
-}
+
+
+void optical_distance_moved(){
+
+  optical_measurements();
+
+  calc_abs_coords();
+
+
+
+
+
+};
+
+int optical_angle_turned()
+{
+
+  int angle_turned = 0;
+
+  optical_measurements();
+
+  // do calculations based on the values stored within the roverUnity dx and dy values upon the running of the optical_measurements() function
+
+  angle_turned = 90 / 128 * roverUnity.dx; // TODO:test that this is working e.g. signs and stuff!
+
+  return angle_turned;
+};
