@@ -1,4 +1,3 @@
-
 /******************************************************************************
 TestRun.ino
 TB6612FNG H-Bridge Motor Driver Example code
@@ -83,9 +82,9 @@ private:
 
     //let's initialise the PD constants
 
-    Kd = 1;
+    Kd = 0.1;
 
-    Kp = 1;
+    Kp = 0.1;
 
     // corrigate path if needed
 
@@ -203,19 +202,19 @@ public:
   // NOTE: this function is open-loop, do not use in production!
   void turn(bool turnLeft)
   {
-    int speed = 3;
+    int speed = 150;
 
     if (turnLeft)
-    {
-      motorLeft.drive(-speed, 1);
-
-      motorRight.drive(speed, 1);
-    }
-    else
     {
       motorLeft.drive(speed, 1);
 
       motorRight.drive(-speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(-speed, 1);
+
+      motorRight.drive(speed, 1);
     }
   };
 
