@@ -18,10 +18,12 @@ void setup()
 void loop()
 {
 
+    optical_measurements();
+
     if (driveUnity.coord_y < 100)
     {
 
-        driveUnity.forward(5);
+        driveUnity.turn(90,true);
     }
     else
     {
