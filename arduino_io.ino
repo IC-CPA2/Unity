@@ -46,7 +46,7 @@ void loop(){
   int buildingcount = 1;
   int buildingdist = 0;
 
-  for(int i=0; i<10000; i++){
+  for(int i=0; i<5000; i++){
     
     SPI.beginTransaction(settings);
     digitalWrite(VSPI_SS, LOW);
@@ -103,30 +103,41 @@ void loop(){
   int pinkdistf = 2670/(pinkdist/pinkcount);
   int bluedistf = 2670/(bluedist/bluecount);
   int maindistf = 1000;
+
   
-  if((pinkdistf < 40) && (reddistf < 40)){
+  Serial.print("red");
+  Serial.println(redcount);
+  Serial.print("orange");
+  Serial.println(orangecount);
+  Serial.print("pink");
+  Serial.println(pinkcount);
+  Serial.print("blue");
+  Serial.println(bluecount);
+  
+  
+  if((pinkdistf < 60) && (reddistf < 60) && redcount>orangecount && redcount * 3 > pinkcount){
     Serial.println("Red Ball");
     Serial.print(pinkdistf);
     Serial.println(" cm");
     Serial.println(redpos/redcount);
     maindistf = pinkdistf;
   }
-  else if(pinkdistf < 40 && pinkdistf > 5){
+  else if(pinkdistf < 60 && pinkdistf > 5){
     Serial.println("Pink Ball");
     Serial.print(pinkdistf);
     Serial.println(" cm");
     Serial.println(pinkpos/pinkcount);
     maindistf = pinkdistf;
   }
-  else if(orgdistf < 50){
+  else if(orgdistf < 60 && orangecount > 5){
     Serial.println("Orange Ball");
     Serial.print(orgdistf);
     Serial.println(" cm");
     Serial.println(orgpos/orangecount);
     maindistf = orgdistf;
   }
-  else if(bluedistf < 50){
-    Serial.println("Blue Ball");
+  else if(bluedistf < 60 && bluecount > 20){
+    Serial.println("Blue Ball or No Ball");
     Serial.print(bluedistf);
     Serial.println(" cm");
     Serial.println(bluepos/bluecount);
