@@ -1,15 +1,20 @@
-    {% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
-    {% load static %} <img id="question" src="{% static "blog/media/question.png" %}" alt="question" height="0" width="0" />
+    {% load static %} <img id="terrain" src="{% static "blog/media/terrain.png" %}" alt="terrain" height="0" width="0" />
+    {% load static %} <img id="question" src="{% static "blog/media/questions.png" %}" alt="question" height="0" width="0" />
     {% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
     {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
     {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
     {% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
     {% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
     {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
-    {% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
     {% load extras %}
 
     <style>
+        body{
+            background-image: url("/static/blog/media/bgabout.jpg") ;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
         .grid-container {
             display: grid;
             grid-template-columns: auto auto auto auto auto auto;
@@ -23,6 +28,7 @@
             text-align: center;
             padding: 10px 0;
             font-size: 20px;
+            font-family: "Courier New", monospace;
         }
         
         .item4 {
@@ -133,21 +139,21 @@
 
     <div class="grid-container">
 
-        <body style="background-color:#98d696;">
-        </body>
+        <!-- <body style="background-color:#98d696;">
+        </body> -->
         
         <div class="item1">
-            Wifi Status:
+            <b>Wifi Status:</b>
             <br>
-            <br>
+  
             {% if wifis == "0" or wifis == "1" or wifis == "2" %}
-                {% load static %} <img id="none" src="{% static "blog/media/none.png" %}" alt="wifibad" height="90" width="100" />
+                {% load static %} <img id="none" src="{% static "blog/media/dinobk.png" %}" alt="wifibad" height="150" width="150" />
             {% elif wifis == "3" or wifis == "4" %}
-                {% load static %} <img id="weak" src="{% static "blog/media/weak.png" %}" alt="wifiok" height="90" width="100" />
+                {% load static %} <img id="weak" src="{% static "blog/media/wifibad.png" %}" alt="wifiok" height="150" width="150" />
             {% elif wifis == "5" or wifis == "6" or wifi == "7" %}
-                {% load static %} <img id="mid" src="{% static "blog/media/mid.png" %}" alt="wifimid" height="90" width="100" />
+                {% load static %} <img id="mid" src="{% static "blog/media/wifimid.png" %}" alt="wifimid" height="150" width="150" />
             {% elif wifis == "8" or wifis == "9" or wifis == "10" %}
-                {% load static %} <img id="good" src="{% static "blog/media/good.png" %}" alt="wifigood" height="90" width="100" />
+                {% load static %} <img id="good" src="{% static "blog/media/wifigood.png" %}" alt="wifigood" height="150" width="150" />
             {% endif %}
 
         </div>
@@ -156,7 +162,8 @@
         </div>
         <div class="item3">
             <form>
-            <h5>Mode</h5>
+            <b>Mode</b>
+            <br><br>
             <form action="" method="post">
                 {% csrf_token %}
                 <select name="modes" id="modes">
@@ -202,16 +209,6 @@
                     </div>
                 </div>
 
-
-
-
-
-
-
-
-
-
-
                 <!-- {% csrf_token %}
                 <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
                 <input type="text" id="dist" name="dist" value="0"><br>
@@ -248,15 +245,15 @@
         <div class="item6">
             <form action="" method="post">
                 {% csrf_token %}
-                <label for="map_name"> Save Map As: </label><br><br>
+                <label for="map_name"> <b> Save Map As: </b> </label><br><br>
                 <input type="text" id="map_name" required> 
                 <br>
                 <br>
                 <input type="submit" value="Submit">
             </form>
         </div>
-        <div class="item7">7
-        </div>
+        <!-- <div class="item7">7
+        </div> -->
         <div class="item8" id = "gridmap">
             {% for i in counter %}
                 {% for j in counter %}
@@ -273,7 +270,7 @@
                         console.log({{i}}{{j}})
                         var ctx = c.getContext("2d");
                         var img = document.getElementById("question");
-                        ctx.drawImage(img,5,10,35,25);
+                        ctx.drawImage(img,12,12,25,25);
                     </script>
                         {% if aliens|index:i|index:j == 0 %}
                             <script>
@@ -387,7 +384,7 @@
                 }
             </script>
         </div>  
-        <div class="item9">
+        <!-- <div class="item9">
             9
         </div>
         <div class="item10">
@@ -410,7 +407,7 @@
         </div>
         <div class="item11">11</div>
         <div class="item12">12</div>
-        <div class="item13">13</div>
+        <div class="item13">13</div> -->
 
         <script>
             window.setInterval('refresh()', 3000); 	// Call a function every 10000 milliseconds (OR 10 seconds).

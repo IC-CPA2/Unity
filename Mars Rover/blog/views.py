@@ -220,8 +220,11 @@ def about(request):
     return render(request, 'blog/about.html', context)
 
 def login(request):
-    password = request.POST['last']
-    if hashlib.sha256(password.encode('utf-8')).hexdigest() == 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f':
+    password = request.POST['psw']
+    username = request.POST['uname']
+    if username == 'ccl19' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '08c368c45b3e8d0c6ddc111a564f05dac269f1b1623ac4989b94b8d577d85d19':
+        return redirect('/about')
+    elif username == 'yscamy' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '65123d9463c1fa5535e014bfaf9c551481b1b4d227b587b917ca9f05c8edc778':
         return redirect('/about')
     else:
         return redirect('/')

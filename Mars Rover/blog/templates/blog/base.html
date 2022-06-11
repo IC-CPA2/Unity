@@ -1,23 +1,31 @@
-<center>
-<h1>MARS ROVER 1.1</h1>
-<form action="login/" method="post">
-{% csrf_token %}
-CODE<br>
-<input name="last" required>
-<br><br>
-<input type="submit" value="Submit">
+<!DOCTYPE html>
+<html>
+<head>
 
-<script>
-  window.setInterval('refresh()', 10000); 	
-  // Call a function every 10000 milliseconds 
-  // (OR 10 seconds).
-
-  // Refresh or reload page.
-  function refresh() {
-      window .location.reload();
+<style>
+  body{
+    background-image: url("/static/blog/media/bg.jpg") ;
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: "Courier New", monospace;
   }
-</script>
+</style>
+</head>
 
+<body>
+  <center>
+    <h1>MARS ROVER 1.2</h1>
+    <form action="login/" method="post">
+      {% csrf_token %}
+      <label for="uname"><b>Username:</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+      <br>
+      <br>
+      <label for="psw"><b>Password:</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+      <br><br>
+      <input type="submit" value="Submit">
+    </form>
 
-</center>
-
+  </center>
+</body>

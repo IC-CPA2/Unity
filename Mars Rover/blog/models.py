@@ -4,6 +4,7 @@ from django.utils import timezone
 
 # Create your models here.
 class map_info(models.Model):
+    map_name = models.CharField(max_length=100)
     map_id = models.IntegerField(primary_key=True)
     map_size = models.CharField(max_length=50)
     date_time = models.DateTimeField(default=timezone.now)
