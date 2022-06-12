@@ -3,20 +3,22 @@
 
 <table border='1'>
     <tr>
-      <th>Map_ID</th>
+      <th>Map ID</th>
+      <th>Map Name</th>
       <th>Date</th>
-      <th>Map_Size</th>
+      <th>Map Size</th>
     </tr>
     {% for x in posts %}
       <tr>
         <td>{{ x.map_id }}</td>
-          <td>{{ x.date_time }}</td>
+        <td>{{ x.map_name }}</td>
+        <td>{{ x.date_time }}</td>
         <td>{{ x.map_size }}</td>
       </tr>
     {% endfor %}
   </table>
 
-  <form action="/members/search" method="POST">
+  <form action="/members/search" method="GET">
     {% csrf_token %}
     <br>
     <label for="map">Map ID:</label><br>

@@ -243,10 +243,10 @@
             <!-- <button type="button" onclick="refreshMap()">Request data</button> -->
         </div>
         <div class="item6">
-            <form action="" method="post">
+            <form action="/about/distance" method="post">
                 {% csrf_token %}
                 <label for="map_name"> <b> Save Map As: </b> </label><br><br>
-                <input type="text" id="map_name" required> 
+                <input type="text" id="map_name" name="map_name" required> 
                 <br>
                 <br>
                 <input type="submit" value="Submit">

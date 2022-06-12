@@ -9,7 +9,7 @@ from django.db.models import Count
 
 # Create your views here.
 def members_list_(request):
-    posts = map_info.objects.all().values('map_id','date_time','map_size')
+    posts = map_info.objects.all().values('map_id','date_time','map_size','map_name')
     # posts = pathHistory.objects.distinct('map_id')
 
     # test = posts.only('map_id')
@@ -21,8 +21,8 @@ def members_list_(request):
     return render(request, 'output.html',{'posts':posts})
 
 def query(request):
-    if request.method == 'POST':
-        search_id = request.POST["mapid"]
+    if request.method == 'GET':
+        search_id = request.GET["mapid"]
 
         grid = """<body style="background-color:#B5F0C4;">
                  </body>

@@ -1,3 +1,5 @@
+from audioop import minmax
+from tkinter import Y
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import HttpResponse
@@ -8,7 +10,7 @@ from django.db import connection
 from django.db.models import Q
 from django.db.models import Count
 import os
-from members.models import live_database, map_info
+from members.models import live_database, map_info, all_info
 
 import hashlib
 
@@ -288,10 +290,10 @@ def distance(request):
             print("AFTER")
             filt_cond = live_database.objects.get(last_visited=1)
             rover_pos = filt_cond.tile_num
-            rover_posx = str(rover_pos)[0:2]
-            rover_posx = int(rover_posx)
-            rover_posy = str(rover_pos)[2:4]
+            rover_posy = str(rover_pos)[0:2]
             rover_posy = int(rover_posy)
+            rover_posx = str(rover_pos)[2:4]
+            rover_posx = int(rover_posx)
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
@@ -409,8 +411,7 @@ def distance(request):
     wifi = w.readline()
     w.close()
     
-    if request.method == 'POST':
-
+    if 'angle' in request.POST:
         direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
         direction_path = direction_path.replace("\\","/")
 
@@ -435,7 +436,70 @@ def distance(request):
         # distance = 0
         # angle = 0
         # direc.close()
+
+    if 'map_name' in request.POST: 
+        name = request.POST['map_name']
+        print("map_name:", name)
+
+        maxx = 0
+        maxy = 0
+        minx = 100
+        miny = 100
+        tile_numarr =[]
+
+        tile = live_database.objects.values_list('tile_num')
+        for i in tile:
+            y = str(i)[2:4]
+            y = int(y)
+            x = str(i)[4:6]
+            x = int(x)
+            tile_numarr.append(str(y)+str(x))
+            
+
+            print (y,x)
+
+            if x > maxx:
+                maxx = x
+            if y > maxy:
+                maxy = y
+            if x < minx:
+                minx = x
+            if y < miny:
+                miny = y
         
+        # print (maxy)
+        # print (miny)
+        sizex = maxx-minx+1
+        sizey = maxy-miny+1
+        # print ("size:", sizex, sizey)
+
+        size = str(sizex) + "x" + str(sizey)
+
+        unique = map_info.objects.filter(map_name=str(name))
+
+        if len(unique) == 0:
+            new = map_info(map_name=name,map_size=size)
+            new.save()
+            mapid = new.map_id
+                    
+        else:
+            rename = map_info.objects.get(map_name=str(name))
+            rename.map_size = size
+            mapid = rename.map_id
+            rename.save()
+            
+        
+        for i in range(miny,maxy):
+            for j in range(minx,maxx):
+                key = str(i)+str(j)
+                if key in tile_numarr:
+                    tile = live_database.objects.get(tile_num=key)
+                    new_tile = all_info(tile_number=key,tile_info=tile.tile_info,map_id_id=mapid)
+                else:
+                    new_tile = all_info(tile_number=key,tile_info="U",map_id_id=mapid)
+                new_tile.save()   
+            # print(rename.map_name)
+            
 
     directionFile = []
     direction = []

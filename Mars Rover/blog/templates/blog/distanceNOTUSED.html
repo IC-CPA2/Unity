@@ -1,0 +1,365 @@
+{% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
+{% load static %} <img id="question" src="{% static "blog/media/question.png" %}" alt="question" height="0" width="0" />
+{% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
+{% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
+{% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
+{% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
+{% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
+{% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+{% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
+{% load extras %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto auto auto;
+        gap: 10px;
+        background-color: #ffffff00;
+        padding: 10px;
+    }
+
+    .grid-container > div {
+        background-color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        padding: 20px 0;
+        font-size: 20px;
+    }
+    
+    .item4 {
+        height: 150px;
+    }
+
+    .item8 {
+        grid-area: 1 / 2 / 5 / 6;
+    }
+    .item10 {
+        grid-area: 5 / 1 / 5 / 3;
+    }
+
+    .item9 {
+        grid-area: 4 / 6 / 6 / 6;
+        font-size: 20px;
+    }
+
+    .buttons{
+        margin: auto auto;
+        display:grid;
+        grid-template-columns: 50px 50px 50px;
+        grid-row: 50px 50px;
+        grid-column-gap: 20px;
+        grid-row-gap: 20px;
+        padding-top: 10%;
+        padding-left: 10%;
+    }
+    .buttonup{
+        grid-column: 2 / span 1;
+        grid-row: 1 / span 1;
+    }
+
+    .buttondown{
+
+        grid-column: 2 / span 1;
+        grid-row: 2 / span 1;
+    }
+
+    .buttonleft{
+        grid-column: 1 / span 1;
+        grid-row: 2 / span 1;
+    }
+    .buttonright{
+        grid-column: 3 / span 1;
+        grid-row: 2 / span 1;
+    }
+
+    .slidecontainer {
+        width: 100%; /* Width of the outside container */
+        padding-top: 5%;
+        padding-bottom: 5%;
+    }
+
+    /* The slider itself */
+    .slider {
+        -webkit-appearance: none;  /* Override default CSS styles */
+        appearance: none;
+        width: 100%; /* Full-width */
+        height: 25px; /* Specified height */
+        background: #d3d3d3; /* Grey background */
+        outline: none; /* Remove outline */
+        opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+        -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+        transition: opacity .2s;
+    }
+
+    /* Mouse-over effects */
+    .slider:hover {
+        opacity: 1; /* Fully shown on mouse-over */
+    }
+
+    /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none; /* Override default look */
+        appearance: none;
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: #04AA6D; /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    .slider::-moz-range-thumb {
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: #04AA6D; /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    .scrollbox {
+        height:150px;
+        width:auto;
+        border:1px solid #ccc;
+        overflow:auto;
+        text-align: left;
+    }
+
+    .myProgress{
+        width: 100%;
+        background-color: #c1c1c1;
+    }
+                
+    .myBar{
+        width: 0%;
+        height: 30px;
+        background-color: #F05760;
+    }
+    
+</style>
+
+<div class="grid-container">
+
+    <body style="background-color:#B5F0C4;">
+    </body>
+    
+    <div class="item1">
+        Wifi Status:
+        <br>
+        {% if wifis == "0" or wifis == "1" or wifis == "2" %}
+            {% load static %} <img id="none" src="{% static "blog/media/none.png" %}" alt="wifibad" height="100" width="110" />
+        {% elif wifis == "3" or wifis == "4" %}
+            {% load static %} <img id="weak" src="{% static "blog/media/weak.png" %}" alt="wifiok" height="100" width="110" />
+        {% elif wifis == "5" or wifis == "6" or wifi == "7" %}
+            {% load static %} <img id="mid" src="{% static "blog/media/mid.png" %}" alt="wifimid" height="100" width="110" />
+        {% elif wifis == "8" or wifis == "9" or wifis == "10" %}
+            {% load static %} <img id="good" src="{% static "blog/media/good.png" %}" alt="wifigood" height="100" width="110" />
+        {% endif %}
+
+    </div>
+    <div class="item2">{% load static %} <img id="logo" src="{% static "blog/media/mars_logo.png" %}" alt="logo" height="100" width="100" />
+    </div>
+    <div class="scrollbox">
+        3
+        <!-- <font size="5"> Log: </font>
+        <br>
+        {% for i in directions %}
+            {{i}}
+            <br>
+        {% endfor %} -->
+    </div>
+    <div class="item4">
+        <form>
+        <h5>Mode</h5>
+        <form method="post">
+        {% csrf_token %}
+            <select name="modes" id="modes">
+                <option value="Manual">Manual</option>
+                <option value="Discovery">Discovery</option>
+                <option value="Autonomous">Autonomous</option>
+            </select>
+            <br>
+            <br>
+        <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="item5"><br>
+        <button type="button" onclick="resetMap()">Reset</button>
+        <br>
+        <br>
+        <button onclick="location.href = '/members'"> View database</button>
+        <br>
+        <br>
+        <button onClick="window.location.reload();">Refresh</button>
+    </div>
+    <div class="item6">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
+            <input type="text" id="dist" name="dist" value="0"><br>
+            <div class="slidecontainer">
+                <input type="range" min="0" max="360" value="0" id="myRange" step="45" name="angle">
+                <br><font size="3"> <span id="slide"></span>º </font>
+            </div>
+            <input type="submit" value="Submit" onclick="refreshMap()">
+
+            <script>
+                var slider = document.getElementById("myRange");
+                var output = document.getElementById("slide");
+                output.innerHTML = slider.value; // Display the default slider value
+            
+                // Update the current slider value (each time you drag the slider handle)
+                slider.oninput = function() {
+                output.innerHTML = this.value;
+                }    
+            </script>
+        </form>
+    </div>
+    <div class="item7">7
+    </div>
+    <div class="item8" id = "gridmap">
+        {% for i in counter %}
+            {% for j in counter %}
+                <canvas id={{i}}{{j}} width="50" height="50"
+                    style="border:0.5px solid #000000;">
+                </canvas>
+
+                <script>
+                    var c = document.getElementById({{i}}{{j}});
+                    var ctx = c.getContext("2d");
+                    var img = document.getElementById("terrain");
+                    ctx.drawImage(img,0,0,50,50);
+                    var c = document.getElementById({{i}}{{j}});
+                    var ctx = c.getContext("2d");
+                    var img = document.getElementById("question");
+                    ctx.drawImage(img,0,5,50,40);
+                </script>
+                    {% if aliens|index:i|index:j == 0 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("pink");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 3 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("green");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 4 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("blue");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 5 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("red");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 6 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("orange");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 2 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("rover");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% elif aliens|index:i|index:j == 7 %}
+                        <script>
+                            var c = document.getElementById({{i}}{{j}});
+                            var ctx = c.getContext("2d");
+                            var img = document.getElementById("terrain");
+                            ctx.drawImage(img,0,0,50,50);
+                        </script>
+                    {% endif %}
+            {% endfor %}
+            <br>
+        {% endfor %}
+        <script>
+            function resetMap(){
+                for (i = 1; i<10; i++){
+                    for (j = 1; j<10; j++){
+                        let va= i.toString()+j.toString()
+                        console.log(va)
+                        var c = document.getElementById(i.toString()+j.toString());
+                        var ctx = c.getContext("2d");
+                        var img = document.getElementById("terrain");
+                        ctx.drawImage(img,0,0,50,50);
+                    }
+                }
+                var c = document.getElementById("55");
+                var ctx = c.getContext("2d");
+                var img = document.getElementById("rover");
+                ctx.drawImage(img,0,0,50,50);
+        }
+        </script>
+    </div>  
+    <div class="item9">
+        <h5>Save Map</h5>
+        <form action="" method="post">
+            <label for="map_name"> Save As: </label><br><br>
+            <input type="text" id="map_name" required> 
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="item10">
+        <style>
+            #myProgress{
+                width: 100%;
+                background-color: #c1c1c1;
+            }
+                
+            #myBar{
+                width: {{battery}};
+                height: 30px;
+                background-color: #F05760;
+            }
+        </style>
+        <font size="3"> Battery Level: </font>
+        <div id="myProgress">
+        <div id="myBar"> {{battery}} </div>
+        </div> 
+    </div>
+    <div class="item11">11</div>
+    <div class="item12">12</div>
+    <div class="item13">13</div>
+
+    <script>
+        window.setInterval('refresh()', 5000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+
+        // Refresh or reload page.
+        function refresh() {
+            window .location.reload();
+        }
+    </script>

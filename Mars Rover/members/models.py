@@ -4,6 +4,7 @@ from django.utils import timezone
 # Create your models here.
 class map_info(models.Model):
     map_id = models.AutoField(primary_key=True)
+    map_name = models.CharField(max_length=50)
     map_size = models.CharField(max_length=50)
     date_time = models.DateTimeField(default=timezone.now)
     def _str_(self):
@@ -12,7 +13,7 @@ class map_info(models.Model):
 class all_info(models.Model):
     map_id = models.ForeignKey('map_info',on_delete=models.CASCADE)
     path = models.CharField(max_length=600)#designed to store the whole long path. 
-    tile_number = models.IntegerField()
+    tile_number = models.CharField(max_length=50, primary_key=True)
     tile_info = models.CharField(max_length=50)
 
 class live_database(models.Model):
