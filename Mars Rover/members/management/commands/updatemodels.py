@@ -63,14 +63,14 @@ class Command(BaseCommand):
 
 
 
-        insert_vals = live_database(tile_num="3939",tile_info="T",last_visited=0)
-        insert_vals.save()
-        ins_valst = live_database(tile_num="4040",tile_info="PA",last_visited=0)
-        ins_valst.save()
-        ins_th = live_database(tile_num="4639",tile_info="OA",last_visited=0)
-        ins_th.save()
-        ins_valst = live_database(tile_num = "4039",tile_info="T",last_visited=1)
-        ins_valst.save()
+        # insert_vals = live_database(tile_num="3939",tile_info="T",last_visited=0)
+        # insert_vals.save()
+        # ins_valst = live_database(tile_num="4040",tile_info="PA",last_visited=0)
+        # ins_valst.save()
+        # ins_th = live_database(tile_num="4639",tile_info="OA",last_visited=0)
+        # ins_th.save()
+        # ins_valst = live_database(tile_num = "4039",tile_info="T",last_visited=1)
+        # ins_valst.save()
             # insert_vals2 = live_database(tile_num="44",tile_info="T",last_visited=1)
             # insert_vals2.save()
             # insert_vals3 = live_database(tile_num="12",tile_info="PA",last_visited=0)
@@ -106,7 +106,7 @@ class Command(BaseCommand):
         # change.save()
 
         #can be responsible for wiping databases. 
-        # print("AFTER",live_database.objects.all().values())
+        print("AFTER",live_database.objects.all().values())
     
 
 
