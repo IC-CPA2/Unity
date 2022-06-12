@@ -487,18 +487,24 @@ def distance(request):
             rename.map_size = size
             mapid = rename.map_id
             rename.save()
-            
+
+        last_vis = live_database.objects.get(last_visited=1)  
         
-        for i in range(miny,maxy):
-            for j in range(minx,maxx):
+        for i in range(miny,maxy+1):
+            for j in range(minx,maxx+1):
                 key = str(i)+str(j)
                 if key in tile_numarr:
                     tile = live_database.objects.get(tile_num=key)
-                    new_tile = all_info(tile_number=key,tile_info=tile.tile_info,map_id_id=mapid)
+                    if key == last_vis.tile_num: 
+                        new_tile = all_info(tile_number=key,tile_info="R",map_id_id=mapid)
+                    else:
+                        new_tile = all_info(tile_number=key,tile_info=tile.tile_info,map_id_id=mapid)
                 else:
                     new_tile = all_info(tile_number=key,tile_info="U",map_id_id=mapid)
+
                 new_tile.save()   
             # print(rename.map_name)
+        
             
 
     directionFile = []
