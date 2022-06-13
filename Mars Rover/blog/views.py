@@ -297,6 +297,7 @@ def distance(request):
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
+                    print(key)
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
                     rover_pos = filt_cond.tile_num

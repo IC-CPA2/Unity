@@ -145,101 +145,160 @@ def square_mapper(curr_coords,angle):
 s.bind(('0.0.0.0', 12000))
 s.listen(1)
 counter = 0
+test_funct = input("please input operation mode")
 try:
     while True:
         print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
         conn,address = s.accept()   
         iterator = len(live_database.objects.all())
-
         if iterator == 0:
-            insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
-            insert_vals.save()
-        curr_dir = os.getcwd()
-        file_path = curr_dir+"\\blog\\text_files\\distance.txt"
-        file_path = file_path.replace("\\","/")
-        f = open(file_path,"r")
-        #reading angle changes. 
-        # dist = int(f.readline())
-        ang_change = int(f.readline())#reads second line containing angle field. 
-        f.close()   
-        if counter == 0:
-            head_angle = str(ang_change)
-            counter+=1
-        else:
-            head_angle = str((int(head_angle)+ang_change)%360)
+          insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
+          insert_vals.save()
+        if test_funct == "M":
 
-        ##TCP protocols to send the values back will be used. 
-        print("stuff in database",live_database.objects.all().values())
-    
-        observed_tile = square_mapper(curr_sq,int(head_angle))
-        print(observed_tile)
-        cmsg = str(ang_change)
-        if cmsg == "0":
-          cmsg = "f"
-        elif cmsg == "45":
-          cmsg = "d"
-        elif cmsg == "90":
-          ###do we need to have -ve values? For angles instead of 0-270? 
-          ##Actually no need. I just need to convert to send right symbols. 
-          cmsg = "r"
-          #are you sure?
-        elif cmsg == "135":
-          cmsg = "a"
-        elif cmsg == "180":
-          cmsg = "b"
-        elif cmsg == "225":
-          cmsg = "x"
-        elif cmsg == "270":
-          cmsg == "r"
-        elif cmsg == "315":
-          cmsg = "y"
-          #is there an angle of 360?
-        print("Angle Facing",cmsg)
+          curr_dir = os.getcwd()
+          file_path = curr_dir+"\\blog\\text_files\\distance.txt"
+          file_path = file_path.replace("\\","/")
+          f = open(file_path,"r")
+          #reading angle changes. 
+          # dist = int(f.readline())
+          ang_change = int(f.readline())#reads second line containing angle field. 
+          f.close()   
+          if counter == 0:
+              head_angle = str(ang_change)
+              counter+=1
+          else:
+              head_angle = str((int(head_angle)+ang_change)%360)
 
-        #THE HEAD ANGLE SHOULD BE WRITTEN INTO THE TABLE.
+          ##TCP protocols to send the values back will be used. 
+      
+          observed_tile = square_mapper(curr_sq,int(head_angle))
+          print(observed_tile)
+          cmsg = str(ang_change)
+          if cmsg == "0":
+            cmsg = "f"
+          elif cmsg == "45":
+            cmsg = "d"
+          elif cmsg == "90":
+            ###do we need to have -ve values? For angles instead of 0-270? 
+            ##Actually no need. I just need to convert to send right symbols. 
+            cmsg = "r"
+            #are you sure?
+          elif cmsg == "135":
+            cmsg = "a"
+          elif cmsg == "180":
+            cmsg = "b"
+          elif cmsg == "225":
+            cmsg = "x"
+          elif cmsg == "270":
+            cmsg == "r"
+          elif cmsg == "315":
+            cmsg = "y"
+            #is there an angle of 360?
+          print("Angle Facing",cmsg)
 
-        # cmsg = cmsg.decode();
-        conn.send(cmsg.encode())                
-        # print("Maintaining connection")
-        content = conn.recvfrom(32)[0]
-        content = content.decode()
-        if content=="XX":
-            break
-        else:
-            print("Client Sent",content)
-        all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
-        coords = all_info[0].split(",") #gives x and y coordinates
-        curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
-        #send back as current values the X,Y values. 
-        temp_dict = {}
-        temp_dict[1] = all_info[1][:-1]
-        temp_dict[2] = all_info[2][:-1]
-        temp_dict[3] = all_info[3][:-1]
-        temp_dict[4] = all_info[4][:-1]
-        print("debugging",temp_dict)
+          #THE HEAD ANGLE SHOULD BE WRITTEN INTO THE TABLE.
 
-        new_squares = square_mapper(curr_sq,int(head_angle))
-        ##This obtains the new mapping with a set of arrays for new squares. 
-        old_last_sq = live_database.objects.get(last_visited=1)
-        old_last_sq.last_visited = 0
-        old_last_sq.save()
-        new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
-        new_sq.save()#apply the new last square.
+          # cmsg = cmsg.decode();
+          conn.send(cmsg.encode())                
+          # print("Maintaining connection")
+          content = conn.recvfrom(32)[0]
+          content = content.decode()
+          if content=="XX":
+              break
+          else:
+              print("Client Sent",content)
+          all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
+          coords = all_info[0].split(",") #gives x and y coordinates
+          curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
+          #send back as current values the X,Y values. 
+          temp_dict = {}
+          temp_dict[1] = all_info[1][:-1]
+          temp_dict[2] = all_info[2][:-1]
+          temp_dict[3] = all_info[3][:-1]
+          temp_dict[4] = all_info[4][:-1]
+          print("debugging",temp_dict)
 
-        for i in range(0,4):
-            #loop from 1-4 inclusive.
-            check_db = live_database.objects.filter(tile_num=new_squares[i]) 
-            if len(check_db)==0:
-              make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
-              print(make_new_tile)
-              make_new_tile.save()
-            else:
-              new_save = live_database.objects.get(tile_num=new_squares[i])
-              new_save.tile_info = temp_dict[i+1]
-              new_save.save()
+          new_squares = square_mapper(curr_sq,int(head_angle))
+          ##This obtains the new mapping with a set of arrays for new squares. 
+          old_last_sq = live_database.objects.get(last_visited=1)
+          old_last_sq.last_visited = 0
+          old_last_sq.save()
+          new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
+          new_sq.save()#apply the new last square.
+
+          for i in range(0,4):
+              #loop from 1-4 inclusive.
+              check_db = live_database.objects.filter(tile_num=new_squares[i]) 
+              if len(check_db)==0:
+                make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+                print(make_new_tile)
+                make_new_tile.save()
+              else:
+                new_save = live_database.objects.get(tile_num=new_squares[i])
+                new_save.tile_info = temp_dict[i+1]
+                new_save.save()
               # check_db.tile_info = temp_dict[i+1]
               # check_db.save()
-        
+        else:
+          # print("BOTTOM LOOP")
+          cmsg = "A"
+          conn.send(cmsg.encode())                
+          # print("Maintaining connection")
+          content = conn.recvfrom(32)[0]
+          content = content.decode()
+          if content=="XX":
+              break
+          else:
+              # print("Client Sent",content)
+              pass
+          all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
+          coords = all_info[0].split(",") #gives x and y coordinates
+          curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
+          #send back as current values the X,Y values. 
+          temp_dict = {}
+          temp_dict[1] = all_info[1][:-1]
+          temp_dict[2] = all_info[2][:-1]
+          temp_dict[3] = all_info[3][:-1]
+          temp_dict[4] = all_info[4][:-1]
+          temp_dict[5] = all_info[5]
+
+          # print("debugging",temp_dict)
+          angle = temp_dict[5]
+          # print("debug: ",angle)
+          print(temp_dict[5])
+          print(curr_sq)
+
+          new_squares = square_mapper(curr_sq,int(angle))
+          ##This obtains the new mapping with a set of arrays for new squares. 
+          old_last_sq = live_database.objects.get(last_visited=1)
+          old_last_sq.last_visited = 0
+          old_last_sq.save()
+          print("run code")
+          checker = live_database.objects.filter(tile_num=curr_sq)
+          if len(checker) == 0:
+            print("CHECK DEBUGGER")
+            new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
+            new_sq.save()#apply the new last square.
+          else:
+            print("ELESE CHECKER")
+            sel_vals = live_database.objects.get(tile_num=curr_sq)
+            sel_vals.last_visited=1
+            sel_vals.save()
+
+          for i in range(0,4):
+              #loop from 1-4 inclusive.
+              check_db = live_database.objects.filter(tile_num=new_squares[i]) 
+              if len(check_db)==0:
+                make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+                print(make_new_tile)
+                make_new_tile.save()
+              else:
+                new_save = live_database.objects.get(tile_num=new_squares[i])
+                new_save.tile_info = temp_dict[i+1]
+                new_save.save()
+
+
         # if content == "T":
         #     curr_sq = observed_tile
         #     old_last_sq = live_database.objects.get(last_visited=1)
