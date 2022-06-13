@@ -41,8 +41,8 @@ const int offsetB = 1;  // motor left
 // motors as you have memory for.  If you are using functions like forward
 // that take 2 motors as arguements you can either write new functions or
 // call the function more than once.
-Motor motorRight = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
-Motor motorLeft = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
+Motor motorLeft = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
+Motor motorRight = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 // for storing speed values
 
@@ -52,13 +52,13 @@ struct speed
 };
 
 // definition of the motor class
-// defnition
 class Motors
 {
 
 private:
   double last_heading_error = 0;
-  double Kd, Kp, KD, correction;
+  double cumulative_error = 0;
+  double Kd, Kp, KD, correction, motor_proportionality, normalised_speed;
 
   typedef struct speed MotorSpeeds;
 
@@ -70,19 +70,22 @@ private:
   }
 
   // the input error here has to be the total_x_translation during straight drive
-  MotorSpeeds speed_straightness_control(int speed, double error)
+  MotorSpeeds speed_straightness_control(int speed, double current_error)
   {
-    Serial.println("straightness is controlled, the error is:");
-    Serial.println(error);
-    Serial.println("----------");
 
     MotorSpeeds speeds;
+
+    // adjust constant to model power differences between motor left and right
+
+    motor_proportionality = 0.92;
 
     // let's initialise the PD constants
 
     Kd = 0.1;
 
     Kp = 0.1;
+
+    cumulative_error = 0.5 * cumulative_error + current_error;
 
     // corrigate path if needed
 
@@ -92,44 +95,51 @@ private:
 
     // PD controller
 
-    KD = (error - last_heading_error) * speed;
+    Serial.println("straightness is controlled, the error is:");
+    Serial.println(current_error);
 
-    correction = Kd * KD + Kp * error;
+    Serial.println("Cumulative error:");
+    Serial.println(cumulative_error);
+    Serial.println("----------");
 
-    if (error < 0)
+    KD = (cumulative_error - last_heading_error) * speed / 255;
+
+    correction = Kd * KD + Kp * current_error;
+
+    if (cumulative_error < 0)
     {
 
       // speeds.left = corrigation * speed;
       speeds.left = speed + correction;
-      speeds.right = speed;
+      speeds.right = motor_proportionality * speed;
     }
-    else if (error > 0)
+    else if (cumulative_error > 0)
     {
 
       speeds.left = speed;
       // speeds.right = corrigation * speed;
-      speeds.right = speed + correction;
+      speeds.right = motor_proportionality * speed + correction;
     }
     else
     {
 
       speeds.left = speed;
-      speeds.right = speed;
+      speeds.right = motor_proportionality * speed;
     }
 
-    last_heading_error = error;
+    last_heading_error = cumulative_error;
 
     return speeds;
   }
 
-  void drive_straight(int speed, int duration, double error)
+  void drive_straight(int speed, int duration, double current_error)
   {
 
     MotorSpeeds speeds;
     // the input error here has to be the total_x_translation during straight drive
-    Serial.println("speed is controlled, the error is:");
-    Serial.println(error);
-    speeds = speed_straightness_control(speed, error);
+    // Serial.println("speed is controlled, the error is:");
+    // Serial.println(current_error);
+    speeds = speed_straightness_control(speed, current_error);
 
     // Use of the drive function which takes as arguements the speed
     // and optional duration.  A negative speed will cause it to go
@@ -145,6 +155,11 @@ private:
 
     motorLeft.brake();
     motorRight.brake();
+
+    // reset cumulative error
+
+    cumulative_error = 0;
+
     // conversion from angle to duration
 
     int turning_prop = 12.6;
@@ -175,7 +190,7 @@ public:
   double error;
 
   // method to move forward
-  void forward(int speed, double error)
+  void forward(int speed, double current_error)
   {
     int duration = 10; // default value
 
@@ -184,7 +199,7 @@ public:
     // generate duration to control the motors
     duration = convert_to_duration(distance, speed);
 
-    drive_straight(speed, duration, error);
+    drive_straight(speed, duration, current_error);
   }
 
   // method to brake
@@ -198,7 +213,7 @@ public:
   // NOTE: this function is open-loop, do not use in production!
   void turn(bool turnLeft)
   {
-    int speed = 150;
+    int speed = 70;
 
     if (turnLeft)
     {

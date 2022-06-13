@@ -17,18 +17,22 @@ void setup()
 
 void loop()
 {
+    delay(50);
+    // optical_measurements();
+    // Serial.println("Forward distance:");
+    // Serial.println(driveUnity.coord_y);
 
-    optical_measurements();
-
-    if (driveUnity.coord_y < 100)
+    if (driveUnity.coord_y < 200000)
     {
 
-        driveUnity.turn(90,true);
+        driveUnity.forward(3);
     }
     else
     {
-
+        driveUnity.turn(90, true);
         driveUnity.brake();
+        Serial.println("Heading angle");
+        Serial.println(roverUnity.head_angle);
     }
 }
 

@@ -252,11 +252,17 @@ void calc_abs_coords()
 
   int dx = roverUnity.dx;
   int dy = roverUnity.dy;
+
+  Serial.println("Rover dx:");
+  Serial.println(dx);
+  Serial.println("Rover dy");
+  Serial.println(dy);
+
   int head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
 
-  roverUnity.pos_x = sin(head_angle_radians) + roverUnity.pos_x;
+  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
 
-  roverUnity.pos_y = cos(head_angle_radians) + roverUnity.pos_y;
+  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
 
   // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
 };
@@ -313,7 +319,6 @@ void optical_measurements()
   Serial.println(')');
 
   // Serial.println(md.max_pix);
-  delay(100);
 
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
@@ -326,31 +331,22 @@ void optical_measurements()
 
   Serial.print('\n');
 
-  Serial.println("Coordinate_x = " + String(roverUnity.pos_x));
+  Serial.println("position x = " + String(roverUnity.pos_x));
 
-  Serial.println("Coordinate_y = " + String(roverUnity.pos_y));
-   Serial.println("head angle = " + String(roverUnity.head_angle));
+  Serial.println("position y = " + String(roverUnity.pos_y));
   Serial.print('\n');
 
-
-
-  delay(50);
+  delay(500);
 
 #endif
 };
 
-
-
-void optical_distance_moved(){
+void optical_distance_moved()
+{
 
   optical_measurements();
 
   calc_abs_coords();
-
-
-
-
-
 };
 
 int optical_angle_turned()

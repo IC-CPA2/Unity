@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "..\\.."
+		},
+		{
+			"name": "driving_motor",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
