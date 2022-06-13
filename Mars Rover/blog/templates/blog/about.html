@@ -145,7 +145,6 @@
         <div class="item1">
             <b>Wifi Status:</b>
             <br>
-  
             {% if wifis == "0" or wifis == "1" or wifis == "2" %}
                 {% load static %} <img id="none" src="{% static "blog/media/dinobk.png" %}" alt="wifibad" height="150" width="150" />
             {% elif wifis == "3" or wifis == "4" %}
@@ -164,12 +163,11 @@
             <form>
             <b>Mode</b>
             <br><br>
-            <form action="" method="post">
-                {% csrf_token %}
-                <select name="modes" id="modes">
-                    <option value="Manual">Manual</option>
-                    <option value="Discovery">Discovery</option>
-                    <option value="Autonomous">Autonomous</option>
+            <form action="/about/distance" method="GET">
+                <select name="mode" id="mode">
+                    <option id = mode value="Manual">Manual</option>
+                    <option id = mode value="Discovery">Discovery</option>
+                    <option id = mode value="Autonomous">Autonomous</option>
                 </select>
                 <br>
                 <br>
@@ -230,16 +228,16 @@
                 </script> -->
             </form>
         </div>
-        <div class="item5"><br>
-            <button type="button" onclick="resetMap()">Reset</button>
-            <br>
-            <br>
+        <div class="item5">
+            <form action="/about/distance" method="GET">
+                <!-- {% csrf_token %} -->
+                <button name="reset" id="reset" value="1">Reset</button>
+            <!-- <button  onclick="resetMap()">Reset</button> -->
+            </form>
             <button onclick="location.href = '/members'"> View database</button>
             <br>
             <br>
             <button onClick="window.location.reload();">Refresh</button>
-            
-            <br>
             <!-- <button type="button" onclick="refreshMap()">Request data</button> -->
         </div>
         <div class="item6">
@@ -252,8 +250,6 @@
                 <input type="submit" value="Submit">
             </form>
         </div>
-        <!-- <div class="item7">7
-        </div> -->
         <div class="item8" id = "gridmap">
             {% for i in counter %}
                 {% for j in counter %}
@@ -350,25 +346,6 @@
                 <br>
             {% endfor %}
             <script>
-                function updateDiv(){ 
-                    $( "#gridmap" ).load(window.location.href + " #gridmap" );
-                }
-                function resetMap(){
-                    for (i = 1; i<10; i++){
-                        for (j = 1; j<10; j++){
-                            let va= i.toString()+j.toString()
-                            console.log(va)
-                            var c = document.getElementById(i.toString()+j.toString());
-                            var ctx = c.getContext("2d");
-                            var img = document.getElementById("terrain");
-                            ctx.drawImage(img,0,0,50,50);
-                        }
-                    }
-                    var c = document.getElementById("55");
-                    var ctx = c.getContext("2d");
-                    var img = document.getElementById("rover");
-                    ctx.drawImage(img,0,0,50,50);
-                }
 
                 function refreshMap (){
                     var xhttp = new XMLHttpRequest();
