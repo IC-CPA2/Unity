@@ -20,7 +20,7 @@ while True:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_name, server_port))
     msg = client_socket.recv(1024)
-    print("Client Head Angle, Current Square and Observing:",msg.decode())
+    print("Client Received Angle :",msg.decode())
 
     msg = input("Indicate Information from Square Observed: ");
 
