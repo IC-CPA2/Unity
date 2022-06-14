@@ -84,11 +84,11 @@ private:
 
     // let's initialise the PD constants
 
-    Kd = 1;
+    Kd = 0.5;
 
     Kp = 0.8;
 
-    Ki = 2;
+    Ki = 0.6;
 
     clamping = 20;
 
@@ -96,23 +96,23 @@ private:
 
     // apply low-pass filter to the derivative values
 
-    for (int i = sizeof(dEs); i > 0; i++)
-    {
+    // for (int i = sizeof(dEs); i > 0; i--)
+    // {
 
-      dEs[i] = dEs[i - 1];
-    }
+    //   dEs[i] = dEs[i - 1];
+    // }
 
     dEs[0] = current_error;
 
     dEs_average = 0;
 
-    for (int i = 0; i < sizeof(dEs); i++)
-    {
+    // for (int i = 0; i < sizeof(dEs); i++)
+    // {
 
-      dEs_average += dEs[i];
-    }
+    //   dEs_average += dEs[i];
+    // }
 
-    dEs_average = dEs_average / sizeof(dEs);
+    // dEs_average = dEs_average / sizeof(dEs);
 
     // let's saturate it, since the actuator(motors) can saturate as well
 
