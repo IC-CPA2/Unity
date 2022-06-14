@@ -55,57 +55,7 @@ class Command(BaseCommand):
         #made some modifications to handle the iterator.
         iterator = len(live_database.objects.all())
         live_database.objects.all().delete()
-        # test = live_database.objects.filter(tile_num="4545")
-        # print(test)
-    
-        # print("also impor",len(test))
 
-
-
-
-        # insert_vals = live_database(tile_num="3939",tile_info="T",last_visited=0)
-        # insert_vals.save()
-        # ins_valst = live_database(tile_num="4040",tile_info="PA",last_visited=0)
-        # ins_valst.save()
-        # ins_th = live_database(tile_num="4639",tile_info="OA",last_visited=0)
-        # ins_th.save()
-        # ins_valst = live_database(tile_num = "4039",tile_info="T",last_visited=1)
-        # ins_valst.save()
-            # insert_vals2 = live_database(tile_num="44",tile_info="T",last_visited=1)
-            # insert_vals2.save()
-            # insert_vals3 = live_database(tile_num="12",tile_info="PA",last_visited=0)
-            # insert_vals3.save()
-
-            # num_sq = insert_vals.order
-            # print(num_sq)
-        # old_last_sq = live_database.objects.get(last_visited=1)
-        # old_last_sq.last_visited = 0
-        # old_last_sq.save()
-
-        # ins_again = live_database(tile_num="45",tile_info="N",last_visited=1)
-        # ins_again.save()
-        # ins_again = live_database(tile_num="46",tile_info="PA",last_visited=0)
-        # ins_again.save()
-
-
-    
-        # curr_dir = os.getcwd()
-        # file_path = curr_dir+"\\blog\\text_files\\distance.txt"
-        # file_path = file_path.replace("\\","/")
-        # f = open(file_path,"r")
-        # dist = int(f.readline())
-        # angle_change = int(f.readline())#reads second line containing angle field. 
-        # head_angle = int(f.readline())
-        # f.close()
-        # print("distance",dist,"angle",angle_change)
-        # head_angle = (head_angle+angle_change)%360
-        #     ##TCP protocols to send the values back will be used. 
-        # print("B4",live_database.objects.values())
-        # change = live_database.objects.get(last_visited=1)
-        # change.last_visited = 0
-        # change.save()
-
-        #can be responsible for wiping databases. 
         print("AFTER",live_database.objects.all().values())
     
 
