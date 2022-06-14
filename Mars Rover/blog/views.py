@@ -1,4 +1,5 @@
 from audioop import minmax
+from datetime import datetime
 from tkinter import Y
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -10,11 +11,13 @@ from django.db import connection
 from django.db.models import Q
 from django.db.models import Count
 import os
+from django.utils import timezone
 from members.models import live_database, map_info, all_info
 
 import hashlib
 
 no = 9
+const = 1
 
 
 def reduce (hundred):
@@ -56,6 +59,22 @@ def about(request):
     batteryLvl = f.readline() + "%"
     #reads battery levels. 
     f.close()
+
+    if 'mode' in request.GET:
+        modes = request.GET["mode"]
+        mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
+        mode_path = mode_path.replace("\\","/")
+        m = open(mode_path, "w")
+
+        mod = ""
+        if modes == "Manual":
+            mod = "M"
+        elif modes == "Autonomous":
+            mod = "A"
+
+        m.write(mod)
+        m.close()
+
 
     img = []
     database = [[1]*59 for i in range(59)]
@@ -100,10 +119,11 @@ def about(request):
             print("AFTER")
             filt_cond = live_database.objects.get(last_visited=1)
             rover_pos = filt_cond.tile_num
-            rover_posx = str(rover_pos)[0:2]
-            rover_posx = int(rover_posx)
-            rover_posy = str(rover_pos)[2:4]
+            rover_posy = str(rover_pos)[0:2]
             rover_posy = int(rover_posy)
+            rover_posx = str(rover_pos)[2:4]
+            rover_posx = int(rover_posx)
+            
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
@@ -262,6 +282,7 @@ def distance(request):
             for i in range (10,69):
                 for j in range(10,69):
                     key = str(i)+str(j)
+                    
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
                     rover_pos = filt_cond.tile_num
@@ -288,12 +309,14 @@ def distance(request):
 
         else:
             print("AFTER")
+            
             filt_cond = live_database.objects.get(last_visited=1)
             rover_pos = filt_cond.tile_num
             rover_posy = str(rover_pos)[0:2]
             rover_posy = int(rover_posy)
             rover_posx = str(rover_pos)[2:4]
             rover_posx = int(rover_posx)
+
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
@@ -411,7 +434,27 @@ def distance(request):
     w = open(wifi_path, "r")
     wifi = w.readline()
     w.close()
+
+    if 'reset' in request.GET:
+        yes = request.GET["reset"]
+        if yes == "1":
+            live_database.objects.filter(last_visited=0).delete()
     
+    if 'mode' in request.GET:
+        modes = request.GET["mode"]
+        mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
+        mode_path = mode_path.replace("\\","/")
+        m = open(mode_path, "w")
+
+        mod = ""
+        if modes == "Manual":
+            mod = "M"
+        elif modes == "Autonomous":
+            mod = "A"
+
+        m.write(mod)
+        m.close()
+
     if 'angle' in request.POST:
         direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
         direction_path = direction_path.replace("\\","/")
@@ -441,7 +484,7 @@ def distance(request):
     if 'map_name' in request.POST: 
         name = request.POST['map_name']
         print("map_name:", name)
-
+        
         maxx = 0
         maxy = 0
         minx = 100
@@ -475,7 +518,7 @@ def distance(request):
         # print ("size:", sizex, sizey)
 
         size = str(sizex) + "x" + str(sizey)
-
+        
         unique = map_info.objects.filter(map_name=str(name))
 
         if len(unique) == 0:
@@ -484,10 +527,14 @@ def distance(request):
             mapid = new.map_id
                     
         else:
-            rename = map_info.objects.get(map_name=str(name))
-            rename.map_size = size
-            mapid = rename.map_id
-            rename.save()
+            global const
+            name += " (" + str(const) + ")"
+            const += 1
+            # rename = map_info.objects.get(map_name=str(name))
+            # rename.map_size = size
+            new = map_info(map_name=name,map_size=size)
+            new.save()
+            mapid = new.map_id
 
         last_vis = live_database.objects.get(last_visited=1)  
         
@@ -542,7 +589,8 @@ def distance(request):
         'wifis': wifi
     } 
 
-    return render(request, 'blog/about.html', context)
+    return redirect ('/about', context)
+    # return render(request, 'blog/about.html', context)
 
 def ajax (request):
     context = {
