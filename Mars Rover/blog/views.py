@@ -77,7 +77,7 @@ def about(request):
 
 
     img = []
-    database = [[1]*59 for i in range(59)]
+    database = [[1]*71 for i in range(71)]
 
     ali = [[1]*9 for i in range(9)]
     rover_pos = 0
@@ -87,8 +87,8 @@ def about(request):
 
         if len(database) == 0:
             print("START")
-            for i in range (10,69):
-                for j in range(10,69):
+            for i in range (10,71):
+                for j in range(10,71):
                     key = str(i)+str(j)
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
@@ -269,7 +269,7 @@ def distance(request):
     img = []
     ali = [[1]*9 for i in range(9)]
     db_length = len(live_database.objects.all())
-    database = [[1]*59 for i in range(59)]
+    database = [[1]*71 for i in range(71)]
     rover_pos = 0
 
     if db_length >0:
@@ -279,8 +279,8 @@ def distance(request):
         
         if len(database) == 0:
             print("START")
-            for i in range (10,69):
-                for j in range(10,69):
+            for i in range (10,71):
+                for j in range(10,71):
                     key = str(i)+str(j)
                     
                     tile = live_database.objects.filter(tile_num=key).values()
