@@ -58,7 +58,10 @@ class Motors
 private:
   double last_heading_error = 0;
   double cumulative_error = 0;
-  double Kd, Kp, KD, correction, motor_proportionality, normalised_speed;
+  double Kd, Kp, Ki, KD, KI, correction, motor_proportionality, normalised_speed, previous_current_error, clamping;
+  double dEs[4] = {0, 0, 0, 0};
+  double dEs_average = 0;
+  double previous_dEs_average = 0;
 
   typedef struct speed MotorSpeeds;
 
@@ -77,15 +80,50 @@ private:
 
     // adjust constant to model power differences between motor left and right
 
-    motor_proportionality = 0.92;
+    motor_proportionality = 0.96;
 
     // let's initialise the PD constants
 
-    Kd = 0.1;
+    Kd = 1;
 
-    Kp = 0.1;
+    Kp = 0.8;
 
-    cumulative_error = 0.5 * cumulative_error + current_error;
+    Ki = 2;
+
+    clamping = 20;
+
+    cumulative_error = 0.9 * cumulative_error + current_error; // previously 0.5 *
+
+    // apply low-pass filter to the derivative values
+
+    for (int i = sizeof(dEs); i > 0; i++)
+    {
+
+      dEs[i] = dEs[i - 1];
+    }
+
+    dEs[0] = current_error;
+
+    dEs_average = 0;
+
+    for (int i = 0; i < sizeof(dEs); i++)
+    {
+
+      dEs_average += dEs[i];
+    }
+
+    dEs_average = dEs_average / sizeof(dEs);
+
+    // let's saturate it, since the actuator(motors) can saturate as well
+
+    if (cumulative_error > clamping)
+    {
+      cumulative_error = clamping;
+    }
+    else if (cumulative_error < -clamping)
+    {
+      cumulative_error = -clamping;
+    }
 
     // corrigate path if needed
 
@@ -95,39 +133,47 @@ private:
 
     // PD controller
 
-    Serial.println("straightness is controlled, the error is:");
-    Serial.println(current_error);
+    // KD = (dEs_average - previous_dEs_average) * speed / 255;
 
-    Serial.println("Cumulative error:");
-    Serial.println(cumulative_error);
+    KD = (current_error - previous_current_error) * speed / 255;
+
+    KI = cumulative_error;
+
+    correction = Kd * KD + Kp * current_error + Ki * KI;
+
+    // NOT TO USE: stop the rover to restabilise in case of too high sverving
+
+    // if (correction > 30)
+    // {
+    //   motorRight.brake();
+    //   motorLeft.brake();
+    //   delay(0.5);
+    // }
+
+    Serial.println("\n \n");
+    Serial.println("----------");
+    Serial.println("----------");
+    // Serial.println("Correction values are KP, KI, KD:");
+    Serial.print("KP: ");
+    Serial.print(Kp * current_error);
+    Serial.print("KI: ");
+    Serial.print(KI * Ki);
+    Serial.print("KD: ");
+    Serial.print(KD * Kd);
+    Serial.print(" ---- Correction: ");
+    Serial.print(correction);
+
+    Serial.println("----------");
     Serial.println("----------");
 
-    KD = (cumulative_error - last_heading_error) * speed / 255;
-
-    correction = Kd * KD + Kp * current_error;
-
-    if (cumulative_error < 0)
-    {
-
-      // speeds.left = corrigation * speed;
-      speeds.left = speed + correction;
-      speeds.right = motor_proportionality * speed;
-    }
-    else if (cumulative_error > 0)
-    {
-
-      speeds.left = speed;
-      // speeds.right = corrigation * speed;
-      speeds.right = motor_proportionality * speed + correction;
-    }
-    else
-    {
-
-      speeds.left = speed;
-      speeds.right = motor_proportionality * speed;
-    }
+    // speeds.left = corrigation * speed;
+    speeds.left = speed + correction;
+    speeds.right = motor_proportionality * speed;
 
     last_heading_error = cumulative_error;
+    previous_current_error = current_error;
+
+    previous_dEs_average = dEs_average;
 
     return speeds;
   }

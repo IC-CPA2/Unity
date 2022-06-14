@@ -22,10 +22,11 @@ void loop()
     // Serial.println("Forward distance:");
     // Serial.println(driveUnity.coord_y);
 
+    // optical_measurements();
     if (driveUnity.coord_y < 200000)
     {
 
-        driveUnity.forward(3);
+        driveUnity.forward(5);
     }
     else
     {

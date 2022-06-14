@@ -336,7 +336,7 @@ void optical_measurements()
   Serial.println("position y = " + String(roverUnity.pos_y));
   Serial.print('\n');
 
-  delay(500);
+  //delay(200);
 
 #endif
 };
