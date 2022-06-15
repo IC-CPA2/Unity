@@ -305,34 +305,6 @@ try:
           else:
             print("entering else condition")
             pass
-
-
-
-              
-              # if ali_info != "T" and ali_info != "U":
-              #   if alien_storer[ali_info]==0:
-              #     print("L283",alien_storer[ali_info])
-              #     make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
-              #     make_new_tile.save()# we can save the new values into db which are of Terrain or Unknown
-              #   else:
-              #     #labelled as aliens
-              #     top_left = int(new_squares[i])-303 #this iterates and selects the squares w/o aliens. 
-              #     counter = 0
-              #     for y in range(0,7): #assuming a 3 square error (for leniency)
-              #       for x in range(0,7):
-              #         storer = live_database.objects.filter(tile_num=top_left+100*y+x)
-              #         if len(storer) > 0:
-              #           sel_vals = live_database.objects.get(tile_num=top_left+100*y+x)
-              #           print("T inf",sel_vals.tile_info)
-              #           if sel_vals.tile_info==ali_info:
-              #             print("Counter Change")
-              #             counter +=1
-
-              #     if counter == 0:
-              #       print("CHECK COUNTER")
-              #       make_new_tile = live_database.objects.get(tile_num=new_squares[i])
-              #       make_new_tile.tile_info = ali_info
-              #       make_new_tile.save()
         
         print("Change Angle Etc. For Next Cycle")
 
