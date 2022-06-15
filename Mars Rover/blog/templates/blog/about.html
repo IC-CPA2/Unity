@@ -6,6 +6,11 @@
     {% load static %} <img class="lazy" id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
     {% load static %} <img class="lazy" id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
     {% load static %} <img class="lazy" id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="darkgreen" src="{% static "blog/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="darkblue" src="{% static "blog/media/darkblue.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="yellow" src="{% static "blog/media/yellow.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="fan" src="{% static "blog/media/fan.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="wall" src="{% static "blog/media/wall.png" %}" alt="logo" height="0" width="0" />
     {% load extras %}
 
     <style>
@@ -301,6 +306,61 @@
                                 var c = document.getElementById({{i}}{{j}});
                                 var ctx = c.getContext("2d");
                                 var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 8 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("darkgreen");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script> 
+                        {% elif aliens|index:i|index:j == 9 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("darkblue");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 10 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("yellow");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 11 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("fan");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 12 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("wall");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
                         {% elif aliens|index:i|index:j == 2 %}

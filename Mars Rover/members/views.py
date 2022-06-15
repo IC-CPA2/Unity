@@ -107,7 +107,12 @@ def query(request):
                             <img id="green" src="static/members/media/green.png" %}" alt="green" height="0" width="0" />
                             <img id="red" src="static/members/media/red.png" %}" alt="red" height="0" width="0" />
                             <img id="orange" src="static/members/media/orange.png" %}" alt="orange" height="0" width="0" />
-                            <img id="rover" src="static/members/media/rover.png" %}" alt="logo" height="0" width="0" />"""
+                            <img id="rover" src="static/members/media/rover.png" %}" alt="logo" height="0" width="0" />
+                            <img id="yellow" src="static/members/media/yellow.png" %}" alt="logo" height="0" width="0" />
+                            <img id="darkblue" src="static/members/media/darkblue.png" %}" alt="logo" height="0" width="0" />
+                            <img id="darkgreen" src="static/members/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
+                            <img id="fan" src="static/members/media/fan.png" %}" alt="logo" height="0" width="0" />
+                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />"""
             printout += image_dec
 
             printout += """<div class="grid-container">"""
@@ -226,6 +231,86 @@ def query(request):
                                                     var c = document.getElementById(\"""" + str(i) + str(j) + """\");
                                                     var ctx = c.getContext("2d");
                                                     var img = document.getElementById("red");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "YA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("yellow");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "DGA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("darkgreen");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "DBA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("darkblue");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "F":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("fan");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "W":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("wall");
                                                     ctx.drawImage(img,0,0,50,50);
                                                     </script>"""
                         elif tilenum[str(i)+str(j)] == "T":

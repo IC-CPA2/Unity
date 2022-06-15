@@ -105,10 +105,16 @@ try:
         sel_red = live_database.objects.filter(tile_info="RA")
         sel_green = live_database.objects.filter(tile_info="GA")
         sel_orange = live_database.objects.filter(tile_info="OA")
+        sel_yellow = live_database.objects.filter(tile_info="YA")
+        sel_darkblue = live_database.objects.filter(tile_info="DBA")
+        sel_darkgreen = live_database.objects.filter(tile_info="DGA")
         alien_storer['PA']=len(sel_pink)
         alien_storer['OA']=len(sel_orange)
         alien_storer['RA']=len(sel_red)
         alien_storer['GA']=len(sel_green)
+        alien_storer['YA']=len(sel_yellow)
+        alien_storer['DGA']=len(sel_darkgreen)
+        alien_storer['DBA']=len(sel_darkblue)
         alien_storer['BA']=len(sel_blue) # we select aliens. 
 
         print("Aliens by Colour:",alien_storer)   

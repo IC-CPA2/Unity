@@ -111,6 +111,16 @@ def about(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
 
                     if key == rover_pos:
                         database[i][j] = 2
@@ -147,6 +157,17 @@ def about(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
+                        
 
                     if key == rover_pos:
                         database[i][j] = 2
@@ -255,6 +276,10 @@ def login(request):
         return redirect('/about')
     elif username == 'yscamy' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '65123d9463c1fa5535e014bfaf9c551481b1b4d227b587b917ca9f05c8edc778':
         return redirect('/about')
+    elif username == 'ms3120' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '4191a83a68daf3b0a0e997342f79f8c38a68553e5cd255830552ba302efccecd':
+        return redirect('/about')
+    elif username == 'hjj120' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8':
+        return redirect('/about')
     else:
         return redirect('/')
 
@@ -310,6 +335,16 @@ def distance(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
                     if key == rover_pos:
                         database[i][j] = 2
             ali = reduce(database)   
@@ -348,7 +383,16 @@ def distance(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
-
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
                     if key == rover_pos:
                         database[i][j] = 2
             ali = reduce(database)    
