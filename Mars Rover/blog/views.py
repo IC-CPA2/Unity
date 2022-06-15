@@ -78,7 +78,7 @@ def about(request):
         m.close()
 
     img = []
-    database = [[1]*59 for i in range(59)]
+    database = [[1]*71 for i in range(71)]
 
     ali = [[1]*9 for i in range(9)]
     rover_pos = 0
@@ -88,8 +88,8 @@ def about(request):
 
         if len(database) == 0:
             print("START")
-            for i in range (10,69):
-                for j in range(10,69):
+            for i in range (10,71):
+                for j in range(10,71):
                     key = str(i)+str(j)
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
@@ -276,7 +276,7 @@ def distance(request):
     img = []
     ali = [[1]*9 for i in range(9)]
     db_length = len(live_database.objects.all())
-    database = [[1]*59 for i in range(59)]
+    database = [[1]*71 for i in range(71)]
     rover_pos = 0
 
     if db_length >0:
@@ -286,9 +286,10 @@ def distance(request):
         
         if len(database) == 0:
             print("START")
-            for i in range (10,69):
-                for j in range(10,69):
+            for i in range (10,71):
+                for j in range(10,71):
                     key = str(i)+str(j)
+                    
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
                     rover_pos = filt_cond.tile_num
@@ -315,15 +316,18 @@ def distance(request):
 
         else:
             print("AFTER")
+            
             filt_cond = live_database.objects.get(last_visited=1)
             rover_pos = filt_cond.tile_num
             rover_posy = str(rover_pos)[0:2]
             rover_posy = int(rover_posy)
             rover_posx = str(rover_pos)[2:4]
             rover_posx = int(rover_posx)
+
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
+                    print(key)
                     tile = live_database.objects.filter(tile_num=key).values()
                     filt_cond = live_database.objects.get(last_visited=1)
                     rover_pos = filt_cond.tile_num
@@ -348,68 +352,6 @@ def distance(request):
                     if key == rover_pos:
                         database[i][j] = 2
             ali = reduce(database)    
-        # print (ali)
-        # for i in range(0,len(sel_val)):
-        #     labeled_tile = sel_val[i]["tile_num"]
-        #     info_rec = sel_val[i]["tile_info"]
-        #     print (info_rec)
-        #     if info_rec == "T":
-        #         traversed[labeled_tile] = 7
-        #     elif info_rec == "PA":
-        #         traversed[labeled_tile] = 0
-        #     elif info_rec == "GA":
-        #         traversed[labeled_tile] = 3
-        #     elif info_rec == "BA":
-        #         traversed[labeled_tile] = 4
-        #     elif info_rec == "RA":
-        #         traversed[labeled_tile] = 5
-        #     elif info_rec == "OA":
-        #         traversed[labeled_tile] = 6
-        # filt_cond = live_database.objects.get(last_visited=1)
-        # tmp = filt_cond.tile_num
-        # print(tmp)
-        # for key in traversed:#this for loop will be used to create the map for the aliens. 
-        #     if traversed[key] == 0:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         ali[int(x_coord)][storer%10] = 0
-        #     elif traversed[key] == 3:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         ali[int(x_coord)][storer%10] = 3
-        #     elif traversed[key] == 4:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         ali[int(x_coord)][storer%10] = 4
-        #     elif traversed[key] == 5:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         ali[int(x_coord)][storer%10] = 5
-        #     elif traversed[key] == 6:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         ali[int(x_coord)][storer%10] = 6
-        #     elif traversed[key] == 7:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         # ali[int(x_coord)][storer%10] = 7
-        # storer = int(tmp)
-        # x_pos = (storer-(storer%10))/10
-        # ali[int(x_pos)][storer%10] = 2
-
-    
     ## if (rover coord) on the edge
     ## shift to centre (traversed[55] = 2)
     ## use func to get 4 coords around the rover 
