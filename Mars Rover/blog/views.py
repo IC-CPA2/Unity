@@ -60,8 +60,10 @@ def about(request):
     #reads battery levels. 
     f.close()
 
+    mo=""
     if 'mode' in request.GET:
         modes = request.GET["mode"]
+        mo = modes
         mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
         mode_path = mode_path.replace("\\","/")
         m = open(mode_path, "w")
@@ -74,7 +76,6 @@ def about(request):
 
         m.write(mod)
         m.close()
-
 
     img = []
     database = [[1]*59 for i in range(59)]
@@ -119,10 +120,10 @@ def about(request):
             print("AFTER")
             filt_cond = live_database.objects.get(last_visited=1)
             rover_pos = filt_cond.tile_num
-            rover_posx = str(rover_pos)[0:2]
-            rover_posx = int(rover_posx)
-            rover_posy = str(rover_pos)[2:4]
+            rover_posy = str(rover_pos)[0:2]
             rover_posy = int(rover_posy)
+            rover_posx = str(rover_pos)[2:4]
+            rover_posx = int(rover_posx)
             for i in range (rover_posy-7, rover_posy+7):
                 for j in range (rover_posx-7, rover_posx+7):  
                     key = str(i)+str(j)
@@ -221,12 +222,16 @@ def about(request):
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
    
-    wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
-    wifi_path = wifi_path.replace("\\","/")
+    # wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+    # wifi_path = wifi_path.replace("\\","/")
 
-    w = open(wifi_path, "r")
-    wifi = w.readline()
-    w.close()
+    # w = open(wifi_path, "r")
+    # wifi = w.readline()
+    # w.close()
+
+    # wifi = 
+    # print(wifi)
+
 
     context = {
         # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
@@ -235,9 +240,12 @@ def about(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi
-    }
-    print(request.POST)
+        'wifis': os.system("ping -c 1 google.com")==0,
+        'options': ['Manual', 'Autonomous'],
+        'picked': mo
+    } 
+
+    # print(request.POST)
     return render(request, 'blog/about.html', context)
 
 def login(request):
@@ -514,20 +522,19 @@ def distance(request):
 
         size = str(sizex) + "x" + str(sizey)
         
-        unique = map_info.objects.filter(map_name=str(name))
+        unique = map_info.objects.filter(user_map_name=str(name))
 
         if len(unique) == 0:
-            new = map_info(map_name=name,map_size=size)
+            new = map_info(map_name=name,map_size=size,user_map_name=str(name))
             new.save()
             mapid = new.map_id
                     
         else:
-            global const
-            name += " (" + str(const) + ")"
-            const += 1
+            rawname = name 
+            name += " (" + str(len(unique)) + ")"
             # rename = map_info.objects.get(map_name=str(name))
             # rename.map_size = size
-            new = map_info(map_name=name,map_size=size)
+            new = map_info(map_name=name,map_size=size,user_map_name=rawname)
             new.save()
             mapid = new.map_id
 
@@ -581,7 +588,8 @@ def distance(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi
+        'wifis': wifi,
+        'options': ['Manual', 'Autonomous']
     } 
 
     return redirect ('/about', context)

@@ -33,40 +33,48 @@ def query(request):
     miny = 100
     tile_numarr =[]
 
-    tile = live_database.objects.values_list('tile_num')
-    for i in tile:
-        y = str(i)[2:4]
-        y = int(y)
-        x = str(i)[4:6]
-        x = int(x)
-        tile_numarr.append(str(y)+str(x))
 
-        if x > maxx:
-            maxx = x
-        if y > maxy:
-            maxy = y
-        if x < minx:
-            minx = x
-        if y < miny:
-            miny = y
-    
-    sizex = maxx-minx+1
-    sizey = maxy-miny+1
+    # print (minx)
+    # print (sizey)
 
     if 'mapid' in request.GET:
         search_id = request.GET["mapid"]
 
+        tile = all_info.objects.filter(map_id_id=search_id).values_list('tile_number')
+        for i in tile:
+            y = str(i)[2:4]
+            y = int(y)
+            x = str(i)[4:6]
+            x = int(x)
+            tile_numarr.append(str(y)+str(x))
+
+            # print("y,x:",y,x)
+
+            if x > maxx:
+                maxx = x
+            if y > maxy:
+                maxy = y
+            if x < minx:
+                minx = x
+            if y < miny:
+                miny = y
+        
+        sizex = maxx-minx+1
+        sizey = maxy-miny+1
+
+
         grid = """
                 <style>
                 .grid-container {
-                display: grid;
-                grid-template-columns: auto auto;
-                gap: 10px;
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    gap: 10px;
+                    height: auto;
                 }
 
                 .grid-container > div {
-                text-align: center;
-                font-size: 20px;
+                    text-align: center;
+                    font-size: 20px;
                 }
                 </style>"""
 
@@ -106,7 +114,7 @@ def query(request):
                     
             # posts = all_info.objects.get(map_id = search_id)
             posts = all_info.objects.filter(map_id=search_id).values()
-            print (posts)
+            # print (posts)
             #do something with user
             # for i in posts:
             #     printout = printout + str(i)
@@ -118,7 +126,7 @@ def query(request):
             tilenum = {}
             for k in posts:
                 tilenum[str(k.get('tile_number'))] = str(k.get('tile_info'))
-                print(tilenum)
+                # print(tilenum)
 
             printout += """<div>"""
             for i in range(miny-1,maxy+2):
@@ -273,9 +281,9 @@ def query(request):
 
             pathlist = []
             paths = "<h4> Paths: </h4>"
-            for k in posts:
-                pathlist.append(k.get('path'))
-                paths += k.get('path') + "<br>"
+            # for k in posts:
+            #     pathlist.append(k.get('path'))
+            #     paths += k.get('path') + "<br>"
 
             grid2 = "<div>" + paths + "</div>"
             
