@@ -13,24 +13,27 @@ void setup()
 {
 
     driveUnity.setup();
+    // delay to initialise everyything properly
+    delay(2000);
 }
 
 void loop()
 {
-    delay(50);
-    // optical_measurements();
-    // Serial.println("Forward distance:");
-    // Serial.println(driveUnity.coord_y);
+    // delay(50);
+    //  optical_measurements();
+    //  Serial.println("Forward distance:");
+    //  Serial.println(driveUnity.coord_y);
 
     // optical_measurements();
     if (driveUnity.coord_y < 200000)
     {
 
-        driveUnity.forward(5);
+        driveUnity.turn(90, true);
+        driveUnity.turn(90, false);
     }
     else
     {
-        driveUnity.turn(90, true);
+
         driveUnity.brake();
         Serial.println("Heading angle");
         Serial.println(roverUnity.head_angle);

@@ -232,7 +232,7 @@ private:
 public:
   int speed;
   int distance = 1; // IT MIGHT NOT WORK
-  int turning_angle;
+  double turning_angle;
   double error;
 
   // method to move forward

@@ -10,9 +10,9 @@ private:
     double straightness_error = 0;
 
 public:
-    int heading_angle;
+    double heading_angle;
     // x- and y positions of the rover
-    int coord_x, coord_y;
+    double coord_x, coord_y;
 
     // call this in the void setup() in main.cpp
     void setup()
@@ -39,20 +39,23 @@ public:
     // call this to turn the rover a certain amount of degrees
     void turn(int angle_degrees, bool turnLeft)
     {
-        int turned_angle = 0;
+        double turned_angle = 0;
 
         // ENABLE THIS PART OF THE CODE FOR ROTATION FEEDBACK FROM THE OFS
 
-        // while (abs(turned_angle) < abs(angle_degrees))
-        // {
-        //     turned_angle = turned_angle + optical_angle_turned(); // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-        //     RoverMotors.turn(turnLeft);                           // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
-        // }
-        // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
+        while (abs(turned_angle) < abs(angle_degrees))
+        {
+            turned_angle = turned_angle + optical_angle_turned();
+            Serial.println(turned_angle);
 
-        RoverMotors.turn_angle(angle_degrees, turnLeft);
+            // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
+            RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+        }
+        roverUnity.head_angle = roverUnity.head_angle + turned_angle;
 
-        roverUnity.head_angle = roverUnity.head_angle + angle_degrees;
+        // RoverMotors.turn_angle(angle_degrees, turnLeft);
+
+        // roverUnity.head_angle = roverUnity.head_angle + angle_degrees;
 
         heading_angle = roverUnity.head_angle;
 
