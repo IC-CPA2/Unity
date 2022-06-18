@@ -128,81 +128,54 @@ def about(request):
 
         else:
             print("AFTER")
-            filt_cond = live_database.objects.get(last_visited=1)
-            rover_pos = filt_cond.tile_num
-            rover_posy = str(rover_pos)[0:2]
-            rover_posy = int(rover_posy)
-            rover_posx = str(rover_pos)[2:4]
-            rover_posx = int(rover_posx)
-            for i in range (rover_posy-7, rover_posy+7):
-                for j in range (rover_posx-7, rover_posx+7):  
-                    key = str(i)+str(j)
-                    tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+            filthy = live_database.objects.filter(last_visited=1)
+            if len(filthy)!=0:
+                filt_cond = live_database.objects.get(last_visited=1)
+                rover_pos = filt_cond.tile_num
+                rover_posy = str(rover_pos)[0:2]
+                rover_posy = int(rover_posy)
+                rover_posx = str(rover_pos)[2:4]
+                rover_posx = int(rover_posx)
+                for i in range (rover_posy-7, rover_posy+7):
+                    for j in range (rover_posx-7, rover_posx+7):  
+                        key = str(i)+str(j)
+                        tile = live_database.objects.filter(tile_num=key).values()
+                        # filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
 
-                    if len(tile) > 0:
-                        tile = live_database.objects.get(tile_num=key)
-                        # print (tile.tile_info)
-                        info = tile.tile_info
-                        if (info == "T"):
-                            database[i][j] = 7
-                        elif (info == "PA"):
-                            database[i][j] = 0
-                        elif (info == "GA"):
-                            database[i][j] = 3
-                        elif (info == "BA"):
-                            database[i][j] = 4
-                        elif (info == "RA"):
-                            database[i][j] = 5
-                        elif (info == "OA"):
-                            database[i][j] = 6
-                        elif (info == "YA"):
-                            database[i][j] = 10
-                        elif (info == "DGA"):
-                            database[i][j] = 8
-                        elif (info == "DBA"):
-                            database[i][j] = 9
-                        elif (info == "F"):
-                            database[i][j] = 11
-                        elif (info == "W"):
-                            database[i][j] = 12
-                        
+                        if len(tile) > 0:
+                            tile = live_database.objects.get(tile_num=key)
+                            # print (tile.tile_info)
+                            info = tile.tile_info
+                            if (info == "T"):
+                                database[i][j] = 7
+                            elif (info == "PA"):
+                                database[i][j] = 0
+                            elif (info == "GA"):
+                                database[i][j] = 3
+                            elif (info == "BA"):
+                                database[i][j] = 4
+                            elif (info == "RA"):
+                                database[i][j] = 5
+                            elif (info == "OA"):
+                                database[i][j] = 6
+                            elif (info == "YA"):
+                                database[i][j] = 10
+                            elif (info == "DGA"):
+                                database[i][j] = 8
+                            elif (info == "DBA"):
+                                database[i][j] = 9
+                            elif (info == "F"):
+                                database[i][j] = 11
+                            elif (info == "W"):
+                                database[i][j] = 12
+                            
 
-                    if key == rover_pos:
-                        database[i][j] = 2
-            ali = reduce(database)                     
+                        if key == rover_pos:
+                            database[i][j] = 2
+                ali = reduce(database)                     
         # print (ali)
 
-
-        # for i in range(0, len(sel_val)):
-        #     labeled_tile = sel_val[i]["tile_num"]
-        #     info_rec = sel_val[i]["tile_info"]
-        #     if info_rec == "T":
-        #         traversed[labeled_tile] = 7
-        #     elif info_rec == "PA":
-        #         traversed[labeled_tile] = 0
-        #     elif info_rec == "GA":
-        #         traversed[labeled_tile] = 3
-        #     elif info_rec == "BA":
-        #         traversed[labeled_tile] = 4
-        #     elif info_rec == "RA":
-        #         traversed[labeled_tile] = 5
-        #     elif info_rec == "OA":
-        #         traversed[labeled_tile] = 6
-        # filt_cond = live_database.objects.get(last_visited=1)
-        # tmp = filt_cond.tile_num
-        # print(tmp)
-        # for key in traversed:#this for loop will be used to create the map for the aliens. 
-        #     if traversed[key] == 0:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         # ali[int(x_coord)][storer%10] = 0
-        # # storer = int(tmp)
-        # # x_pos = (storer-(storer%10))/10
-        # # ali[int(x_pos)][storer%10] = 2
 
     # #edit value of ali at each position to get the current position. 
     # file_path = curr_dir+"\\blog\\text_files\\image.txt"
@@ -316,8 +289,11 @@ def distance(request):
                     key = str(i)+str(j)
                     
                     tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+                    filthy = live_database.objects.filter(last_visited=1)
+                    if len(filthy) != 0:
+                        filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
+
 
                     if len(tile) > 0:
                         tile = live_database.objects.get(tile_num=key)
@@ -351,73 +327,53 @@ def distance(request):
 
         else:
             print("AFTER")
-            
-            filt_cond = live_database.objects.get(last_visited=1)
-            rover_pos = filt_cond.tile_num
-            rover_posy = str(rover_pos)[0:2]
-            rover_posy = int(rover_posy)
-            rover_posx = str(rover_pos)[2:4]
-            rover_posx = int(rover_posx)
+            filthy = live_database.objects.filter(last_visited=1)
+            if len(filthy) == 1:
+                    
+                filt_cond = live_database.objects.get(last_visited=1)
+                rover_pos = filt_cond.tile_num
+                rover_posy = str(rover_pos)[0:2]
+                rover_posy = int(rover_posy)
+                rover_posx = str(rover_pos)[2:4]
+                rover_posx = int(rover_posx)
 
-            for i in range (rover_posy-7, rover_posy+7):
-                for j in range (rover_posx-7, rover_posx+7):  
-                    key = str(i)+str(j)
-                    print(key)
-                    tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+                for i in range (rover_posy-7, rover_posy+7):
+                    for j in range (rover_posx-7, rover_posx+7):  
+                        key = str(i)+str(j)
+                        print(key)
+                        tile = live_database.objects.filter(tile_num=key).values()
+                        filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
 
-                    if len(tile) > 0:
-                        tile = live_database.objects.get(tile_num=key)
-                        # print (tile.tile_info)
-                        info = tile.tile_info
-                        if (info == "T"):
-                            database[i][j] = 7
-                        elif (info == "PA"):
-                            database[i][j] = 0
-                        elif (info == "GA"):
-                            database[i][j] = 3
-                        elif (info == "BA"):
-                            database[i][j] = 4
-                        elif (info == "RA"):
-                            database[i][j] = 5
-                        elif (info == "OA"):
-                            database[i][j] = 6
-                        elif (info == "YA"):
-                            database[i][j] = 10
-                        elif (info == "DGA"):
-                            database[i][j] = 8
-                        elif (info == "DBA"):
-                            database[i][j] = 9
-                        elif (info == "F"):
-                            database[i][j] = 11
-                        elif (info == "W"):
-                            database[i][j] = 12
-                    if key == rover_pos:
-                        database[i][j] = 2
-            ali = reduce(database)    
-    ## if (rover coord) on the edge
-    ## shift to centre (traversed[55] = 2)
-    ## use func to get 4 coords around the rover 
-    ## add them to the corresponding side of the rover
-    ## OR look thru database instead, rmb the prev val
-    ## of the rover position and find values 4 coords away
-    ## using the keys (tile_num)
-
-
-    # ali = [[0]*9 for i in range(9)]
-    # file_path = curr_dir+"\\blog\\text_files\\image.txt"
-    # file_path = file_path.replace("\\","/")
-    # fi = open(file_path, "r")
-    # val = fi.readline()
-    # fi.close()
-    # val1 = val.split(";")
-    # for i in range(len(val1)):
-    #     value = val1[i].split(",")
-    #     # img.append(value)
-    #     for j in range(len(value)):
-    #         ali[i][j] = int(value[j])
-    
+                        if len(tile) > 0:
+                            tile = live_database.objects.get(tile_num=key)
+                            # print (tile.tile_info)
+                            info = tile.tile_info
+                            if (info == "T"):
+                                database[i][j] = 7
+                            elif (info == "PA"):
+                                database[i][j] = 0
+                            elif (info == "GA"):
+                                database[i][j] = 3
+                            elif (info == "BA"):
+                                database[i][j] = 4
+                            elif (info == "RA"):
+                                database[i][j] = 5
+                            elif (info == "OA"):
+                                database[i][j] = 6
+                            elif (info == "YA"):
+                                database[i][j] = 10
+                            elif (info == "DGA"):
+                                database[i][j] = 8
+                            elif (info == "DBA"):
+                                database[i][j] = 9
+                            elif (info == "F"):
+                                database[i][j] = 11
+                            elif (info == "W"):
+                                database[i][j] = 12
+                        if key == rover_pos:
+                            database[i][j] = 2
+                ali = reduce(database)        
     wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
     wifi_path = wifi_path.replace("\\","/")
     w = open(wifi_path, "r")
@@ -445,8 +401,6 @@ def distance(request):
         m.close()
 
     if 'angle' in request.POST:
-        direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
-        direction_path = direction_path.replace("\\","/")
 
         angle = request.POST["angle"]
         print (angle)
