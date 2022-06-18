@@ -60,8 +60,10 @@ def about(request):
     #reads battery levels. 
     f.close()
 
+    mo=""
     if 'mode' in request.GET:
         modes = request.GET["mode"]
+        mo = modes
         mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
         mode_path = mode_path.replace("\\","/")
         m = open(mode_path, "w")
@@ -74,7 +76,6 @@ def about(request):
 
         m.write(mod)
         m.close()
-
 
     img = []
     database = [[1]*71 for i in range(71)]
@@ -110,6 +111,16 @@ def about(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
 
                     if key == rover_pos:
                         database[i][j] = 2
@@ -117,71 +128,54 @@ def about(request):
 
         else:
             print("AFTER")
-            filt_cond = live_database.objects.get(last_visited=1)
-            rover_pos = filt_cond.tile_num
-            rover_posy = str(rover_pos)[0:2]
-            rover_posy = int(rover_posy)
-            rover_posx = str(rover_pos)[2:4]
-            rover_posx = int(rover_posx)
-            
-            for i in range (rover_posy-7, rover_posy+7):
-                for j in range (rover_posx-7, rover_posx+7):  
-                    key = str(i)+str(j)
-                    tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+            filthy = live_database.objects.filter(last_visited=1)
+            if len(filthy)!=0:
+                filt_cond = live_database.objects.get(last_visited=1)
+                rover_pos = filt_cond.tile_num
+                rover_posy = str(rover_pos)[0:2]
+                rover_posy = int(rover_posy)
+                rover_posx = str(rover_pos)[2:4]
+                rover_posx = int(rover_posx)
+                for i in range (rover_posy-7, rover_posy+7):
+                    for j in range (rover_posx-7, rover_posx+7):  
+                        key = str(i)+str(j)
+                        tile = live_database.objects.filter(tile_num=key).values()
+                        # filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
 
-                    if len(tile) > 0:
-                        tile = live_database.objects.get(tile_num=key)
-                        # print (tile.tile_info)
-                        info = tile.tile_info
-                        if (info == "T"):
-                            database[i][j] = 7
-                        elif (info == "PA"):
-                            database[i][j] = 0
-                        elif (info == "GA"):
-                            database[i][j] = 3
-                        elif (info == "BA"):
-                            database[i][j] = 4
-                        elif (info == "RA"):
-                            database[i][j] = 5
-                        elif (info == "OA"):
-                            database[i][j] = 6
+                        if len(tile) > 0:
+                            tile = live_database.objects.get(tile_num=key)
+                            # print (tile.tile_info)
+                            info = tile.tile_info
+                            if (info == "T"):
+                                database[i][j] = 7
+                            elif (info == "PA"):
+                                database[i][j] = 0
+                            elif (info == "GA"):
+                                database[i][j] = 3
+                            elif (info == "BA"):
+                                database[i][j] = 4
+                            elif (info == "RA"):
+                                database[i][j] = 5
+                            elif (info == "OA"):
+                                database[i][j] = 6
+                            elif (info == "YA"):
+                                database[i][j] = 10
+                            elif (info == "DGA"):
+                                database[i][j] = 8
+                            elif (info == "DBA"):
+                                database[i][j] = 9
+                            elif (info == "F"):
+                                database[i][j] = 11
+                            elif (info == "W"):
+                                database[i][j] = 12
+                            
 
-                    if key == rover_pos:
-                        database[i][j] = 2
-            ali = reduce(database)                     
+                        if key == rover_pos:
+                            database[i][j] = 2
+                ali = reduce(database)                     
         # print (ali)
 
-
-        # for i in range(0, len(sel_val)):
-        #     labeled_tile = sel_val[i]["tile_num"]
-        #     info_rec = sel_val[i]["tile_info"]
-        #     if info_rec == "T":
-        #         traversed[labeled_tile] = 7
-        #     elif info_rec == "PA":
-        #         traversed[labeled_tile] = 0
-        #     elif info_rec == "GA":
-        #         traversed[labeled_tile] = 3
-        #     elif info_rec == "BA":
-        #         traversed[labeled_tile] = 4
-        #     elif info_rec == "RA":
-        #         traversed[labeled_tile] = 5
-        #     elif info_rec == "OA":
-        #         traversed[labeled_tile] = 6
-        # filt_cond = live_database.objects.get(last_visited=1)
-        # tmp = filt_cond.tile_num
-        # print(tmp)
-        # for key in traversed:#this for loop will be used to create the map for the aliens. 
-        #     if traversed[key] == 0:
-        #         storer = int(key)
-        #         # print("debug",storer)
-        #         # print("failing",int(storer-(storer%10))/10)
-        #         x_coord = (storer-(storer%10))/10
-        #         # ali[int(x_coord)][storer%10] = 0
-        # # storer = int(tmp)
-        # # x_pos = (storer-(storer%10))/10
-        # # ali[int(x_pos)][storer%10] = 2
 
     # #edit value of ali at each position to get the current position. 
     # file_path = curr_dir+"\\blog\\text_files\\image.txt"
@@ -222,12 +216,16 @@ def about(request):
         elif i[0] == "R":
             direction.append("Right: " + str(i[1:]))
    
-    wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
-    wifi_path = wifi_path.replace("\\","/")
+    # wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
+    # wifi_path = wifi_path.replace("\\","/")
 
-    w = open(wifi_path, "r")
-    wifi = w.readline()
-    w.close()
+    # w = open(wifi_path, "r")
+    # wifi = w.readline()
+    # w.close()
+
+    # wifi = 
+    # print(wifi)
+
 
     context = {
         # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
@@ -236,9 +234,12 @@ def about(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi
-    }
-    print(request.POST)
+        'wifis': os.system("ping -c 1 google.com")==0,
+        'options': ['Manual', 'Autonomous'],
+        'picked': mo
+    } 
+
+    # print(request.POST)
     return render(request, 'blog/about.html', context)
 
 def login(request):
@@ -247,6 +248,10 @@ def login(request):
     if username == 'ccl19' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '08c368c45b3e8d0c6ddc111a564f05dac269f1b1623ac4989b94b8d577d85d19':
         return redirect('/about')
     elif username == 'yscamy' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '65123d9463c1fa5535e014bfaf9c551481b1b4d227b587b917ca9f05c8edc778':
+        return redirect('/about')
+    elif username == 'ms3120' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '4191a83a68daf3b0a0e997342f79f8c38a68553e5cd255830552ba302efccecd':
+        return redirect('/about')
+    elif username == 'hjj120' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8':
         return redirect('/about')
     else:
         return redirect('/')
@@ -284,8 +289,11 @@ def distance(request):
                     key = str(i)+str(j)
                     
                     tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+                    filthy = live_database.objects.filter(last_visited=1)
+                    if len(filthy) != 0:
+                        filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
+
 
                     if len(tile) > 0:
                         tile = live_database.objects.get(tile_num=key)
@@ -303,70 +311,69 @@ def distance(request):
                             database[i][j] = 5
                         elif (info == "OA"):
                             database[i][j] = 6
+                        elif (info == "YA"):
+                            database[i][j] = 10
+                        elif (info == "DGA"):
+                            database[i][j] = 8
+                        elif (info == "DBA"):
+                            database[i][j] = 9
+                        elif (info == "F"):
+                            database[i][j] = 11
+                        elif (info == "W"):
+                            database[i][j] = 12
                     if key == rover_pos:
                         database[i][j] = 2
             ali = reduce(database)   
 
         else:
             print("AFTER")
-            
-            filt_cond = live_database.objects.get(last_visited=1)
-            rover_pos = filt_cond.tile_num
-            rover_posy = str(rover_pos)[0:2]
-            rover_posy = int(rover_posy)
-            rover_posx = str(rover_pos)[2:4]
-            rover_posx = int(rover_posx)
+            filthy = live_database.objects.filter(last_visited=1)
+            if len(filthy) == 1:
+                    
+                filt_cond = live_database.objects.get(last_visited=1)
+                rover_pos = filt_cond.tile_num
+                rover_posy = str(rover_pos)[0:2]
+                rover_posy = int(rover_posy)
+                rover_posx = str(rover_pos)[2:4]
+                rover_posx = int(rover_posx)
 
-            for i in range (rover_posy-7, rover_posy+7):
-                for j in range (rover_posx-7, rover_posx+7):  
-                    key = str(i)+str(j)
-                    print(key)
-                    tile = live_database.objects.filter(tile_num=key).values()
-                    filt_cond = live_database.objects.get(last_visited=1)
-                    rover_pos = filt_cond.tile_num
+                for i in range (rover_posy-7, rover_posy+7):
+                    for j in range (rover_posx-7, rover_posx+7):  
+                        key = str(i)+str(j)
+                        print(key)
+                        tile = live_database.objects.filter(tile_num=key).values()
+                        filt_cond = live_database.objects.get(last_visited=1)
+                        rover_pos = filt_cond.tile_num
 
-                    if len(tile) > 0:
-                        tile = live_database.objects.get(tile_num=key)
-                        # print (tile.tile_info)
-                        info = tile.tile_info
-                        if (info == "T"):
-                            database[i][j] = 7
-                        elif (info == "PA"):
-                            database[i][j] = 0
-                        elif (info == "GA"):
-                            database[i][j] = 3
-                        elif (info == "BA"):
-                            database[i][j] = 4
-                        elif (info == "RA"):
-                            database[i][j] = 5
-                        elif (info == "OA"):
-                            database[i][j] = 6
-
-                    if key == rover_pos:
-                        database[i][j] = 2
-            ali = reduce(database)    
-    ## if (rover coord) on the edge
-    ## shift to centre (traversed[55] = 2)
-    ## use func to get 4 coords around the rover 
-    ## add them to the corresponding side of the rover
-    ## OR look thru database instead, rmb the prev val
-    ## of the rover position and find values 4 coords away
-    ## using the keys (tile_num)
-
-
-    # ali = [[0]*9 for i in range(9)]
-    # file_path = curr_dir+"\\blog\\text_files\\image.txt"
-    # file_path = file_path.replace("\\","/")
-    # fi = open(file_path, "r")
-    # val = fi.readline()
-    # fi.close()
-    # val1 = val.split(";")
-    # for i in range(len(val1)):
-    #     value = val1[i].split(",")
-    #     # img.append(value)
-    #     for j in range(len(value)):
-    #         ali[i][j] = int(value[j])
-    
+                        if len(tile) > 0:
+                            tile = live_database.objects.get(tile_num=key)
+                            # print (tile.tile_info)
+                            info = tile.tile_info
+                            if (info == "T"):
+                                database[i][j] = 7
+                            elif (info == "PA"):
+                                database[i][j] = 0
+                            elif (info == "GA"):
+                                database[i][j] = 3
+                            elif (info == "BA"):
+                                database[i][j] = 4
+                            elif (info == "RA"):
+                                database[i][j] = 5
+                            elif (info == "OA"):
+                                database[i][j] = 6
+                            elif (info == "YA"):
+                                database[i][j] = 10
+                            elif (info == "DGA"):
+                                database[i][j] = 8
+                            elif (info == "DBA"):
+                                database[i][j] = 9
+                            elif (info == "F"):
+                                database[i][j] = 11
+                            elif (info == "W"):
+                                database[i][j] = 12
+                        if key == rover_pos:
+                            database[i][j] = 2
+                ali = reduce(database)        
     wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
     wifi_path = wifi_path.replace("\\","/")
     w = open(wifi_path, "r")
@@ -394,8 +401,6 @@ def distance(request):
         m.close()
 
     if 'angle' in request.POST:
-        direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
-        direction_path = direction_path.replace("\\","/")
 
         angle = request.POST["angle"]
         print (angle)
@@ -457,20 +462,19 @@ def distance(request):
 
         size = str(sizex) + "x" + str(sizey)
         
-        unique = map_info.objects.filter(map_name=str(name))
+        unique = map_info.objects.filter(user_map_name=str(name))
 
         if len(unique) == 0:
-            new = map_info(map_name=name,map_size=size)
+            new = map_info(map_name=name,map_size=size,user_map_name=str(name))
             new.save()
             mapid = new.map_id
                     
         else:
-            global const
-            name += " (" + str(const) + ")"
-            const += 1
+            rawname = name 
+            name += " (" + str(len(unique)) + ")"
             # rename = map_info.objects.get(map_name=str(name))
             # rename.map_size = size
-            new = map_info(map_name=name,map_size=size)
+            new = map_info(map_name=name,map_size=size,user_map_name=rawname)
             new.save()
             mapid = new.map_id
 
@@ -524,7 +528,8 @@ def distance(request):
         'battery': batteryLvl,
         'aliens': ali,
         'directions': direction,
-        'wifis': wifi
+        'wifis': wifi,
+        'options': ['Manual', 'Autonomous']
     } 
 
     return redirect ('/about', context)

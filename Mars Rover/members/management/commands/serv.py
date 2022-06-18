@@ -6,6 +6,8 @@ from socket import *
 import socket
 import numpy as np
 import math
+import time
+import os
 
 from xml.dom.expatbuilder import parseString
 #server side  encoding. 
@@ -92,11 +94,12 @@ def square_mapper(curr_coords,angle):
 s.bind(('0.0.0.0', 12000))
 s.listen(1)
 counter = 0
-
+debug_ln = 0
 test_funct = input("please input operation mode")
 try:
     while True:
         print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
+        curr_time = time.time()
         conn,address = s.accept()   
         iterator = len(live_database.objects.all())
         alien_storer = {}
@@ -105,10 +108,16 @@ try:
         sel_red = live_database.objects.filter(tile_info="RA")
         sel_green = live_database.objects.filter(tile_info="GA")
         sel_orange = live_database.objects.filter(tile_info="OA")
+        sel_yellow = live_database.objects.filter(tile_info="YA")
+        sel_darkblue = live_database.objects.filter(tile_info="DBA")
+        sel_darkgreen = live_database.objects.filter(tile_info="DGA")
         alien_storer['PA']=len(sel_pink)
         alien_storer['OA']=len(sel_orange)
         alien_storer['RA']=len(sel_red)
         alien_storer['GA']=len(sel_green)
+        alien_storer['YA']=len(sel_yellow)
+        alien_storer['DGA']=len(sel_darkgreen)
+        alien_storer['DBA']=len(sel_darkblue)
         alien_storer['BA']=len(sel_blue) # we select aliens. 
 
         print("Aliens by Colour:",alien_storer)   
@@ -234,6 +243,7 @@ try:
           # print("Maintaining connection")
           content = conn.recvfrom(32)[0]
           content = content.decode()
+          print("Client sends: ",content)
           if content=="XX":
               break
           else:
@@ -254,15 +264,26 @@ try:
 
             # print("debugging",temp_dict)
             angle = temp_dict[5]
+
+
+            curr_dir = os.getcwd()
+            direc_path = curr_dir+"\\blog\\text_files\\direction.txt"
+            direc_path = direc_path.replace("\\","/")
+            f = open(direc_path, "w")
+            f.write(angle)
+            f.close()
             # print("debug: ",angle)
             print(temp_dict[5])
             print(curr_sq)
 
             new_squares = square_mapper(curr_sq,int(angle))
             ##This obtains the new mapping with a set of arrays for new squares. 
-            old_last_sq = live_database.objects.get(last_visited=1)
-            old_last_sq.last_visited = 0
-            old_last_sq.save()
+            ch_leng = live_database.objects.filter(last_visited=1)
+            if len(ch_leng) != 0:
+              old_last_sq = live_database.objects.get(last_visited=1)
+              old_last_sq.last_visited = 0
+              old_last_sq.save()
+
             print("run code")
             checker = live_database.objects.filter(tile_num=curr_sq)
             if len(checker) == 0:
@@ -272,6 +293,8 @@ try:
               sel_vals = live_database.objects.get(tile_num=curr_sq)
               sel_vals.last_visited=1
               sel_vals.save()
+            
+
 
             for i in range(0,4):
                 #loop from 1-4 inclusive.
@@ -301,10 +324,9 @@ try:
                       alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
                       alien_ins.save()
                       alien_storer[ali_info] += 1#just in case 0. 
-                  
-          else:
-            print("entering else condition")
-            pass
+          fin_time = time.time()  
+          elapse = fin_time - curr_time 
+          print("FINAL TIME OUTPUT",elapse)       
         
         print("Change Angle Etc. For Next Cycle")
 

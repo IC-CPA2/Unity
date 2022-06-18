@@ -33,40 +33,48 @@ def query(request):
     miny = 100
     tile_numarr =[]
 
-    tile = live_database.objects.values_list('tile_num')
-    for i in tile:
-        y = str(i)[2:4]
-        y = int(y)
-        x = str(i)[4:6]
-        x = int(x)
-        tile_numarr.append(str(y)+str(x))
 
-        if x > maxx:
-            maxx = x
-        if y > maxy:
-            maxy = y
-        if x < minx:
-            minx = x
-        if y < miny:
-            miny = y
-    
-    sizex = maxx-minx+1
-    sizey = maxy-miny+1
+    # print (minx)
+    # print (sizey)
 
     if 'mapid' in request.GET:
         search_id = request.GET["mapid"]
 
+        tile = all_info.objects.filter(map_id_id=search_id).values_list('tile_number')
+        for i in tile:
+            y = str(i)[2:4]
+            y = int(y)
+            x = str(i)[4:6]
+            x = int(x)
+            tile_numarr.append(str(y)+str(x))
+
+            # print("y,x:",y,x)
+
+            if x > maxx:
+                maxx = x
+            if y > maxy:
+                maxy = y
+            if x < minx:
+                minx = x
+            if y < miny:
+                miny = y
+        
+        sizex = maxx-minx+1
+        sizey = maxy-miny+1
+
+
         grid = """
                 <style>
                 .grid-container {
-                display: grid;
-                grid-template-columns: auto auto;
-                gap: 10px;
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    gap: 10px;
+                    height: auto;
                 }
 
                 .grid-container > div {
-                text-align: center;
-                font-size: 20px;
+                    text-align: center;
+                    font-size: 20px;
                 }
                 </style>"""
 
@@ -99,14 +107,19 @@ def query(request):
                             <img id="green" src="static/members/media/green.png" %}" alt="green" height="0" width="0" />
                             <img id="red" src="static/members/media/red.png" %}" alt="red" height="0" width="0" />
                             <img id="orange" src="static/members/media/orange.png" %}" alt="orange" height="0" width="0" />
-                            <img id="rover" src="static/members/media/rover.png" %}" alt="logo" height="0" width="0" />"""
+                            <img id="rover" src="static/members/media/rover.png" %}" alt="logo" height="0" width="0" />
+                            <img id="yellow" src="static/members/media/yellow.png" %}" alt="logo" height="0" width="0" />
+                            <img id="darkblue" src="static/members/media/darkblue.png" %}" alt="logo" height="0" width="0" />
+                            <img id="darkgreen" src="static/members/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
+                            <img id="fan" src="static/members/media/fan.png" %}" alt="logo" height="0" width="0" />
+                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />"""
             printout += image_dec
 
             printout += """<div class="grid-container">"""
                     
             # posts = all_info.objects.get(map_id = search_id)
             posts = all_info.objects.filter(map_id=search_id).values()
-            print (posts)
+            # print (posts)
             #do something with user
             # for i in posts:
             #     printout = printout + str(i)
@@ -118,7 +131,7 @@ def query(request):
             tilenum = {}
             for k in posts:
                 tilenum[str(k.get('tile_number'))] = str(k.get('tile_info'))
-                print(tilenum)
+                # print(tilenum)
 
             printout += """<div>"""
             for i in range(miny-1,maxy+2):
@@ -220,6 +233,86 @@ def query(request):
                                                     var img = document.getElementById("red");
                                                     ctx.drawImage(img,0,0,50,50);
                                                     </script>"""
+                        elif tilenum[str(i)+str(j)] == "YA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("yellow");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "DGA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("darkgreen");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "DBA":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("darkblue");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "F":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("fan");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
+                        elif tilenum[str(i)+str(j)] == "W":
+                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                                                        style="border:0.5px solid #000000;">
+                                                    </canvas>
+                                                    <script>
+                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var ctx = c.getContext("2d");
+                                                        var img = document.getElementById("terrain");
+                                                        ctx.drawImage(img,0,0,50,50);
+                                                    </script>
+                                                    <script>
+                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("wall");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                    </script>"""
                         elif tilenum[str(i)+str(j)] == "T":
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
@@ -273,9 +366,9 @@ def query(request):
 
             pathlist = []
             paths = "<h4> Paths: </h4>"
-            for k in posts:
-                pathlist.append(k.get('path'))
-                paths += k.get('path') + "<br>"
+            # for k in posts:
+            #     pathlist.append(k.get('path'))
+            #     paths += k.get('path') + "<br>"
 
             grid2 = "<div>" + paths + "</div>"
             

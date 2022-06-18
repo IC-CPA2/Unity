@@ -1,11 +1,16 @@
-    {% load static %} <img id="terrain" src="{% static "blog/media/terrain.png" %}" alt="terrain" height="0" width="0" />
-    {% load static %} <img id="question" src="{% static "blog/media/questions.png" %}" alt="question" height="0" width="0" />
-    {% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
-    {% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
-    {% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
-    {% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
-    {% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
-    {% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="terrain" src="{% static "blog/media/terrain.png" %}" alt="terrain" height="0" width="0" />
+    {% load static %} <img class="lazy" id="question" src="{% static "blog/media/questions.png" %}" alt="question" height="0" width="0" />
+    {% load static %} <img class="lazy" id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
+    {% load static %} <img class="lazy" id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
+    {% load static %} <img class="lazy" id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
+    {% load static %} <img class="lazy" id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
+    {% load static %} <img class="lazy" id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
+    {% load static %} <img class="lazy" id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="darkgreen" src="{% static "blog/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="darkblue" src="{% static "blog/media/darkblue.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="yellow" src="{% static "blog/media/yellow.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="fan" src="{% static "blog/media/fan.png" %}" alt="logo" height="0" width="0" />
+    {% load static %} <img class="lazy" id="wall" src="{% static "blog/media/wall.png" %}" alt="logo" height="0" width="0" />
     {% load extras %}
 
     <style>
@@ -18,22 +23,22 @@
         .grid-container {
             display: grid;
             grid-template-columns: auto auto auto auto auto auto;
-            gap: 10px;
+            gap: 5px;
             background-color: #ffffff00;
             /* padding: 10px; */
         }
 
         .grid-container > div {
-            background-color: rgba(255, 255, 255, 0.476);
+            background-color: rgba(255, 255, 255, 0.295);
             text-align: center;
             padding: 10px 0;
             font-size: 20px;
             font-family: "Courier New", monospace;
         }
         
-        .item4 {
+        /* .item4 {
             height: 150px;
-        }
+        } */
 
         .item8 {
             grid-area: 1 / 2 / 5 / 6;
@@ -145,14 +150,10 @@
         <div class="item1">
             <b>Wifi Status:</b>
             <br>
-            {% if wifis == "0" or wifis == "1" or wifis == "2" %}
-                {% load static %} <img id="none" src="{% static "blog/media/dinobk.png" %}" alt="wifibad" height="150" width="150" />
-            {% elif wifis == "3" or wifis == "4" %}
-                {% load static %} <img id="weak" src="{% static "blog/media/wifibad.png" %}" alt="wifiok" height="150" width="150" />
-            {% elif wifis == "5" or wifis == "6" or wifi == "7" %}
-                {% load static %} <img id="mid" src="{% static "blog/media/wifimid.png" %}" alt="wifimid" height="150" width="150" />
-            {% elif wifis == "8" or wifis == "9" or wifis == "10" %}
+            {% if wifis %}
                 {% load static %} <img id="good" src="{% static "blog/media/wifigood.png" %}" alt="wifigood" height="150" width="150" />
+            {% else %}
+                {% load static %} <img id="none" src="{% static "blog/media/dinobk.png" %}" alt="wifibad" height="150" width="150" />
             {% endif %}
 
         </div>
@@ -165,12 +166,12 @@
             <br><br>
             <form action="/about/distance" method="GET">
                 <select name="mode" id="mode">
-                    <option id = mode value="Manual">Manual</option>
-                    <option id = mode value="Discovery">Discovery</option>
-                    <option id = mode value="Autonomous">Autonomous</option>
+                    {% for op in options %}
+                        <option id = mode value={{op}}>{{op}}</option>
+                    {% endfor %}
                 </select>
-                <br>
-                <br>
+                <p style="font-size:15px"><b>Current Mode:</b></p> 
+                <p style="font-size:12px">{{picked}}</p>
             <input type="submit" value="Submit">
             </form>
         </div>
@@ -206,39 +207,16 @@
                         <button class="conbtn" name="angle" value="135"> <img src="{% static "blog/media/br.png" %}"  width="20" height="20" /> </button>
                     </div>
                 </div>
-
-                <!-- {% csrf_token %}
-                <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
-                <input type="text" id="dist" name="dist" value="0"><br>
-                <div class="slidecontainer">
-                    <input type="range" min="0" max="360" value="0" id="myRange" step="45" name="angle">
-                    <br><font size="3"> <span id="slide"></span>º </font>
-                </div>
-                <input type="submit" value="Submit" onclick="refreshScreen()">
-
-                <script>
-                    var slider = document.getElementById("myRange");
-                    var output = document.getElementById("slide");
-                    output.innerHTML = slider.value; // Display the default slider value
-                
-                    // Update the current slider value (each time you drag the slider handle)
-                    slider.oninput = function() {
-                    output.innerHTML = this.value;
-                    }    
-                </script> -->
             </form>
         </div>
         <div class="item5">
             <form action="/about/distance" method="GET">
-                <!-- {% csrf_token %} -->
                 <button name="reset" id="reset" value="1">Reset</button>
-            <!-- <button  onclick="resetMap()">Reset</button> -->
             </form>
             <button onclick="location.href = '/members'"> View database</button>
             <br>
             <br>
             <button onClick="window.location.reload();">Refresh</button>
-            <!-- <button type="button" onclick="refreshMap()">Request data</button> -->
         </div>
         <div class="item6">
             <form action="/about/distance" method="post">
@@ -330,6 +308,61 @@
                                 var img = document.getElementById("terrain");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
+                        {% elif aliens|index:i|index:j == 8 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("darkgreen");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script> 
+                        {% elif aliens|index:i|index:j == 9 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("darkblue");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 10 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("yellow");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 11 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("fan");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 12 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("terrain");
+                                ctx.drawImage(img,0,0,50,50);
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("wall");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
                         {% elif aliens|index:i|index:j == 2 %}
                             <script>
                                 var c = document.getElementById({{i}}{{j}});
@@ -345,47 +378,8 @@
                 {% endfor %}
                 <br>
             {% endfor %}
-            <script>
 
-                function refreshMap (){
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function() {
-                        if (xhttp.readyState == 4 && xhttp.status == 200) {
-                            document.getElementById("gridmap").innerHTML = xhttp.responseText;
-                        }
-                    
-                    };
-                    xhttp.open("GET", "ajax", true);
-                    xhttp.send();
-                    console.log('refresh was clicked')
-                }
-            </script>
         </div>  
-        <!-- <div class="item9">
-            9
-        </div>
-        <div class="item10">
-            <style>
-                #myProgress{
-                    width: 100%;
-                    background-color: #c1c1c1;
-                }
-                    
-                #myBar{
-                    width: {{battery}};
-                    height: 30px;
-                    background-color: #F05760;
-                }
-            </style>
-            <font size="3"> Battery Level: </font>
-            <div id="myProgress">
-            <div id="myBar"> {{battery}} </div>
-            </div> 
-        </div>
-        <div class="item11">11</div>
-        <div class="item12">12</div>
-        <div class="item13">13</div> -->
-
         <script>
             // window.setInterval('refresh()', 3000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
 
