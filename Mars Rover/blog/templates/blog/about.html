@@ -29,7 +29,7 @@
         }
 
         .grid-container > div {
-            background-color: rgba(255, 255, 255, 0.295);
+            background-color: rgba(255, 255, 255, 0.418);
             text-align: center;
             padding: 10px 0;
             font-size: 20px;
@@ -48,7 +48,7 @@
         }
 
         .item6 {
-            /* grid-area: 3 / 6 / 5 / 6; */
+            grid-area: 3 / 6 / 5 / 6;
             font-size: 20px;
         }
 
@@ -155,8 +155,8 @@
             {% else %}
                 {% load static %} <img id="none" src="{% static "blog/media/dinobk.png" %}" alt="wifibad" height="150" width="150" />
             {% endif %}
-
-        </div>
+            
+        </div> 
         <div class="item2">
             {% load static %} <img id="logo" src="{% static "blog/media/logo.png" %}" alt="logo" height="200" width="200" />
         </div>
@@ -378,8 +378,28 @@
                 {% endfor %}
                 <br>
             {% endfor %}
+        </div> 
+        
+        <div class="item9">
+            <style>
+                #myProgress{
+                    width: 100%;
+                    background-color: #c1c1c1;
+                }
+                    
+                #myBar{
+                    width: {{battery}};
+                    height: 20px;
+                    background-color: #F05760;
+                }
+            </style>
+            <font size="3"> <b>Battery Level:</b></font>
+            <div id="myProgress">
+            <div id="myBar"><b>{{battery}}</b></div>
 
-        </div>  
+        </div>
+        
+
         <script>
             // window.setInterval('refresh()', 3000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
 
