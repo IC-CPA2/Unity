@@ -8,7 +8,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    
+    double translation_prop = 0.0225;
 
 public:
     double heading_angle;
@@ -28,8 +28,8 @@ public:
         optical_distance_moved();
         straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
         RoverMotors.forward(speed, straightness_error);
-        coord_x = roverUnity.pos_x;
-        coord_y = roverUnity.pos_y;
+        coord_x = translation_prop * roverUnity.pos_x;
+        coord_y = translation_prop * roverUnity.pos_y;
     };
     // call this to brake the rover immediately
     void brake()
@@ -74,18 +74,19 @@ public:
         RoverMotors.brake();
     };
     //(-10 < speed < 10) drive forward a certain distance, call it inside void loop() in main.cpp, it is BLOCKING
-    void forward_distance(int speed, int distance)
+    void forward_distance(int speed, double distance)
     {
 
-        int elapsed_rover_distance = 0;
-        while (elapsed_rover_distance < distance)
+        double elapsed_rover_distance = 0.0;
+
+        while (elapsed_rover_distance * translation_prop < distance)
         {
             optical_distance_moved();
             straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
             RoverMotors.forward(speed, straightness_error);
             elapsed_rover_distance = elapsed_rover_distance + roverUnity.dy;
-            coord_x = roverUnity.pos_x;
-            coord_y = roverUnity.pos_y;
+            coord_x = translation_prop * roverUnity.pos_x;
+            coord_y = translation_prop * roverUnity.pos_y;
         };
         RoverMotors.brake();
     }
