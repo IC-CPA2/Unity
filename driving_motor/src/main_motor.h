@@ -84,15 +84,15 @@ private:
 
     // let's initialise the PD constants
 
-    Kd = 0.5;
+    Kd = 4;
 
-    Kp = 0.8;
+    Kp = 15;
 
-    Ki = 0.6;
+    Ki = 4;
 
     clamping = 20;
 
-    cumulative_error = 0.9 * cumulative_error + current_error; // previously 0.5 *
+    cumulative_error = cumulative_error + current_error; // previously 0.5 *
 
     // apply low-pass filter to the derivative values
 
@@ -139,7 +139,8 @@ private:
 
     KI = cumulative_error;
 
-    correction = Kd * KD + Kp * current_error + Ki * KI;
+    // correction = Kd * KD + Kp * current_error + Ki * KI;
+    correction = Kp * current_error;
 
     // NOT TO USE: stop the rover to restabilise in case of too high sverving
 
@@ -150,21 +151,21 @@ private:
     //   delay(0.5);
     // }
 
-    Serial.println("\n \n");
-    Serial.println("----------");
-    Serial.println("----------");
-    // Serial.println("Correction values are KP, KI, KD:");
-    Serial.print("KP: ");
-    Serial.print(Kp * current_error);
-    Serial.print("KI: ");
-    Serial.print(KI * Ki);
-    Serial.print("KD: ");
-    Serial.print(KD * Kd);
-    Serial.print(" ---- Correction: ");
-    Serial.print(correction);
+    // Serial.println("\n \n");
+    // Serial.println("----------");
+    // Serial.println("----------");
+    // // Serial.println("Correction values are KP, KI, KD:");
+    // Serial.print("KP: ");
+    // Serial.print(Kp * current_error);
+    // Serial.print("KI: ");
+    // Serial.print(KI * Ki);
+    // Serial.print("KD: ");
+    // Serial.print(KD * Kd);
+    // Serial.print(" ---- Correction: ");
+    // Serial.print(correction);
 
-    Serial.println("----------");
-    Serial.println("----------");
+    // Serial.println("----------");
+    // Serial.println("----------");
 
     // speeds.left = corrigation * speed;
     speeds.left = speed + correction;

@@ -69,6 +69,10 @@ int rover_distance_y = 0;
 
 int rover_angle = 0;
 
+// rover turning adjustment proportionality constant
+
+double turning_prop = 8.0 / 90.0;
+
 double abs_coord_x = 0;
 double abs_coord_y = 0;
 
@@ -232,8 +236,12 @@ byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
 struct Rover
 {
-  double dx, dy, head_angle;
-  // double distance_X, distance_y,  PROBABLY NOT NEEDED?!?!?!
+  // dx and dy are in terms of centimetres
+  double dx, dy;
+  double head_angle = 0;
+  double required_head_angle = 0;
+  double translation_prop = 15 / 666;
+  // position of rover in terms of centimetre translation
   double pos_x, pos_y;
 };
 
@@ -250,19 +258,29 @@ void calc_abs_coords()
 {
   // assign roverUnity new values here
 
-  int dx = roverUnity.dx;
-  int dy = roverUnity.dy;
+  double dx = roverUnity.dx;
+  double dy = roverUnity.dy;
 
-  Serial.println("Rover dx:");
+  Serial.println("Rover dx");
   Serial.println(dx);
   Serial.println("Rover dy");
   Serial.println(dy);
 
-  int head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+  double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
 
-  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_x = sin(head_angle_radians) * dx * roverUnity.translation_prop + roverUnity.pos_x;
 
-  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+  roverUnity.pos_y = cos(head_angle_radians) * dy * roverUnity.translation_prop + roverUnity.pos_y;
+
+  Serial.println("Rover HEAD ANGLE");
+  Serial.println(roverUnity.head_angle);
+
+  Serial.print('\n');
+
+  Serial.println("position x = " + String(roverUnity.pos_x));
+
+  Serial.println("position y = " + String(roverUnity.pos_y));
+  Serial.print('\n');
 
   // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
 };
@@ -320,8 +338,10 @@ void optical_measurements()
 
   // Serial.println(md.max_pix);
 
-  roverUnity.dx = convTwosComp(md.dx);
-  roverUnity.dy = convTwosComp(md.dy);
+  roverUnity.dx = roverUnity.translation_prop * convTwosComp(md.dx);
+  roverUnity.dy = roverUnity.translation_prop * (md.dy);
+
+  roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
 
   // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
   // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
@@ -329,50 +349,15 @@ void optical_measurements()
   // total_rover_x = total_rover_x1 / 157;
   // total_rover_y = total_rover_y1 / 157;
 
-  Serial.print('\n');
-
-  Serial.println("position x = " + String(roverUnity.pos_x));
-
-  Serial.println("position y = " + String(roverUnity.pos_y));
-  Serial.print('\n');
-
   // delay(200);
 
 #endif
 };
 
-void optical_measurements_for_angle()
+double optical_measurements_for_angle()
 {
-#if 0
-/*
-    if(movementflag){
 
-    tdistance = tdistance + convTwosComp(xydat[0]);
-    Serial.println("Distance = " + String(tdistance));
-    movementflag=0;
-    delay(3);
-    }
-
-  */
-  // if enabled this section grabs frames and outputs them as ascii art
-
-  if(mousecam_frame_capture(frame)==0)
-  {
-    int i,j,k;
-    for(i=0, k=0; i<ADNS3080_PIXELS_Y; i++)
-    {
-      for(j=0; j<ADNS3080_PIXELS_X; j++, k++)
-      {
-        Serial.print(asciiart(frame[k]));
-        Serial.print(' ');
-      }
-      Serial.println();
-    }
-  }
-  Serial.println();
-  delay(250);
-
-#else
+  double angle_turned = 0;
 
   // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
   // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
@@ -397,6 +382,8 @@ void optical_measurements_for_angle()
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
 
+  angle_turned = turning_prop * roverUnity.dx;
+
   // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
   // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
 
@@ -411,8 +398,7 @@ void optical_measurements_for_angle()
   // Serial.print('\n');
 
   // delay(200);
-
-#endif
+  return angle_turned;
 };
 
 void optical_distance_moved()
@@ -428,13 +414,11 @@ double optical_angle_turned()
 
   double angle_turned = 0;
 
-  optical_measurements_for_angle();
+  angle_turned = optical_measurements_for_angle();
 
   // do calculations based on the values stored within the roverUnity dx and dy values upon the running of the optical_measurements() function
 
   // Serial.println(roverUnity.dx);
-
-  angle_turned = 8.0 / 90 * roverUnity.dx; // TODO:test that this is working e.g. signs and stuff!
 
   // Serial.println(angle_turned);
 
