@@ -176,56 +176,53 @@ def about(request):
                 ali = reduce(database)                     
         # print (ali)
 
-
-    # #edit value of ali at each position to get the current position. 
-    # file_path = curr_dir+"\\blog\\text_files\\image.txt"
-    # file_path = file_path.replace("\\","/")
-    # fi = open(file_path, "r")
-    # val = fi.readline()
-    # fi.close()
-    # val1 = val.split(";")
-    # #reads in sequence the vlues of this thing. 
-    # print (val1)
-    # curr_pos = 0
-    # for i in range(len(val1)):
-    #     #renders the values
-    #     value = val1[i].split(",")
-    #     # img.append(value)
-    #     for j in range(len(value)):
-    #         ali[i][j] = int(value[j])
-    #         if int(value[j]) == 2:
-    #             curr_pos = str(i)+str(j)# in array coordinates will be 44
-    # print ("let's find curr_pos",curr_pos)
-
-    directionFile = []
-    direction = []
     direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
     direction_path = direction_path.replace("\\","/")
     direc = open(direction_path, "r")
-    for x in direc:
-        directionFile.append(x)
-    direc.close()
 
-    for i in directionFile:
-        if i[0] == "U":
-            direction.append("Forward: " + str(i[1:]))
-        elif i[0] == "D":
-            direction.append("Backward: " + str(i[1:]))
-        elif i[0] == "L":
-            direction.append("Left: " + str(i[1:]))
-        elif i[0] == "R":
-            direction.append("Right: " + str(i[1:]))
-   
-    # wifi_path = curr_dir+"\\blog\\text_files\\wifi.txt"
-    # wifi_path = wifi_path.replace("\\","/")
+    heading = direc.read()
+    print("HERE:", heading)
 
-    # w = open(wifi_path, "r")
-    # wifi = w.readline()
-    # w.close()
+    alien_path = curr_dir+"\\blog\\text_files\\alien.txt"
+    alien_path = alien_path.replace("\\","/")
+    alie = open(alien_path, "r")
+    
+    alienlog = []
 
-    # wifi = 
-    # print(wifi)
+    for i in alie:
+        alienlog.append(i)
+    # alienlog 
 
+    aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R')).values_list()
+
+    print (aliensquery)
+
+    for i in aliensquery:
+        tile_num = i[0]
+        y = tile_num[:2]
+        x = tile_num[2:]
+        tile_num = x + ', ' + y
+        tile_info = i[1]
+        if tile_info == 'BA':
+            tile_info = 'Blue Alien'
+        elif tile_info == 'YA':
+            tile_info = 'Yellow Alien'
+        elif tile_info == 'GA':
+            tile_info = 'Green Alien'
+        elif tile_info == 'RA':
+            tile_info = 'Red Alien'
+        elif tile_info == 'PA':
+            tile_info = 'Pink Alien'
+        elif tile_info == 'DGA':
+            tile_info = 'Dark Green Alien'
+        elif tile_info == 'DBA':
+            tile_info = 'Dark Blue Alien'
+
+        display = tile_info + ": " + tile_num
+        if display not in alienlog:
+            alienlog.append(display)
+
+    print (alienlog)
 
     context = {
         # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
@@ -233,10 +230,11 @@ def about(request):
         'counter': ['1','2','3','4','5','6','7','8','9'],
         'battery': batteryLvl,
         'aliens': ali,
-        'directions': direction,
+        'headings': int(heading),
         'wifis': os.system("ping -c 1 google.com")==0,
         'options': ['Manual', 'Autonomous'],
-        'picked': mo
+        'picked': mo,
+        'alienlogs': alienlog
     } 
 
     # print(request.POST)
@@ -277,7 +275,7 @@ def distance(request):
     database = [[1]*71 for i in range(71)]
     rover_pos = 0
 
-    if db_length >0:
+    if db_length > 0:
         # print ("HELLO")
         # print("DATABASE LENGTH >1 ")
         sel_val = live_database.objects.all().values()
@@ -411,19 +409,6 @@ def distance(request):
         f.write(angle)
         f.close()
 
-        # direc = open(direction_path, "a")
-        # if angle == "0":
-        #     direc.write("\n" + "U" + distance)
-        # elif angle == "90":
-        #     direc.write("\n" + "R" + distance)
-        # elif angle == "180":
-        #     direc.write("\n" + "D" + distance)
-        # elif angle == "270":
-        #     direc.write("\n" + "L" + distance)
-        # distance = 0
-        # angle = 0
-        # direc.close()
-
     if 'map_name' in request.POST: 
         name = request.POST['map_name']
         print("map_name:", name)
@@ -454,11 +439,8 @@ def distance(request):
             if y < miny:
                 miny = y
         
-        # print (maxy)
-        # print (miny)
         sizex = maxx-minx+1
         sizey = maxy-miny+1
-        # print ("size:", sizex, sizey)
 
         size = str(sizex) + "x" + str(sizey)
         
@@ -472,8 +454,6 @@ def distance(request):
         else:
             rawname = name 
             name += " (" + str(len(unique)) + ")"
-            # rename = map_info.objects.get(map_name=str(name))
-            # rename.map_size = size
             new = map_info(map_name=name,map_size=size,user_map_name=rawname)
             new.save()
             mapid = new.map_id
@@ -493,73 +473,41 @@ def distance(request):
                     new_tile = all_info(tile_number=key,tile_info="U",map_id_id=mapid)
 
                 new_tile.save()   
-            # print(rename.map_name)
-        
-            
 
-    directionFile = []
-    direction = []
     direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
     direction_path = direction_path.replace("\\","/")
     direc = open(direction_path, "r")
-    for x in direc:
-        directionFile.append(x)
-    direc.close()
 
-    for i in directionFile:
-        if i[0] == "U":
-            direction.append("Forward: " + str(i[1:]))
-        elif i[0] == "D":
-            direction.append("Backward: " + str(i[1:]))
-        elif i[0] == "L":
-            direction.append("Left: " + str(i[1:]))
-        elif i[0] == "R":
-            direction.append("Right: " + str(i[1:]))
+    heading = direc.read()
 
-    # image_file =  curr_dir + "\\blog\\text_files\\image.txt"
-    # image_file = image_file.replace("\\","/")
+    print("HERE:",heading)
 
-    # imagef = open (image_file, "r")
+    alien_path = curr_dir+"\\blog\\text_files\\alien.txt"
+    alien_path = alien_path.replace("\\","/")
+    alie = open(alien_path, "r")
+    
+    alienlog = {}
+
+    aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R'))
+
+    for i in aliensquery:
+        alienlog[i.tile_num] = i.tile_info
+
+
+    print (alienlog)
+
+    for i in alie:
+        alienlog.append(i)
 
     context = {
-        # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
-        # 'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
         'counter': ['1','2','3','4','5','6','7','8','9'],
         'battery': batteryLvl,
         'aliens': ali,
-        'directions': direction,
+        'headings': int(heading),
         'wifis': wifi,
-        'options': ['Manual', 'Autonomous']
+        'options': ['Manual', 'Autonomous'],
+        'picked': mo,
+        'alienlogs': alienlog
     } 
 
     return redirect ('/about', context)
-    # return render(request, 'blog/about.html', context)
-
-def ajax (request):
-    context = {
-        'counter': ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-    } 
-    # image_dec = """<img id="terrain" src="static/members/media/terrain.jpg" alt="terrain" height="0" width="0"/>"""
-    # image_dec += """<img id="question" src="static/blog/media/question.jpg" alt="question" height="0" width="0"/> """
-
-    # printout = ""
-    # printout += image_dec
-    # printout += """<div>"""
-    # for i in (n+1 for n in range(9)):
-    #     for j in (n+1 for n in range(9)):
-    #         printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
-    #                                     style="border:0.5px solid #000000;">
-    #                                  </canvas>
-    #                                  <script>
-    #                                      var c = document.getElementById(\"""" + str(i) + str(j) + """\");
-    #                                      var ctx = c.getContext("2d");
-    #                                      var img = document.getElementById("terrain");
-    #                                      ctx.drawImage(img,0,0,50,50);
-    #                                  </script>"""
-    #     printout = printout + "<br>"
-
-    # printout = printout + "</div>"
-
-    # return HttpResponse(printout)
-    return render(request, 'blog/ajax.html', context)
-

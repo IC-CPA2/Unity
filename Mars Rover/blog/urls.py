@@ -8,7 +8,6 @@ urlpatterns = [
     path('login/',views.login, name='blog-about'),
     path('form/',views.form, name='blog-about'),
     path('about/distance', views.distance, name='blog-about'),
-    path('about/ajax', views.ajax, name='blog-home')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -264,6 +264,14 @@ try:
 
             # print("debugging",temp_dict)
             angle = temp_dict[5]
+            curr_dir = os.getcwd()
+            direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
+            direction_path = direction_path.replace("\\","/")
+            direc = open(direction_path, "w")
+
+            direc.write(angle)
+
+
             # print("debug: ",angle)
             print(temp_dict[5])
             print(curr_sq)
