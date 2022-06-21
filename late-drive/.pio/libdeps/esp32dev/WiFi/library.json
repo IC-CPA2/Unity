@@ -1,0 +1,19 @@
+{
+    "authors": {
+        "name": "Jake Merz",
+        "url": "https://os.mbed.com/users/zrem/"
+    },
+    "build": {
+        "builder": "MbedLibBuilder"
+    },
+    "description": "Wifi library for the ESP8266",
+    "frameworks": "mbed",
+    "keywords": [],
+    "name": "WiFi",
+    "platforms": "*",
+    "repository": {
+        "type": "hg",
+        "url": "https://os.mbed.com/users/zrem/code/WiFi/"
+    },
+    "version": "0.0.0+sha.a446a6e2d3ce"
+}
