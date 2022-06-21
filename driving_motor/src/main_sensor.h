@@ -9,11 +9,11 @@
 
 #define PIN_SS 5    // originally 5
 #define PIN_MISO 19 // originally 19
-#define PIN_MOSI 23
-#define PIN_SCK 18 // originally 18
+#define PIN_MOSI 23 // originally 23
+#define PIN_SCK 18  // originally 18
 
-#define PIN_MOUSECAM_RESET 35
-#define PIN_MOUSECAM_CS 5 // originally 5
+#define PIN_MOUSECAM_RESET 35 // originally 35
+#define PIN_MOUSECAM_CS 5     // originally 5
 
 #define ADNS3080_PIXELS_X 30
 #define ADNS3080_PIXELS_Y 30
@@ -52,6 +52,7 @@
 
 #define ADNS3080_PRODUCT_ID_VAL 0x17
 
+// SPISettings settings(100000, MSBFIRST, SPI_MODE2);
 int total_rover_x = 0;
 int total_rover_y = 0;
 
