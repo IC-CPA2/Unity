@@ -5,12 +5,13 @@ class Drive
 {
 
 private:
-    Motors RoverMotors;
-    int elapsed_rover_distance = 0;
+        int elapsed_rover_distance = 0;
     double straightness_error = 0;
     double translation_prop = 0.0225;
 
 public:
+    Motors RoverMotors;
+    double motor_proportionality, distance_prop, angle_prop, Kp, Ki, Kd;
     double heading_angle;
     // x- and y positions of the rover
     double coord_x, coord_y;
@@ -38,9 +39,11 @@ public:
         RoverMotors.brake();
     };
     // call this to turn the rover a certain amount of degrees
-    void turn(int angle_degrees, bool turnLeft)
+    void turn(int speed, int angle_degrees, bool turnLeft)
     {
         double turned_angle = 0;
+
+        
 
         // ENABLE THIS PART OF THE CODE FOR ROTATION FEEDBACK FROM THE OFS
         if (turnLeft)
@@ -58,7 +61,7 @@ public:
             Serial.println(turned_angle);
 
             // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-            RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+            RoverMotors.turn(speed,turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;

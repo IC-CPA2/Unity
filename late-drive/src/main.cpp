@@ -15,22 +15,22 @@
 
 WiFiClient client;
 MFRC522 mfrc522(SS_PIN, RST_PIN);
-const char *ssid = "JamesO";//the ssid field here is the name of your wifi
+const char *ssid = "Milu-PC"; // the ssid field here is the name of your wifi
 const char *password = "123456789";
 const uint16_t port = 12001;
 // const char *host = "192.168.14.148";
-// const char *host = "192.168.1.76";//this is the host address of the LAN 
-//192.168.137.71
+// const char *host = "192.168.1.76";//this is the host address of the LAN
+// 192.168.137.71
 const char *host = "192.168.137.1";
 
 // total translation of the rover
-double total_translation_x,total_translation_y;
+double total_translation_x, total_translation_y;
 
 Motors motors;
 
 Drive driveUnity;
 
-//you extract it by going ipconfig on your own desktop.
+// you extract it by going ipconfig on your own desktop.
 void initWiFi()
 {
   WiFi.mode(WIFI_STA);
@@ -53,11 +53,16 @@ void setup()
   // optical_setup();
   driveUnity.setup();
   delay(2000);
-
 }
-  // int total_translation_x,total_translation_y;
-  // Motors motors;
+// int total_translation_x,total_translation_y;
+// Motors motors;
+
+int straight_turn = 0;
+int straight_speed = 3;
+int turning_speed = 70;
+
 void loop()
+
 {
   unsigned long previousMillis = 0;
   unsigned long interval = 30000;
@@ -71,10 +76,11 @@ void loop()
     previousMillis = currentMillis;
   }
   bool connected;
-  String msg = "";//e.g. 0;0;3;5.1>
+  String msg = ""; // e.g. 0;0;3;5.1>
   connected = client.connect(host, port);
   int i = 0;
-  while (i==0)
+
+  while (i == 0)
   {
     if (!connected)
     {
@@ -82,121 +88,125 @@ void loop()
       delay(1000);
       return;
     }
+
+    if (straight_turn == 0)
+    {
+      driveUnity.forward(straight_speed);
+    }
+    else
+    {
+      driveUnity.turn(turning_speed, 90, true);
+    }
+
     Serial.println("Connected to server successful!");
-    client.print("Hello from ESP32!");//send the vision data here 
-    //server is processing here
+    client.print("Hello from ESP32!"); // send the vision data here
+    // server is processing here
     connected = true;
     while (client.available())
     {
       char c = client.read();
       msg.concat(c);
       // Serial.println(c);
-      if (c=='>'){
+      if (c == '>')
+      {
         i = 1;
         Serial.println(msg);
-      }//getting the reads from the ser
+      } // getting the reads from the ser
     }
     // client.stop();
     delay(1000);
   }
-  //param names: straight_turn (int), straight_speed (int), param3 (int), float fl_1 (float), float fl_2 (float)
-  //float fl_3 (float), float kp (float), float ki (float), float fl_4
-    Serial.println("exit for loop");
-    int ind_semicolon = msg.indexOf(";");
-    String str_param = msg.substring(0,ind_semicolon);//get the
-    int straight_turn = str_param.toInt();
-    Serial.println(straight_turn,DEC);
-    msg = msg.substring(ind_semicolon+1,msg.length());
-    
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    int straight_speed = str_param.toInt();
-    Serial.println(straight_speed,DEC);
-    msg = msg.substring(ind_semicolon+1,msg.length());
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    int param3 = str_param.toInt();
-    Serial.println(param3,DEC);
-    msg = msg.substring(ind_semicolon+1,msg.length());
-    Serial.print("end of ints, message is: ");
-    
-    Serial.print(msg);
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float fl_1 = str_param.toFloat();//this is the first float
-    Serial.println("extract float");
-    Serial.println(fl_1,3);//print to 3 degrees of precision (3 d.p.)
+  // param names: straight_turn (int), straight_speed (int), param3 (int), float fl_1 (float), float fl_2 (float)
+  // float fl_3 (float), float kp (float), float ki (float), float fl_4
+  Serial.println("exit for loop");
+  int ind_semicolon = msg.indexOf(";");
+  String str_param = msg.substring(0, ind_semicolon); // get the
+  straight_turn = str_param.toInt();                  // 1
+  Serial.println(straight_turn, DEC);
+  msg = msg.substring(ind_semicolon + 1, msg.length());
 
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  int straight_speed = str_param.toInt();      // 2
+  Serial.println(straight_speed, DEC);
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  int turning_speed = str_param.toInt();       // 3
+  Serial.println(turning_speed, DEC);
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  Serial.print("end of ints, message is: ");
 
-    msg = msg.substring(ind_semicolon+1,msg.length());
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float fl_2 = str_param.toFloat();//this is the first float
-    Serial.println(fl_2,3);//print to 3 degrees of precision (3 d.p.)
-    msg = msg.substring(ind_semicolon+1,msg.length());
+  Serial.print(msg);
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float fl_1 = str_param.toFloat();            // this is the first float
+  Serial.println("extract float");
+  Serial.println(fl_1, 3); // print to 3 degrees of precision (3 d.p.)
 
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float fl_3 = str_param.toFloat();//this is the first float
-    Serial.println(fl_3,3);//print to 3 degrees of precision (3 d.p.)
-    msg = msg.substring(ind_semicolon+1,msg.length());
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float fl_2 = str_param.toFloat();            // this is the second float
+  Serial.println(fl_2, 3);                     // print to 3 degrees of precision (3 d.p.)
+  msg = msg.substring(ind_semicolon + 1, msg.length());
 
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float kp = str_param.toFloat();//this is the first float
-    Serial.println(kp,3);//print to 3 degrees of precision (3 d.p.)
-    msg = msg.substring(ind_semicolon+1,msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float fl_3 = str_param.toFloat();            // this is the third float
+  Serial.println(fl_3, 3);                     // print to 3 degrees of precision (3 d.p.)
+  msg = msg.substring(ind_semicolon + 1, msg.length());
 
-    ind_semicolon = msg.indexOf(";");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float ki = str_param.toFloat();//this is the first float
-    Serial.println(ki,3);//print to 3 degrees of precision (3 d.p.)
-    msg = msg.substring(ind_semicolon+1,msg.length());
-    ind_semicolon = msg.indexOf(">");
-    str_param = msg.substring(0,ind_semicolon);//get the
-    float fl_4 = str_param.toFloat();//this is the first float
-    Serial.println(fl_4,3);//print to 3 degrees of precision (3 d.p.)
-    msg = msg.substring(ind_semicolon+1,msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float kp = str_param.toFloat();              // this is the first float
+  Serial.println(kp, 3);                       // print to 3 degrees of precision (3 d.p.)
+  msg = msg.substring(ind_semicolon + 1, msg.length());
 
-    // delay(500);
-    // optical_measurements();
-    // Serial.println("Forward distance:");
-    // Serial.println(driveUnity.coord_y);
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float ki = str_param.toFloat();              // this is the first float
+  Serial.println(ki, 3);                       // print to 3 degrees of precision (3 d.p.)
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(">");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  float fl_4 = str_param.toFloat();            // this is the first float
+  Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
+  msg = msg.substring(ind_semicolon + 1, msg.length());
 
-    // optical_measurements();
+  // delay(500);
+  // optical_measurements();
+  // Serial.println("Forward distance:");
+  // Serial.println(driveUnity.coord_y);
 
-    // // 666 coordinate_y difference translates to around 15cm of translation
-    // driveUnity.forward_distance(4, 20);
-    // driveUnity.turn(90, true);
-    // driveUnity.forward_distance(4, 20);
-    // driveUnity.turn(90, false);
+  // optical_measurements();
 
-    // if (driveUnity.coord_y < 66600)
-    // {
+  // // 666 coordinate_y difference translates to around 15cm of translation
+  // driveUnity.forward_distance(4, 20);
+  // driveUnity.turn(90, true);
+  // driveUnity.forward_distance(4, 20);
+  // driveUnity.turn(90, false);
 
-    //     //   driveUnity.forward_distance(2, 1000);
-    // }
-    // else
-    // {
-    //     driveUnity.turn(90, true);
-    //     driveUnity.turn(90, false);
-    //     driveUnity.brake();
-    //     Serial.println("Heading angle");
-    //     Serial.println(roverUnity.head_angle);
-    // }
+  // if (driveUnity.coord_y < 66600)
+  // {
 
+  //     //   driveUnity.forward_distance(2, 1000);
+  // }
+  // else
+  // {
+  //     driveUnity.turn(90, true);
+  //     driveUnity.turn(90, false);
+  //     driveUnity.brake();
+  //     Serial.println("Heading angle");
+  //     Serial.println(roverUnity.head_angle);
+  // }
 }
-
-
-
-
-
 
 // void setup()
 // {
 
 //     // delay to initialise everyything properly
-//     
+//
 // }
 
 // void loop()

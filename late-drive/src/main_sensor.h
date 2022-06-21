@@ -242,6 +242,7 @@ struct Rover
   double required_head_angle = 0;
   double translation_prop = 15 / 666 * 666 / 15;
   // position of rover in terms of centimetre translation
+  
   double pos_x, pos_y;
 };
 
