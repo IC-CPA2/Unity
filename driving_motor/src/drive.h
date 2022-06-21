@@ -22,12 +22,12 @@ public:
     };
 
     //(-10 < speed < 10) drive forward indefinitely, call it inside the void loop() in main.cpp, it is NON-BLOCKING
-    void forward(int speed)
+    void forward(int speed, double motor_prop, double kp, double ki, double kd)
     {
 
         optical_distance_moved();
         straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
-        RoverMotors.forward(speed, straightness_error);
+        RoverMotors.forward(speed, straightness_error, motor_prop, kp, ki, kd);
         coord_x = translation_prop * roverUnity.pos_x;
         coord_y = translation_prop * roverUnity.pos_y;
     };
@@ -74,7 +74,7 @@ public:
         RoverMotors.brake();
     };
     //(-10 < speed < 10) drive forward a certain distance, call it inside void loop() in main.cpp, it is BLOCKING
-    void forward_distance(int speed, double distance)
+    void forward_distance(int speed, double distance, double motor_prop, double kp, double ki, double kd)
     {
 
         double elapsed_rover_distance = 0.0;
@@ -83,7 +83,7 @@ public:
         {
             optical_distance_moved();
             straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
-            RoverMotors.forward(speed, straightness_error);
+            RoverMotors.forward(speed, straightness_error, motor_prop, kp, ki, kd);
             elapsed_rover_distance = elapsed_rover_distance + roverUnity.dy;
             coord_x = translation_prop * roverUnity.pos_x;
             coord_y = translation_prop * roverUnity.pos_y;

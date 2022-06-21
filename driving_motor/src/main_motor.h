@@ -26,7 +26,7 @@ Developed with ROB-9457
 // the exception of STBY which the Redbot controls with a physical switch
 #define AIN1 21 // 18
 #define BIN1 17
-#define AIN2 14 // 5
+#define AIN2 25 //14 // 5
 #define BIN2 16
 #define PWMA 22 // 19
 #define PWMB 4
@@ -73,22 +73,22 @@ private:
   }
 
   // the input error here has to be the total_x_translation during straight drive
-  MotorSpeeds speed_straightness_control(int speed, double current_error)
+  MotorSpeeds speed_straightness_control(int speed, double current_error,double motor_prop,double kp, double ki, double kd)
   {
 
     MotorSpeeds speeds;
 
     // adjust constant to model power differences between motor left and right
 
-    motor_proportionality = 0.96;
+    motor_proportionality = motor_prop;
 
     // let's initialise the PD constants
 
-    Kd = 4;
+    Kd = kd; // 4;
 
-    Kp = 15;
+    Kp = kp; //15;
 
-    Ki = 4;
+    Ki = ki; //4;
 
     clamping = 20;
 
@@ -139,8 +139,8 @@ private:
 
     KI = cumulative_error;
 
-    // correction = Kd * KD + Kp * current_error + Ki * KI;
-    correction = Kp * current_error;
+    correction = Kd * KD + Kp * current_error + Ki * KI;
+    //correction = Kp * current_error;
 
     // NOT TO USE: stop the rover to restabilise in case of too high sverving
 
@@ -179,14 +179,14 @@ private:
     return speeds;
   }
 
-  void drive_straight(int speed, int duration, double current_error)
+  void drive_straight(int speed, int duration, double current_error,double motor_prop,double kp, double ki, double kd)
   {
 
     MotorSpeeds speeds;
     // the input error here has to be the total_x_translation during straight drive
     // Serial.println("speed is controlled, the error is:");
     // Serial.println(current_error);
-    speeds = speed_straightness_control(speed, current_error);
+    speeds = speed_straightness_control(speed, current_error,motor_prop,kp,ki,kd);
 
     // Use of the drive function which takes as arguements the speed
     // and optional duration.  A negative speed will cause it to go
@@ -237,7 +237,7 @@ public:
   double error;
 
   // method to move forward
-  void forward(int speed, double current_error)
+  void forward(int speed, double current_error,double motor_prop,double kp, double ki, double kd)
   {
     int duration = 10; // default value
 
@@ -246,7 +246,7 @@ public:
     // generate duration to control the motors
     duration = convert_to_duration(distance, speed);
 
-    drive_straight(speed, duration, current_error);
+    drive_straight(speed, duration, current_error,motor_prop,kp,ki,kd);
   }
 
   // method to brake
