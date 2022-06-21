@@ -106,7 +106,14 @@ int retlargestbin(int arr[65])
   }
 }
 
-int speed = 53;
+int speed = 3;
+
+String msg;
+
+float fl_1 = 0.96;
+float fl_2 = 4;
+float fl_3 = 8;
+float fl_4 = 4;
 
 void loop()
 {
@@ -134,9 +141,10 @@ void loop()
     previousMillis = currentMillis;
   }
   bool connected;
-  std::string msg;
+
   connected = client.connect(host, port);
   int i = 0;
+  msg = "";
   client.print("hello");
   while (i == 0)
   {
@@ -147,18 +155,72 @@ void loop()
       return;
     }
     connected = true;
-    driveUnity.forward(speed - 48);
+    driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
     while (client.available())
     {
       char c = client.read();
-      Serial.println(c);
-      speed = (int)c;
+      msg.concat(c);
 
-      i = 1;
-      break;
+      if (c == '>')
+      {
+        i = 1;
+        Serial.println(msg);
+      } // getting the reads from the ser
+
+      // Serial.println(c);
+      // speed = (int)c;
+
+      // i = 1;
+      // break;
     }
   }
 
+  Serial.println("exit for loop");
+  int ind_semicolon = msg.indexOf(";");
+  String str_param = msg.substring(0, ind_semicolon); // get the
+  speed = str_param.toInt();                          // 1
   Serial.println(speed, DEC);
-  driveUnity.forward(speed - 48);
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+
+  // ind_semicolon = msg.indexOf(";");
+  // str_param = msg.substring(0, ind_semicolon); // get the
+  // int straight_speed = str_param.toInt();      // 2
+  // Serial.println(straight_speed, DEC);
+  // msg = msg.substring(ind_semicolon + 1, msg.length());
+
+  // ind_semicolon = msg.indexOf(";");
+  // str_param = msg.substring(0, ind_semicolon); // get the
+  // int turning_speed = str_param.toInt();       // 3
+  // Serial.println(turning_speed, DEC);
+  // msg = msg.substring(ind_semicolon + 1, msg.length());
+
+  Serial.print("end of ints, message is: ");
+
+  Serial.print(msg);
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  fl_1 = str_param.toFloat();                  // this is the first float
+  Serial.println("extract float");
+  Serial.println(fl_1, 3); // print to 3 degrees of precision (3 d.p.)
+
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  fl_2 = str_param.toFloat();                  // this is the second float
+  Serial.println(fl_2, 3);                     // print to 3 degrees of precision (3 d.p.)
+
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  fl_3 = str_param.toFloat();                  // this is the second float
+  Serial.println(fl_3, 3);                     // print to 3 degrees of precision (3 d.p.)
+
+  msg = msg.substring(ind_semicolon + 1, msg.length());
+  ind_semicolon = msg.indexOf(";");
+  str_param = msg.substring(0, ind_semicolon); // get the
+  fl_4 = str_param.toFloat();                  // this is the second float
+  Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
+
+  Serial.println(speed, DEC);
+  driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
 }
