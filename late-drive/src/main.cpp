@@ -9,8 +9,8 @@
 #define MISO 19
 #define MOSI 23
 #define CS 5
-#define RST_PIN 4
-#define SS_PIN 2
+#define RST_PIN 27
+#define SS_PIN 26
 #include <drive.h>
 
 WiFiClient client;
@@ -95,7 +95,7 @@ void loop()
     }
     else
     {
-      driveUnity.turn(turning_speed, 90, true);
+      driveUnity.turn(90, true);
     }
 
     Serial.println("Connected to server successful!");

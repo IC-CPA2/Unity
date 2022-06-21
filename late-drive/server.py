@@ -17,7 +17,7 @@ try:
             print("debug", content)
         cmsg = input(
             "please enter your message in form: (int;int;int;fl1;fl2;fl3;kp;ki;fl4)")
-        # sample input is : 1;2;3;0.1;0.2;0.3;0.4;0.5;0.6>
+        # sample input is : 0;3;3;0.1;0.2;0.3;0.4;0.5;0.6>
         # cmsg = cmsg.decode();
         conn.send(cmsg.encode())
 

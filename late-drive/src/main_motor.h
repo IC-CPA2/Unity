@@ -59,6 +59,7 @@ private:
   double last_heading_error = 0;
   double cumulative_error = 0;
   double KD, KI, correction, normalised_speed, previous_current_error, clamping;
+  double straight_or_turning, straight_speed, turning_speed, motor_proportionality, distance_prop, angle_prop, Kp, Ki, Kd;
   double dEs[4] = {0, 0, 0, 0};
   double dEs_average = 0;
   double previous_dEs_average = 0;
@@ -235,7 +236,6 @@ public:
   int distance = 1; // IT MIGHT NOT WORK
   double turning_angle;
   double error;
-  double straight_or_turning, straight_speed, turning_speed, motor_proportionality, distance_prop, angle_prop, Kp, Ki, Kd;
 
   // method to move forward
   void forward(int speed, double current_error)
@@ -259,8 +259,10 @@ public:
   }
 
   // NOTE: this function is open-loop, do not use in production!
-  void turn(int speed, bool turnLeft)
+  void turn(bool turnLeft)
   {
+
+    int speed = 70;
 
     if (turnLeft)
     {
