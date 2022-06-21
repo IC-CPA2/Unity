@@ -2,6 +2,7 @@
 #python3 test.py
 #python3 dumb_client.py
 #python3 manage.py updatemodels
+from hashlib import new
 from socket import *
 import socket
 import numpy as np
@@ -110,6 +111,7 @@ try:
         sel_yellow = live_database.objects.filter(tile_info="YA")
         sel_darkblue = live_database.objects.filter(tile_info="DBA")
         sel_darkgreen = live_database.objects.filter(tile_info="DGA")
+        sel_wall = live_database.objects.filter(tile_info="W")
         alien_storer['PA']=len(sel_pink)
         alien_storer['OA']=len(sel_orange)
         alien_storer['RA']=len(sel_red)
@@ -117,7 +119,8 @@ try:
         alien_storer['YA']=len(sel_yellow)
         alien_storer['DGA']=len(sel_darkgreen)
         alien_storer['DBA']=len(sel_darkblue)
-        alien_storer['BA']=len(sel_blue) # we select aliens. 
+        alien_storer['BA']=len(sel_blue) 
+        alien_storer['W']=len(sel_wall)# we select aliens. 
 
         print("Aliens by Colour:",alien_storer)   
 
@@ -127,13 +130,22 @@ try:
         if test_funct == "M":
 
           curr_dir = os.getcwd()
-          file_path = curr_dir+"\\blog\\text_files\\distance.txt"
+          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
           file_path = file_path.replace("\\","/")
           f = open(file_path,"r")
           #reading angle changes. 
           # dist = int(f.readline())
           ang_change = int(f.readline())#reads second line containing angle field. 
-          f.close()   
+          f.close()
+
+          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
+          file_path = file_path.replace("\\","/")
+          f = open(file_path,"w")
+          #reading angle changes. 
+          # dist = int(f.readline())
+          f.write("0")
+          f.close()
+
           if counter == 0:
               head_angle = str(ang_change)
               counter+=1
@@ -158,7 +170,7 @@ try:
           elif cmsg == "225":
             cmsg = "x"
           elif cmsg == "270":
-            cmsg == "r"
+            cmsg == "l"
           elif cmsg == "315":
             cmsg = "y"
             #is there an angle of 360?
@@ -238,7 +250,8 @@ try:
         else:
           # print("BOTTOM LOOP")
           cmsg = "A"
-          conn.send(cmsg.encode())                
+          conn.send(cmsg.encode())  
+          fan = False              
           # print("Maintaining connection")
           content = conn.recvfrom(32)[0]
           content = content.decode()
@@ -248,7 +261,10 @@ try:
               pass
             
           all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
-          if len(all_info)==6:
+          if len(all_info) >= 6:
+            if len(all_info) == 7:
+              fan = True
+
             print("line 239")
             coords = all_info[0].split(",") #gives x and y coordinates
             curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
@@ -284,10 +300,15 @@ try:
             print("run code")
             checker = live_database.objects.filter(tile_num=curr_sq)
             if len(checker) == 0:
-              new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
+              if fan:
+                new_sq = live_database(tile_num=curr_sq,tile_info="F",last_visited=1)
+              else:
+                new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
               new_sq.save()#apply the new last square.
             else:
               sel_vals = live_database.objects.get(tile_num=curr_sq)
+              if fan:
+                sel_vals.tile_info="F"
               sel_vals.last_visited=1
               sel_vals.save()
 
@@ -299,12 +320,24 @@ try:
                 if ali_info == "T" or ali_info == "U":# if terrain or unknown in the slot. 
                   make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                   make_new_tile.save()
+                
                 else:
+                  print("entering bottom crap")
                   #check if not a terrain or Unknown thingy.
                   if alien_storer[ali_info] == 0:#for aliens we can just save them if not there before. 
                     first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                     first_ali.save() #there does not need to be any new vals inserted.
                     alien_storer[ali_info] += 1#not labelled as terrain etc. prevents multiple insertions my guess is. 
+                  elif ali_info == "W":
+                    print("entering bottom if conditions")
+                    wallquery = live_database.objects.filter(tile_num=new_squares[i])
+                    if len(wallquery)!=0:
+                      wall = live_database.objects.get(tile_num=new_squares[i])
+                      wall.tile_info="W"
+                      wall.save()
+                    else:
+                      first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+                      first_ali.save()
                 # we can select tile info from dictionary
 
               else: #think about the new conditions to insert a new alien onto the screen . 
@@ -319,7 +352,7 @@ try:
                       alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
                       alien_ins.save()
                       alien_storer[ali_info] += 1#just in case 0. 
-                  
+        
           else:
             print("entering else condition")
             pass

@@ -67,7 +67,7 @@ def query(request):
                 <style>
                 .grid-container {
                     display: grid;
-                    grid-template-columns: auto auto;
+                    grid-template-columns: auto;
                     gap: 10px;
                     height: auto;
                 }
@@ -370,13 +370,13 @@ def query(request):
             #     pathlist.append(k.get('path'))
             #     paths += k.get('path') + "<br>"
 
-            grid2 = "<div>" + paths + "</div>"
+            # grid2 = "<div>" + "</div>"
             
             buttons = "<div>" + buttons + "</div>"
 
-            grid4 = "<div> 4 </div>"
+            # grid4 = "<div>" + "</div>"
 
-            return HttpResponse (grid + printout + grid2 + buttons + grid4 + "</div>")
+            return HttpResponse (grid + printout + buttons + "</div>")
         else:
             posts = map_info.objects.all().values('map_id','date_time','map_size','map_name')
             context = {

@@ -24,10 +24,11 @@ while True:
         client_socket.connect((server_name, server_port))
         msg = client_socket.recv(1024)
         print("Client Received Angle :",msg.decode())
-        time.sleep(0.2)
+        time.sleep(1)
         msg = str(x)
         client_socket.send(msg.encode())
         client_socket.close()
+
 
 
     #return values from the server

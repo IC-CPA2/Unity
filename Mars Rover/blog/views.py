@@ -18,6 +18,8 @@ import hashlib
 
 no = 9
 const = 1
+counter = 0
+batteryLvl = 100
 
 
 def reduce (hundred):
@@ -53,12 +55,22 @@ def about(request):
     default = """<canvas id="myCanvas" width="50" height="50" style="border:1px solid #000000;"></canvas>"""
 
     curr_dir = os.getcwd()
-    bat_path = curr_dir+"\\blog\\text_files\\bat.txt"
-    bat_path = bat_path.replace("\\","/")
-    f = open(bat_path, "r")
-    batteryLvl = f.readline() + "%"
+    # bat_path = curr_dir+"\\blog\\text_files\\bat.txt"
+    # bat_path = bat_path.replace("\\","/")
+    # f = open(bat_path, "r")
+    # batteryLvl = f.readline() + "%"
     #reads battery levels. 
-    f.close()
+    # f.close()
+
+    global counter
+    global batteryLvl 
+    counter += 1
+
+    print ("counter:", counter)
+
+    if counter > 20:
+        batteryLvl = batteryLvl - 1
+        counter = 0
 
     mo=""
     if 'mode' in request.GET:
@@ -169,8 +181,6 @@ def about(request):
                                 database[i][j] = 11
                             elif (info == "W"):
                                 database[i][j] = 12
-                            
-
                         if key == rover_pos:
                             database[i][j] = 2
                 ali = reduce(database)                     
@@ -181,7 +191,10 @@ def about(request):
     direc = open(direction_path, "r")
 
     heading = direc.read()
-    print("HERE:", heading)
+    if os.path.getsize(direction_path): 
+        print("HERE:", heading)
+    else:
+        heading = "0"
 
     alien_path = curr_dir+"\\blog\\text_files\\alien.txt"
     alien_path = alien_path.replace("\\","/")
@@ -224,11 +237,23 @@ def about(request):
 
     print (alienlog)
 
+    if 'angle' in request.POST:
+
+        angle = request.POST["angle"]
+        print ("ANGLE",angle)
+
+        dis_path = curr_dir+"\\blog\\text_files\\distance.txt"
+        dis_path = dis_path.replace("\\","/")
+        f = open (dis_path, "w")
+        f.write(angle)
+        f.close()
+
+
     context = {
         # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
         # 'x': ['90','91','92','93','94','95','96','97','98','99','10','11','12'],
         'counter': ['1','2','3','4','5','6','7','8','9'],
-        'battery': batteryLvl,
+        'battery': str(batteryLvl) + '%',
         'aliens': ali,
         'headings': int(heading),
         'wifis': os.system("ping -c 1 google.com")==0,
@@ -340,7 +365,7 @@ def distance(request):
                         key = str(i)+str(j)
                         print(key)
                         tile = live_database.objects.filter(tile_num=key).values()
-                        filt_cond = live_database.objects.get(last_visited=1)
+                        # filt_cond = live_database.objects.get(last_visited=1)
                         rover_pos = filt_cond.tile_num
 
                         if len(tile) > 0:
@@ -403,7 +428,7 @@ def distance(request):
         angle = request.POST["angle"]
         print (angle)
 
-        dis_path = curr_dir+"\\blog\\text_files\\distance.txt"
+        dis_path = curr_dir+"\\blog\\text_files\\direction.txt"
         dis_path = dis_path.replace("\\","/")
         f = open (dis_path, "w")
         f.write(angle)
@@ -498,6 +523,24 @@ def distance(request):
 
     for i in alie:
         alienlog.append(i)
+    
+    mo=""
+    if 'mode' in request.GET:
+        modes = request.GET["mode"]
+        mo = modes
+        mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
+        mode_path = mode_path.replace("\\","/")
+        m = open(mode_path, "w")
+
+        mod = ""
+        if modes == "Manual":
+            mod = "M"
+        elif modes == "Autonomous":
+            mod = "A"
+
+        m.write(mod)
+        m.close()
+
 
     context = {
         'counter': ['1','2','3','4','5','6','7','8','9'],
