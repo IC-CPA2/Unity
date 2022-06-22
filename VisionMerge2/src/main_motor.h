@@ -257,10 +257,16 @@ public:
     motorRight.brake();
   }
 
-  // NOTE: this function is open-loop, do not use in production!
-  void turn(bool turnLeft)
+  // NOTE: this function is open-loop
+  void turn(bool turnLeft, int speed)
   {
-    int speed = 70;
+    // int speed = 70;
+
+    speed = (float)speed;
+
+    speed = 25.5 * speed;
+
+    speed = (int)speed;
 
     if (turnLeft)
     {

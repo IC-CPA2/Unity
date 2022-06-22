@@ -113,7 +113,8 @@ String msg;
 float fl_1 = 0.92;
 float fl_2 = 10;
 float fl_3 = 1;
-float fl_4 = 5;
+
+float turning_prop = 0.108;
 
 void loop()
 {
@@ -155,7 +156,8 @@ void loop()
       return;
     }
     connected = true;
-    driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+    // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+    optical_measurements();
     while (client.available())
     {
       char c = client.read();
@@ -218,9 +220,11 @@ void loop()
   msg = msg.substring(ind_semicolon + 1, msg.length());
   ind_semicolon = msg.indexOf(";");
   str_param = msg.substring(0, ind_semicolon); // get the
-  fl_4 = str_param.toFloat();                  // this is the second float
-  Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
+  turning_prop = str_param.toFloat();          // this is the second float
+  Serial.println(turning_prop, 3);             // print to 3 degrees of precision (3 d.p.)
 
   Serial.println(speed, DEC);
-  driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.turn(90, true, turning_prop, speed);
+  driveUnity.turn(90, true, turning_prop, speed);
 }

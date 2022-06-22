@@ -38,7 +38,7 @@ public:
         RoverMotors.brake();
     };
     // call this to turn the rover a certain amount of degrees
-    void turn(int angle_degrees, bool turnLeft)
+    void turn(int angle_degrees, bool turnLeft,float turning_prop, int speed)
     {
         double turned_angle = 0;
 
@@ -54,11 +54,11 @@ public:
 
         while (abs(turned_angle) < abs(angle_degrees))
         {
-            turned_angle = turned_angle + optical_angle_turned();
+            turned_angle = turned_angle + optical_angle_turned(turning_prop);
             Serial.println(turned_angle);
 
             // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-            RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+            RoverMotors.turn(turnLeft,speed); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;

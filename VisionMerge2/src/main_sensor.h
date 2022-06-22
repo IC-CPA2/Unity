@@ -71,15 +71,13 @@ int rover_angle = 0;
 
 // rover turning adjustment proportionality constant
 
-double turning_prop = 8.0 / 90.0;
-
 double abs_coord_x = 0;
 double abs_coord_y = 0;
 
 volatile byte movementflag = 0;
 volatile int xydat[2];
 
-SPIClass * vspi = NULL;
+SPIClass *vspi = NULL;
 
 int convTwosComp(int b)
 {
@@ -345,6 +343,7 @@ void optical_measurements()
 
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
+  float turning_prop = 0.108;
 
   roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
 
@@ -359,7 +358,7 @@ void optical_measurements()
 #endif
 };
 
-double optical_measurements_for_angle()
+double optical_measurements_for_angle(float turning_prop)
 {
 
   double angle_turned = 0;
@@ -414,12 +413,12 @@ void optical_distance_moved()
   calc_abs_coords();
 };
 
-double optical_angle_turned()
+double optical_angle_turned(float turning_prop)
 {
 
   double angle_turned = 0;
 
-  angle_turned = optical_measurements_for_angle();
+  angle_turned = optical_measurements_for_angle(turning_prop);
 
   // do calculations based on the values stored within the roverUnity dx and dy values upon the running of the optical_measurements() function
 
