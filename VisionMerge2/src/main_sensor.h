@@ -240,11 +240,14 @@ struct Rover
 {
   // dx and dy are in terms of centimetres
   double dx, dy;
-  double head_angle = 0;
-  double required_head_angle = 0;
+  double head_angle = 90;
+  double required_head_angle = 90;
   double translation_prop = 15 / 666 * 666 / 15;
-  // position of rover in terms of centimetre translation
-  double pos_x, pos_y;
+  // NOTE: it begins at 21/2 / 10.5cm - position of rover in terms of cm
+  double pos_x = 10.5;
+  double pos_y = 10.5;
+  int tile_x = 0;
+  int tile_y = 0;
 };
 
 // struct AbsCoords
@@ -273,6 +276,10 @@ void calc_abs_coords()
   roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
 
   roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+
+  roverUnity.tile_x = floor((roverUnity.pos_x - 10.5) / 21);
+
+  roverUnity.tile_y = floor((roverUnity.pos_y - 10.5) / 21);
 
   Serial.println("Rover HEAD ANGLE");
   Serial.println(roverUnity.head_angle);
