@@ -276,6 +276,12 @@ def login(request):
         return redirect('/about')
     elif username == 'hjj120' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8':
         return redirect('/about')
+    elif username == 'jjo20' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '1906bc7c801f03c41551b06e2fd406e8f471787c51357e8731ec61dd599f04c8':
+        return redirect('/about')
+    elif username == 'milu' and hashlib.sha256(password.encode('utf-8')).hexdigest() == '9ab83c29298c6edeefe322684cdb4e81c1175eb41463c1d6d62c5e1acc7b0c6c':
+        return redirect('/about')
+    elif username == 'kelvin' and hashlib.sha256(password.encode('utf-8')).hexdigest() == 'e45a1e24db27c12e9a60a38e56ade21c2f37e74adcd13959d01f898c27cae891':
+        return redirect('/about')
     else:
         return redirect('/')
 
