@@ -183,7 +183,10 @@ try:
           # print("Maintaining connection")
           content = conn.recvfrom(32)[0]
           content = content.decode()
+          print("Checking content",content)
+
           if content=="XX":
+              print("if condition entered",content)
               break
           else:
               print("Client Sent",content)
@@ -258,9 +261,14 @@ try:
           # print("Maintaining connection")
           content = conn.recvfrom(32)[0]
           content = content.decode()
-          if content=="XX":
+          print("Checking content",content)
+          print("content length", len(content))
+
+          if len(content)<=4:
+              print("checking IF condition")
               break
           else:
+              print("see errors")
               pass
             
           all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
@@ -319,7 +327,7 @@ try:
                 #loop from 1-4 inclusive.
               check_db = live_database.objects.filter(tile_num=new_squares[i]) #checks whether value is present inside
               ali_info = temp_dict[i+1]
-              print("I val: ",i," aliens information: ",ali_info)
+              # print("I val: ",i," aliens information: ",ali_info)
               if len(check_db)==0:#check if an entry exists in the given tile. 
                 if ali_info == "T" or ali_info == "U":# if terrain or unknown in the slot. 
                   make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
