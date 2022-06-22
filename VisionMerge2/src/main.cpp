@@ -116,16 +116,28 @@ float fl_2 = 10;
 float fl_3 = 0.5;
 float fl_4 = 7;
 
+bool radarDetected = false;
+
 void loop()
 {
   // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.turn(90, true);
-  driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.turn(90, true);
-  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.turn(90, false);
-  driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.turn(90, false);
-  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
+
+  if (!radarDetected)
+  {
+    radarDetected = radar.fan_detect();
+    driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  }
+  else
+  {
+    driveUnity.brake();
+  }
+  // driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.turn(90, true);
+  // driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.turn(90, true);
+  // driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.turn(90, false);
+  // driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.turn(90, false);
+  // driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
 }
