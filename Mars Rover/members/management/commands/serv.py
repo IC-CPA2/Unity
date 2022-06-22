@@ -99,7 +99,7 @@ counter = 0
 test_funct = input("please input operation mode")
 try:
     while True:
-        print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
+        # print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
         conn,address = s.accept()   
         iterator = len(live_database.objects.all())
         alien_storer = {}
@@ -120,7 +120,7 @@ try:
         alien_storer['DGA']=len(sel_darkgreen)
         alien_storer['DBA']=len(sel_darkblue)
         alien_storer['BA']=len(sel_blue) 
-        alien_storer['W']=len(sel_wall)# we select aliens. 
+        alien_storer['W']=0# we select aliens. 
 
         print("Aliens by Colour:",alien_storer)   
 
@@ -218,7 +218,7 @@ try:
             see_entries = live_database.objects.filter(tile_num=new_squares[i]) #checks whether value is present inside
             ali_info = temp_dict[i+1]
             if len(see_entries)==0:#check if an entry exists in the given tile. 
-              if ali_info == "T" or ali_info == "U":# if terrain or unknown in the slot. 
+              if ali_info == "T" or ali_info == "U" or ali_info=="W":# if terrain or unknown in the slot. 
                 make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                 make_new_tile.save()
               else:
@@ -227,6 +227,9 @@ try:
                   first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                   first_ali.save() #there does not need to be any new vals inserted.
                   alien_storer[ali_info] += 1
+                  if ali_info == "W":
+                    alien_storer[ali_info] = 0
+                  
               # we can select tile info from dictionary
 
             else: #think about the new conditions to insert a new alien onto the screen . 
@@ -316,6 +319,7 @@ try:
                 #loop from 1-4 inclusive.
               check_db = live_database.objects.filter(tile_num=new_squares[i]) #checks whether value is present inside
               ali_info = temp_dict[i+1]
+              print("I val: ",i," aliens information: ",ali_info)
               if len(check_db)==0:#check if an entry exists in the given tile. 
                 if ali_info == "T" or ali_info == "U":# if terrain or unknown in the slot. 
                   make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
@@ -328,6 +332,8 @@ try:
                     first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                     first_ali.save() #there does not need to be any new vals inserted.
                     alien_storer[ali_info] += 1#not labelled as terrain etc. prevents multiple insertions my guess is. 
+                    if ali_info == "W":
+                      alien_storer[ali_info] = 0
                   elif ali_info == "W":
                     print("entering bottom if conditions")
                     wallquery = live_database.objects.filter(tile_num=new_squares[i])
@@ -340,18 +346,21 @@ try:
                       first_ali.save()
                 # we can select tile info from dictionary
 
-              else: #think about the new conditions to insert a new alien onto the screen . 
+              else: #think about the new conditions to insert a new alien onto the screen
                 if ali_info != "T" and ali_info != "U":#this is the case something is written in the tile. 
                   ##get and label as a new tile, no previouosly written information. 
                   check_sq = live_database.objects.get(tile_num=new_squares[i])
                   check_info = check_sq.tile_info
 
-                  if alien_storer[ali_info] == 0:#check if an alien is rendered. 
+                  if alien_storer[ali_info] == 0:#check if an alien is rendered.
+                    print("line 356 entered")
+ 
                     #we check if this is 0 and need to like reprocess. 
                     if check_info == "T" or check_info=="U":
                       alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
                       alien_ins.save()
                       alien_storer[ali_info] += 1#just in case 0. 
+                
         
           else:
             print("entering else condition")
