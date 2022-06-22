@@ -22,6 +22,7 @@
 
 WiFiClient client;
 
+// Testing
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 // IPAddress gateway(192, 168, 14, 224);
