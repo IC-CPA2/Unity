@@ -78,10 +78,10 @@ void setup()
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
   radar.setup();
   spi_returnval = 0;
-  mfrc522.PCD_Init();
-  initWiFi();
-  Serial.print("RRSI: ");
-  Serial.println(WiFi.RSSI());
+  // mfrc522.PCD_Init();
+  // initWiFi();
+  // Serial.print("RRSI: ");
+  // Serial.println(WiFi.RSSI());
   spi_returnval = 0;
 }
 
@@ -112,116 +112,20 @@ int speed = 3;
 String msg;
 
 float fl_1 = 0.96;
-float fl_2 = 4;
-float fl_3 = 8;
-float fl_4 = 4;
+float fl_2 = 10;
+float fl_3 = 0.5;
+float fl_4 = 7;
 
 void loop()
 {
-  /*
-  hspi->beginTransaction(settings);
-  digitalWrite(HSPI_SS, LOW);
-  Serial.println(hspi->transfer16(spi_returnval));
-  spi_returnval = 0;
-  digitalWrite(HSPI_SS, HIGH);
-  hspi->endTransaction();
-  driveUnity.turn(90,false);
-  radar.fan_detect();
-  delay(500);
-  */
-  // Start the Comms
-  unsigned long previousMillis = 0;
-  unsigned long interval = 30000;
-  unsigned long currentMillis = millis();
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval))
-  {
-    Serial.print(millis());
-    Serial.println("Need To Reconnect....");
-    WiFi.disconnect();
-    initWiFi();
-    previousMillis = currentMillis;
-  }
-  bool connected;
-
-  connected = client.connect(host, port);
-  int i = 0;
-  msg = "";
-  client.print("hello");
-  while (i == 0)
-  {
-    if (!connected)
-    {
-      Serial.println("connection to host server failed");
-      delay(1000);
-      return;
-    }
-    connected = true;
-    driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
-    while (client.available())
-    {
-      char c = client.read();
-      msg.concat(c);
-
-      if (c == '>')
-      {
-        i = 1;
-        Serial.println(msg);
-      } // getting the reads from the ser
-
-      // Serial.println(c);
-      // speed = (int)c;
-
-      // i = 1;
-      // break;
-    }
-  }
-
-  Serial.println("exit for loop");
-  int ind_semicolon = msg.indexOf(";");
-  String str_param = msg.substring(0, ind_semicolon); // get the
-  speed = str_param.toInt();                          // 1
-  Serial.println(speed, DEC);
-  msg = msg.substring(ind_semicolon + 1, msg.length());
-
-  // ind_semicolon = msg.indexOf(";");
-  // str_param = msg.substring(0, ind_semicolon); // get the
-  // int straight_speed = str_param.toInt();      // 2
-  // Serial.println(straight_speed, DEC);
-  // msg = msg.substring(ind_semicolon + 1, msg.length());
-
-  // ind_semicolon = msg.indexOf(";");
-  // str_param = msg.substring(0, ind_semicolon); // get the
-  // int turning_speed = str_param.toInt();       // 3
-  // Serial.println(turning_speed, DEC);
-  // msg = msg.substring(ind_semicolon + 1, msg.length());
-
-  Serial.print("end of ints, message is: ");
-
-  Serial.print(msg);
-  ind_semicolon = msg.indexOf(";");
-  str_param = msg.substring(0, ind_semicolon); // get the
-  fl_1 = str_param.toFloat();                  // this is the first float
-  Serial.println("extract float");
-  Serial.println(fl_1, 3); // print to 3 degrees of precision (3 d.p.)
-
-  msg = msg.substring(ind_semicolon + 1, msg.length());
-  ind_semicolon = msg.indexOf(";");
-  str_param = msg.substring(0, ind_semicolon); // get the
-  fl_2 = str_param.toFloat();                  // this is the second float
-  Serial.println(fl_2, 3);                     // print to 3 degrees of precision (3 d.p.)
-
-  msg = msg.substring(ind_semicolon + 1, msg.length());
-  ind_semicolon = msg.indexOf(";");
-  str_param = msg.substring(0, ind_semicolon); // get the
-  fl_3 = str_param.toFloat();                  // this is the second float
-  Serial.println(fl_3, 3);                     // print to 3 degrees of precision (3 d.p.)
-
-  msg = msg.substring(ind_semicolon + 1, msg.length());
-  ind_semicolon = msg.indexOf(";");
-  str_param = msg.substring(0, ind_semicolon); // get the
-  fl_4 = str_param.toFloat();                  // this is the second float
-  Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
-
-  Serial.println(speed, DEC);
-  driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.turn(90, true);
+  driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.turn(90, true);
+  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.turn(90, false);
+  driveUnity.forward_distance(speed, 40, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.turn(90, false);
+  driveUnity.forward_distance(speed, 80, fl_1, fl_2, fl_3, fl_4);
 }
