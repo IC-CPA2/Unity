@@ -111,10 +111,10 @@ int speed = 3;
 
 String msg;
 
-float fl_1 = 0.96;
+float fl_1 = 0.92;
 float fl_2 = 10;
-float fl_3 = 0;
-float fl_4 = 7;
+float fl_3 = 0.5;
+float fl_4 = 5;
 
 void loop()
 {

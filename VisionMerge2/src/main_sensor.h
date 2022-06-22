@@ -71,7 +71,7 @@ int rover_angle = 0;
 
 // rover turning adjustment proportionality constant
 
-double turning_prop = 8.0 / 90.0;
+float turning_prop = 0.108;
 
 double abs_coord_x = 0;
 double abs_coord_y = 0;
@@ -79,7 +79,7 @@ double abs_coord_y = 0;
 volatile byte movementflag = 0;
 volatile int xydat[2];
 
-SPIClass * vspi = NULL;
+SPIClass *vspi = NULL;
 
 int convTwosComp(int b)
 {
