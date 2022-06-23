@@ -8,7 +8,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0225;
+    double translation_prop = 0.0191082802547771; // 0.02019375;
 
 public:
     double heading_angle;
@@ -51,16 +51,17 @@ public:
         {
             roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
         }
-        int i=0;
+        int i = 0;
         while (abs(turned_angle) < abs(angle_degrees))
         {
             turned_angle = turned_angle + optical_angle_turned();
-            if(i%100==0){
-               Serial.println(turned_angle); 
+            if (i % 100 == 0)
+            {
+                Serial.println(turned_angle);
             }
             i++;
-            //Serial.println(turned_angle);
-            // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
+            // Serial.println(turned_angle);
+            //  TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
             RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
