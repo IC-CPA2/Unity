@@ -152,36 +152,35 @@ try:
           insert_vals.save()
         if test_funct == "M":
           curr_dir = os.getcwd()
-          deb_co 
-          # f = open(file_path,"r")
-          # ang_change = int(f.readline())#reads line containing angle field.
-          # f.close()
-          ang_change = input("enter angle change lol: ") 
+          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
+          file_path = file_path.replace("\\","/")
+
+          f_op2 = open(file_path,"r")
+          ang_change = int(f_op2.readline())#reads line containing angle field.
+          f_op2.close()
+          f_op2 = open(file_path,"w")
+          f_op2.write("0")
+          f_op2.close()
+          # ang_change = input("enter angle change lol: ") 
           # if str(ang_change)!=0:
           #   f.write(ang_change)
 
 
-          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
-          file_path = file_path.replace("\\","/")
 
-          if counter == 0:
-              head_angle = str(ang_change)
-              counter+=1
-          else:
-              ang_change = int(ang_change)
-              head_angle = str((int(head_angle)+ang_change)%360)      
-          observed_tile = square_mapper(curr_sq,int(head_angle))
-          print(observed_tile)
-          cmsg = str(ang_change)
+          # if counter == 0:
+          #     head_angle = str(ang_change)
+          #     counter+=1
+          # else:
+          #     ang_change = int(ang_change)
+          #     head_angle = str((int(head_angle)+ang_change)%360)      
+          cmsg = str(ang_change) #sending angle to server
           cmsg = ang_to_char(cmsg) #convert from an angle to character.
-          f = open(file_path,"w")
-          f.write(head_angle) #overwrite to 0 as a result. 
-          f.close()
+
 
 
           print("Angle Facing",cmsg)
 
-          conn.send(cmsg.encode())                
+          conn.send(cmsg.encode())   
           # print("Maintaining connection")
           content = conn.recvfrom(32)[0]
           content = content.decode()
@@ -199,6 +198,15 @@ try:
           temp_dict[2] = all_info[2][:-1]
           temp_dict[3] = all_info[3][:-1]
           temp_dict[4] = all_info[4][:-1]
+          temp_dict[5] = all_info[5]
+          head_ang = temp_dict[5]
+          observed_tile = square_mapper(curr_sq,int(head_ang))
+  
+          f = open(file_path,"w")
+          f.write(head_ang) #overwrite to 0 as a result. 
+          f.close()           
+
+
           print("debugging",temp_dict)
 
           new_squares = square_mapper(curr_sq,int(head_angle))
