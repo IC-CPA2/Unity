@@ -52,6 +52,7 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 def about(request):
+    print("ABOUT")
     default = """<canvas id="myCanvas" width="50" height="50" style="border:1px solid #000000;"></canvas>"""
 
     curr_dir = os.getcwd()
@@ -209,7 +210,7 @@ def about(request):
 
     aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R')).values_list()
 
-    print (aliensquery)
+    # print (aliensquery)
 
     for i in aliensquery:
         tile_num = i[0]
@@ -305,7 +306,7 @@ def form(request):
 #takes distance and sends to back end I think. 
 #the file edited is distance.txt
 def distance(request):
-
+    print("DISTANCE")
     curr_dir = os.getcwd()
     bat_path = curr_dir+"\\blog\\text_files\\bat.txt"
     bat_path = bat_path.replace("\\","/")
@@ -383,7 +384,7 @@ def distance(request):
                 for i in range (rover_posy-7, rover_posy+7):
                     for j in range (rover_posx-7, rover_posx+7):  
                         key = str(i)+str(j)
-                        print(key)
+                        # print(key)
                         tile = live_database.objects.filter(tile_num=key).values()
                         # filt_cond = live_database.objects.get(last_visited=1)
                         rover_pos = filt_cond.tile_num
@@ -446,7 +447,7 @@ def distance(request):
     if 'angle' in request.POST:
 
         angle = request.POST["angle"]
-        print (angle)
+        print ("ANGLE:", angle)
 
         dis_path = curr_dir+"\\blog\\text_files\\direction.txt"
         dis_path = dis_path.replace("\\","/")
@@ -525,11 +526,10 @@ def distance(request):
 
     heading = direc.read()
     if os.path.getsize(direction_path): 
-        print("HERE:", heading)
+        print("heading from direction:", heading)
     else:
         heading = "0"
 
-    print("HERE:",heading)
 
     alien_path = curr_dir+"\\blog\\text_files\\alien.txt"
     alien_path = alien_path.replace("\\","/")
