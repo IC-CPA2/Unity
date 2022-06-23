@@ -343,7 +343,7 @@ void optical_measurements()
 
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
-  float turning_prop = 0.108;
+  float turning_prop = 0.0925; // 0.108;
 
   roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
 

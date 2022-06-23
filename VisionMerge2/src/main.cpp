@@ -115,7 +115,7 @@ float fl_2 = 10;
 float fl_3 = 1;
 float fl_4 = 5;
 
-float turning_prop = 0.1296; // 0.108;
+float turning_prop = 0.0925; // 0.108;
 
 void loop()
 {
