@@ -74,6 +74,7 @@ def about(request):
 
     mo=""
     if 'mode' in request.GET:
+        print("MODES")
         modes = request.GET["mode"]
         mo = modes
         mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
@@ -248,6 +249,23 @@ def about(request):
         f.write(angle)
         f.close()
 
+    modes_path = curr_dir+"\\blog\\text_files\\mode.txt"
+    modes_path = modes_path.replace("\\","/")
+    m = open(modes_path, "r")
+
+    modss = m.readline()
+    print ("HERE:", modss)
+    
+    print(modss)
+    if modss== "M":
+        print ("HIM")
+        mo = "Manual"
+    elif modss == "A":
+        print ("HIA")
+        mo = "Autonomous"
+
+    print ("MO:",mo)
+   
 
     context = {
         # 'y': ['90','91', '92', '93', '94', '95', '96', '97', '98', '99','10','11','12','13','14','15','16','17','18','19'], 
@@ -536,6 +554,7 @@ def distance(request):
     
     mo=""
     if 'mode' in request.GET:
+        print("MODES")
         modes = request.GET["mode"]
         mo = modes
         mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
@@ -550,7 +569,20 @@ def distance(request):
 
         m.write(mod)
         m.close()
+    
 
+    modes_path = curr_dir+"\\blog\\text_files\\mode.txt"
+    modes_path = modes_path.replace("\\","/")
+    m = open(modes_path, "r")
+
+    print ("HERE:", m.read())
+    if m.read() == "M":
+        print ("HIM")
+        mo = "Manual"
+    elif m.read() == "A":
+        print ("HIA")
+        mo = "Autonomous"
+    print (mo)
 
     context = {
         'counter': ['1','2','3','4','5','6','7','8','9'],
