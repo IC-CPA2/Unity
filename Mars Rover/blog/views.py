@@ -187,12 +187,12 @@ def about(request):
                 ali = reduce(database)                     
         # print (ali)
 
-    direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
-    direction_path = direction_path.replace("\\","/")
-    direc = open(direction_path, "r")
+    procang_path = curr_dir+"\\blog\\text_files\\procang.txt"
+    procang_path = procang_path.replace("\\","/")
+    pang = open(procang_path, "r")
 
-    heading = direc.read()
-    if os.path.getsize(direction_path): 
+    heading = pang.read()
+    if os.path.getsize(procang_path): 
         print("HERE:", heading)
     else:
         heading = "0"
@@ -239,10 +239,8 @@ def about(request):
     print (alienlog)
 
     if 'angle' in request.POST:
-
         angle = request.POST["angle"]
         print ("ANGLE",angle)
-
         dis_path = curr_dir+"\\blog\\text_files\\distance.txt"
         dis_path = dis_path.replace("\\","/")
         f = open (dis_path, "w")
@@ -255,8 +253,6 @@ def about(request):
 
     modss = m.readline()
     print ("HERE:", modss)
-    
-    print(modss)
     if modss== "M":
         print ("HIM")
         mo = "Manual"
