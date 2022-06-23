@@ -79,7 +79,7 @@ double abs_coord_y = 0;
 volatile byte movementflag = 0;
 volatile int xydat[2];
 
-SPIClass *vspi = NULL;
+SPIClass * vspi = NULL;
 
 int convTwosComp(int b)
 {
