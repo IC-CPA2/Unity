@@ -8,12 +8,12 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0225;
 
 public:
     double heading_angle;
     // x- and y positions of the rover
     double coord_x, coord_y;
+    double translation_prop = 0.02109375; // 0.0225;
 
     // call this in the void setup() in main.cpp
     void setup()
@@ -38,7 +38,7 @@ public:
         RoverMotors.brake();
     };
     // call this to turn the rover a certain amount of degrees
-    void turn(int angle_degrees, bool turnLeft,float turning_prop, int speed)
+    void turn(int angle_degrees, bool turnLeft, float turning_prop, int speed)
     {
         double turned_angle = 0;
 
@@ -58,7 +58,7 @@ public:
             Serial.println(turned_angle);
 
             // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-            RoverMotors.turn(turnLeft,speed); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+            RoverMotors.turn(turnLeft, speed); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
@@ -74,7 +74,7 @@ public:
         RoverMotors.brake();
     };
     //(-10 < speed < 10) drive forward a certain distance, call it inside void loop() in main.cpp, it is BLOCKING
-    void forward_distance(int speed, double distance,  double motor_prop, double kp, double ki, double kd)
+    void forward_distance(int speed, double distance, double motor_prop, double kp, double ki, double kd)
     {
 
         double elapsed_rover_distance = 0.0;
@@ -83,7 +83,7 @@ public:
         {
             optical_distance_moved();
             straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
-            RoverMotors.forward(speed, straightness_error,motor_prop,kp,ki,kd);
+            RoverMotors.forward(speed, straightness_error, motor_prop, kp, ki, kd);
             elapsed_rover_distance = elapsed_rover_distance + roverUnity.dy;
             coord_x = translation_prop * roverUnity.pos_x;
             coord_y = translation_prop * roverUnity.pos_y;
@@ -91,13 +91,7 @@ public:
         RoverMotors.brake();
     }
 
-    void navigate_to_neighbouring_coordinate(int next_tile[2]){
-
-
-
-
-
+    void navigate_to_neighbouring_coordinate(int next_tile[2])
+    {
     }
-
-
 };

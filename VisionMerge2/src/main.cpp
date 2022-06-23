@@ -117,6 +117,10 @@ float fl_4 = 5;
 
 float turning_prop = 0.0925; // 0.108;
 
+float distance_to_move = 20; // in centimetres
+
+double translation_prop = 0.02109375; // 0.0225;
+
 void loop()
 {
   /*
@@ -215,17 +219,17 @@ void loop()
   msg = msg.substring(ind_semicolon + 1, msg.length());
   ind_semicolon = msg.indexOf(";");
   str_param = msg.substring(0, ind_semicolon); // get the
-  fl_3 = str_param.toFloat();                  // this is the second float
-  Serial.println(fl_3, 3);                     // print to 3 degrees of precision (3 d.p.)
+  distance_to_move = str_param.toFloat();      // this is the second float
+  Serial.println(distance_to_move, 3);         // print to 3 degrees of precision (3 d.p.)
 
   msg = msg.substring(ind_semicolon + 1, msg.length());
   ind_semicolon = msg.indexOf(";");
   str_param = msg.substring(0, ind_semicolon); // get the
-  turning_prop = str_param.toFloat();          // this is the second float
-  Serial.println(turning_prop, 3);             // print to 3 degrees of precision (3 d.p.)
+  translation_prop = str_param.toFloat();      // this is the second float
+  Serial.println(translation_prop, 3);         // print to 3 degrees of precision (3 d.p.)
 
-  Serial.println(speed, DEC);
+  Serial.println(translation_prop, DEC);
   // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
-  driveUnity.turn(90, true, turning_prop, speed);
-  driveUnity.turn(90, true, turning_prop, speed);
+  driveUnity.translation_prop = translation_prop;
+  driveUnity.forward_distance(speed, distance_to_move, fl_1, fl_2, fl_3, fl_4);
 }
