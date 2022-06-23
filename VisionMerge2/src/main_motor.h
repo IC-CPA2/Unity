@@ -140,7 +140,7 @@ private:
     KI = cumulative_error;
 
     correction = Kd * KD + Kp * current_error + Ki * KI;
-    //correction = Kp * current_error;
+    // correction = Kp * current_error;
 
     // NOT TO USE: stop the rover to restabilise in case of too high sverving
 

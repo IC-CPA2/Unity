@@ -247,49 +247,49 @@ struct Rover
   double pos_y = 10.5;
   int tile_x = 0;
   int tile_y = 0;
+};
 
-  // struct AbsCoords
-  // {
-  //   int pos_x, pos_y;
-  // };
+// struct AbsCoords
+// {
+//   int pos_x, pos_y;
+// };
 
-  // definition of our global ROVER struct
+// definition of our global ROVER struct
+Rover roverUnity;
 
-  Rover roverUnity;
+void calc_abs_coords()
+{
+  // assign roverUnity new values here
 
-  void calc_abs_coords()
-  {
-    // assign roverUnity new values here
+  double dx = roverUnity.dx;
+  double dy = roverUnity.dy;
 
-    double dx = roverUnity.dx;
-    double dy = roverUnity.dy;
+  Serial.println("Rover dx");
+  Serial.println(dx);
+  Serial.println("Rover dy");
+  Serial.println(dy);
 
-    Serial.println("Rover dx");
-    Serial.println(dx);
-    Serial.println("Rover dy");
-    Serial.println(dy);
+  double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
 
-    double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
 
-    roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
 
-    roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+  Serial.println("Rover HEAD ANGLE");
+  Serial.println(roverUnity.head_angle);
 
-    Serial.println("Rover HEAD ANGLE");
-    Serial.println(roverUnity.head_angle);
+  Serial.print('\n');
 
-    Serial.print('\n');
+  Serial.println("position x = " + String(roverUnity.pos_x));
 
-    Serial.println("position x = " + String(roverUnity.pos_x));
+  Serial.println("position y = " + String(roverUnity.pos_y));
+  Serial.print('\n');
 
-    Serial.println("position y = " + String(roverUnity.pos_y));
-    Serial.print('\n');
+  // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
+};
 
-    // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
-  };
-
-  void optical_measurements()
-  {
+void optical_measurements()
+{
 #if 0
 /*
     if(movementflag){
@@ -321,112 +321,112 @@ struct Rover
 
 #else
 
-    // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
-    // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
+  // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
+  // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
 
-    int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
-    MD md;
-    mousecam_read_motion(&md);
-    for (int i = 0; i < md.squal / 4; i++)
-      Serial.print('*');
-    Serial.print(' ');
-    Serial.print((val * 100) / 351);
-    Serial.print(' ');
-    Serial.print(md.shutter);
-    Serial.print(" (");
-    Serial.print((int)convTwosComp(md.dx));
-    Serial.print(',');
-    Serial.print((int)convTwosComp(md.dy));
-    Serial.println(')');
+  int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
+  MD md;
+  mousecam_read_motion(&md);
+  for (int i = 0; i < md.squal / 4; i++)
+    Serial.print('*');
+  Serial.print(' ');
+  Serial.print((val * 100) / 351);
+  Serial.print(' ');
+  Serial.print(md.shutter);
+  Serial.print(" (");
+  Serial.print((int)convTwosComp(md.dx));
+  Serial.print(',');
+  Serial.print((int)convTwosComp(md.dy));
+  Serial.println(')');
 
-    // Serial.println(md.max_pix);
+  // Serial.println(md.max_pix);
 
-    // roverUnity.dx = roverUnity.translation_prop * convTwosComp(md.dx);
-    // roverUnity.dy = roverUnity.translation_prop * convTwosComp(md.dy);
+  // roverUnity.dx = roverUnity.translation_prop * convTwosComp(md.dx);
+  // roverUnity.dy = roverUnity.translation_prop * convTwosComp(md.dy);
 
-    roverUnity.dx = convTwosComp(md.dx);
-    roverUnity.dy = convTwosComp(md.dy);
+  roverUnity.dx = convTwosComp(md.dx);
+  roverUnity.dy = convTwosComp(md.dy);
 
-    roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
+  roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
 
-    // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
-    // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
+  // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
+  // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
 
-    // total_rover_x = total_rover_x1 / 157;
-    // total_rover_y = total_rover_y1 / 157;
+  // total_rover_x = total_rover_x1 / 157;
+  // total_rover_y = total_rover_y1 / 157;
 
-    // delay(200);
+  // delay(200);
 
 #endif
-  };
+};
 
-  double optical_measurements_for_angle()
-  {
+double optical_measurements_for_angle()
+{
 
-    double angle_turned = 0;
+  double angle_turned = 0;
 
-    // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
-    // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
+  // if enabled this section produces a bar graph of the surface quality that can be used to focus the camera
+  // also drawn is the average pixel value 0-63 and the shutter speed and the motion dx,dy.
 
-    int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
-    MD md;
-    mousecam_read_motion(&md);
-    // for (int i = 0; i < md.squal / 4; i++)
-    //   Serial.print('*');
-    // Serial.print(' ');
-    // Serial.print((val * 100) / 351);
-    // Serial.print(' ');
-    // Serial.print(md.shutter);
-    // Serial.print(" (");
-    // Serial.print((int)convTwosComp(md.dx));
-    // Serial.print(',');
-    // Serial.print((int)convTwosComp(md.dy));
-    // Serial.println(')');
+  int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
+  MD md;
+  mousecam_read_motion(&md);
+  // for (int i = 0; i < md.squal / 4; i++)
+  //   Serial.print('*');
+  // Serial.print(' ');
+  // Serial.print((val * 100) / 351);
+  // Serial.print(' ');
+  // Serial.print(md.shutter);
+  // Serial.print(" (");
+  // Serial.print((int)convTwosComp(md.dx));
+  // Serial.print(',');
+  // Serial.print((int)convTwosComp(md.dy));
+  // Serial.println(')');
 
-    // Serial.println(md.max_pix);
+  // Serial.println(md.max_pix);
 
-    roverUnity.dx = convTwosComp(md.dx);
-    roverUnity.dy = convTwosComp(md.dy);
+  roverUnity.dx = convTwosComp(md.dx);
+  roverUnity.dy = convTwosComp(md.dy);
 
-    angle_turned = turning_prop * roverUnity.dx;
+  angle_turned = turning_prop * roverUnity.dx;
 
-    // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
-    // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
+  // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
+  // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
 
-    // total_rover_x = total_rover_x1 / 157;
-    // total_rover_y = total_rover_y1 / 157;
+  // total_rover_x = total_rover_x1 / 157;
+  // total_rover_y = total_rover_y1 / 157;
 
-    // Serial.print('\n');
+  // Serial.print('\n');
 
-    // Serial.println("position x = " + String(roverUnity.pos_x));
+  // Serial.println("position x = " + String(roverUnity.pos_x));
 
-    // Serial.println("position y = " + String(roverUnity.pos_y));
-    // Serial.print('\n');
+  // Serial.println("position y = " + String(roverUnity.pos_y));
+  // Serial.print('\n');
 
-    // delay(200);
-    return angle_turned;
-  };
+  // delay(200);
+  return angle_turned;
+};
 
-  void optical_distance_moved()
-  {
+void optical_distance_moved()
+{
 
-    optical_measurements();
+  optical_measurements();
 
-    calc_abs_coords();
-  };
+  calc_abs_coords();
+};
 
-  double optical_angle_turned()
-  {
+double optical_angle_turned()
+{
 
-    double angle_turned = 0;
+  double angle_turned = 0;
 
-    angle_turned = optical_measurements_for_angle();
+  angle_turned = optical_measurements_for_angle();
 
-    // do calculations based on the values stored within the roverUnity dx and dy values upon the running of the optical_measurements() function
+  // do calculations based on the values stored within the roverUnity dx and dy values upon the running of the optical_measurements() function
 
-    // Serial.println(roverUnity.dx);
+  // Serial.println(roverUnity.dx);
 
-    // Serial.println(angle_turned);
+  // Serial.println(angle_turned);
 
-    return angle_turned;
-  };
+  return angle_turned;
+};
