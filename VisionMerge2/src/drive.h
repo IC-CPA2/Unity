@@ -90,4 +90,14 @@ public:
         };
         RoverMotors.brake();
     }
+
+    void navigate_to_neighbouring_coordinate(int next_tile[2]){
+
+
+
+
+
+    }
+
+
 };
