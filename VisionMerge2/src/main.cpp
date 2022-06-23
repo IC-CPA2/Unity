@@ -156,7 +156,7 @@ void loop()
       return;
     }
     connected = true;
-    driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+    // driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
     while (client.available())
     {
       char c = client.read();
@@ -223,5 +223,14 @@ void loop()
   Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
 
   Serial.println(speed, DEC);
-  driveUnity.forward(speed, fl_1, fl_2, fl_3, fl_4);
+  driveUnity.forward_distance(speed, 20, fl_1, fl_2, fl_3, fl_4);
+
+  // int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
+
+  // for (int i = 0; i < 3; i++)
+  // {
+
+  //   driveUnity.navigate_to_neighbouring_coordinate(speed,tiles[i], fl_1, fl_2, fl_3, fl_4);
+
+  // }
 }

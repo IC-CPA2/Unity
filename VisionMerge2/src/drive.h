@@ -8,7 +8,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0225;
+    double translation_prop = 0.0191; // 0.0225;
 
 public:
     double heading_angle;
@@ -52,6 +52,17 @@ public:
             roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
         }
 
+        // ensure that the required head angle is within the range of 0 <= angle < 360
+
+        if (roverUnity.required_head_angle >= 360)
+        {
+            roverUnity.required_head_angle = roverUnity.required_head_angle - 360;
+        }
+        else if (roverUnity.required_head_angle < 0)
+        {
+            roverUnity.required_head_angle = 360 - roverUnity.required_head_angle;
+        }
+
         while (abs(turned_angle) < abs(angle_degrees))
         {
             turned_angle = turned_angle + optical_angle_turned();
@@ -90,97 +101,117 @@ public:
         };
         RoverMotors.brake();
     }
-    // navigate to the next tile in the array of coords by the navigation algorithm NOTE: currently only supports 90degree rotations
-    void navigate_to_neighbouring_coordinate(int speed, int next_tile[2], double motor_prop, double kp, double ki, double kd)
-    {
+    // navigate to the next (neigbouring!) tile in the array of neighbouring tile coords by the navigation algorithm NOTE: currently only supports 90degree rotations
+    // void navigate_to_neighbouring_coordinate(int speed, int next_tile[2], double motor_prop, double kp, double ki, double kd)
+    // {
 
-        // state machine here to determine whether or not to turn first and then move
+    //     // state machine here to determine whether or not to turn first and then move
 
-        // current head_angle vs which direction the tile is into
+    //     // current head_angle vs which direction the tile is into
 
-        double required_head_angle = 0;
+    //     double required_head_angle = 0;
 
-        double turn_left = true;
-        // for 90 degree rotations, one of them is always 0
+    //     double turn_left = true;
 
-        int translation_dir_x = (next_tile[0] - roverUnity.tile_x) / abs(next_tile[0] - roverUnity.tile_x);
-        int translation_dir_y = (next_tile[1] - roverUnity.tile_y) / abs(next_tile[1] - roverUnity.tile_y);
+    //     // for 90 degree rotations, one of them is always 0
 
-        if (translation_dir_x != 0)
-        {
-            if (translation_dir_x > 0)
-            {
-                required_head_angle = 0;
-            }
-            else
-            {
-                required_head_angle = 180;
-            }
-        }
-        if (translation_dir_y != 0)
-        {
-            if (translation_dir_y > 0)
-            {
-                required_head_angle = 90;
-            }
-            else
-            {
-                required_head_angle = 270;
-            }
-        }
+    //     // int translation_dir_x = (next_tile[0] - roverUnity.tile_x) / abs(next_tile[0] - roverUnity.tile_x);
+    //     // int translation_dir_y = (next_tile[1] - roverUnity.tile_y) / abs(next_tile[1] - roverUnity.tile_y);
 
-        // calculate where to turn
+    //     int translation_dir_x = (next_tile[0] - roverUnity.tile_x);
+    //     int translation_dir_y = (next_tile[1] - roverUnity.tile_y);
 
-        double turning_angle = required_head_angle - roverUnity.head_angle;
+    //     if (translation_dir_x != 0)
+    //     {
+    //         if (translation_dir_x > 0)
+    //         {
+    //             required_head_angle = 0;
+    //         }
+    //         else
+    //         {
+    //             required_head_angle = 180;
+    //         }
+    //     }
+    //     if (translation_dir_y != 0)
+    //     {
+    //         if (translation_dir_y > 0)
+    //         {
+    //             required_head_angle = 90;
+    //         }
+    //         else
+    //         {
+    //             required_head_angle = 270;
+    //         }
+    //     }
 
-        if (turning_angle >= 0)
-        {
-            turn_left = true;
-        }
-        else
-        {
-            turn_left = false;
-        }
+    //     // calculate how much to turn
 
-        // turn into the required direction
+    //     double turning_angle = required_head_angle - roverUnity.head_angle;
 
-        if (turnLeft)
-        {
-            roverUnity.required_head_angle = roverUnity.required_head_angle + angle_degrees;
-        }
-        else
-        {
-            roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
-        }
+    //     // calculate where to turn
 
-        while (abs(turned_angle) < abs(angle_degrees))
-        {
-            turned_angle = turned_angle + optical_angle_turned();
-            Serial.println(turned_angle);
+    //     if (turning_angle >= 0)
+    //     {
+    //         turn_left = true;
+    //     }
+    //     else
+    //     {
+    //         turn_left = false;
+    //     }
 
-            // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-            RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
-        }
+    //     // turn into the required direction
 
-        // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
+    //     if (turn_left)
+    //     {
+    //         roverUnity.required_head_angle = roverUnity.required_head_angle + turning_angle;
+    //     }
+    //     else
+    //     {
+    //         roverUnity.required_head_angle = roverUnity.required_head_angle - turning_angle;
+    //     }
 
-        roverUnity.head_angle = roverUnity.required_head_angle;
+    //     // ensure that the required head angle is within the range of 0 <= angle < 360
 
-        // RoverMotors.turn_angle(angle_degrees, turnLeft);
+    //     if (roverUnity.required_head_angle >= 360)
+    //     {
+    //         roverUnity.required_head_angle = roverUnity.required_head_angle - 360;
+    //     }
+    //     else if (roverUnity.required_head_angle < 0)
+    //     {
+    //         roverUnity.required_head_angle = 360 - roverUnity.required_head_angle;
+    //     }
 
-        // roverUnity.head_angle = roverUnity.head_angle + angle_degrees;
+    //     // initialise turned angle
+    //     double turned_angle = 0;
 
-        heading_angle = roverUnity.head_angle;
+    //     while (abs(turned_angle) < abs(turning_angle))
+    //     {
+    //         turned_angle = turned_angle + optical_angle_turned();
+    //         Serial.println(turned_angle);
 
-        RoverMotors.brake();
+    //         // TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
+    //         RoverMotors.turn(turn_left); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+    //     }
 
-        // then move
+    //     RoverMotors.brake();
 
-        while (roverUnity.tile_x != next_tile[0] && roverUnity.tile_y != next_tile[1])
-        {
-            optical_distance_moved();
-            straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
-            RoverMotors.forward(speed, straightness_error, motor_prop, kp, ki, kd);
-        }
-    }
+    //     // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
+
+    //     roverUnity.head_angle = roverUnity.required_head_angle;
+
+    //     // RoverMotors.turn_angle(angle_degrees, turnLeft);
+
+    //     // roverUnity.head_angle = roverUnity.head_angle + angle_degrees;
+
+    //     heading_angle = roverUnity.head_angle;
+
+    //     // then move
+
+    //     while (roverUnity.tile_x != next_tile[0] && roverUnity.tile_y != next_tile[1])
+    //     {
+    //         optical_distance_moved();
+    //         straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
+    //         RoverMotors.forward(speed, straightness_error, motor_prop, kp, ki, kd);
+    //     }
+    // }
 };
