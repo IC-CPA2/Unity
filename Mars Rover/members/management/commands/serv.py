@@ -148,8 +148,8 @@ try:
         alien_storer['YA']=len(sel_yellow)
         alien_storer['DGA']=len(sel_darkgreen)
         alien_storer['DBA']=len(sel_darkblue)
-        alien_storer['BA']=len(sel_blue) 
-        alien_storer['W']=0# we select aliens. 
+        alien_storer['BA']=len(sel_blue)  
+        alien_storer['W']=0# we select aliens.
 
         print("Aliens by Colour:",alien_storer)   
 
@@ -158,30 +158,21 @@ try:
           insert_vals.save()
         if test_funct == "M":
           curr_dir = os.getcwd()
-          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
+          file_path = curr_dir+"\\blog\\text_files\\procang.txt"
+          my_files2 = curr_dir+"\\blog\\text_files\\direction.txt"
+          my_files2.replace("\\","/")
           file_path = file_path.replace("\\","/")
 
-          f_op2 = open(file_path,"r")
-          ang_change = int(f_op2.readline())#reads line containing angle field.
-          f_op2.close()
-          f_op2 = open(file_path,"w")
-          f_op2.write("0")
-          f_op2.close()
-          # ang_change = input("enter angle change lol: ") 
-          # if str(ang_change)!=0:
-          #   f.write(ang_change)
+          to_direction = open(file_path,"r")
+          ang_change = int(to_direction.readline())#reads line containing angle field.
+          to_direction.close()
 
+          to_dir2 = open(file_path,"w")
+          to_dir2.write("0")
+          to_dir2.close()#reading from file then restoring it's value to 0. 
 
-
-          # if counter == 0:
-          #     head_angle = str(ang_change)
-          #     counter+=1
-          # else:
-          #     ang_change = int(ang_change)
-          #     head_angle = str((int(head_angle)+ang_change)%360)      
           cmsg = str(ang_change) #sending angle to server
           cmsg = ang_to_char(cmsg) #convert from an angle to character.
-
 
 
           print("Angle Facing",cmsg)
@@ -208,14 +199,14 @@ try:
           head_ang = temp_dict[5]
           observed_tile = square_mapper(curr_sq,int(head_ang))
   
-          f = open(file_path,"w")
-          f.write(head_ang) #overwrite to 0 as a result. 
+          f = open(my_files2,"w")
+          f.write(head_ang) #overwrite the head angle so it can be processed. 
           f.close()           
 
 
           print("debugging",temp_dict)
 
-          new_squares = square_mapper(curr_sq,int(head_angle))
+          new_squares = square_mapper(curr_sq,int(head_ang))
           old_last_sq = live_database.objects.get(last_visited=1)
           old_last_sq.last_visited = 0
           old_last_sq.save()

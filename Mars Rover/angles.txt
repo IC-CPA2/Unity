@@ -1,4 +1,4 @@
-19,19;DGA1;DGAx;DGAx;DGAx;180;
+0,0;T1;Tx;Tx;BAx;90;
 1,0;U1;Tx;Tx;Tx;90
 2,0;U1;Tx;Tx;Tx;90
 3,0;U1;Tx;Tx;Tx;90
