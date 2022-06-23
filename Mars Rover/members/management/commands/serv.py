@@ -52,6 +52,11 @@ def mult_mat(angle):#executes matrix multiplicaitons 2x2 by 2x1.
   return np.concatenate((top_lef,top_two,top_rig,one_up),axis=1)
 # need some more base cases for which stuff I need to calculate. 
 
+def storer(col):
+  sel = live_database.objects.filter(tile_info=col)
+  return len(sel)
+
+
 def square_mapper(curr_coords,angle):
   #curr_coords is likely an string input. 
   all_vals = mult_mat(angle)#multiply matrix and get all combinations
@@ -116,6 +121,7 @@ counter = 0
 # test_funct = input("please input operation mode")
 sel_work_dir = os.getcwd()
 file_acc_path = sel_work_dir+"\\blog\\text_files\\mode.txt"
+file_acc_path = file_acc_path.replace("\\","/")
 my_f = open(file_acc_path,"r")
 test_funct = str(my_f.readline())
 test_funct.replace(" ","")#replace whitespace with nothing
