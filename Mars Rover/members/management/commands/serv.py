@@ -87,7 +87,24 @@ def square_mapper(curr_coords,angle):
   # arr.append(str(up_one))
   return arr#gives array of coordinates. 
 
-
+def ang_to_char(msg_inp):
+  if msg_inp == "0":
+    msg_inp = "f"
+  elif msg_inp == "45":
+    msg_inp = "d"
+  elif msg_inp == "90":
+    msg_inp = "r"
+  elif msg_inp == "135":
+    msg_inp = "a"
+  elif msg_inp == "180":
+    msg_inp = "b"
+  elif msg_inp == "225":
+    msg_inp = "x"
+  elif msg_inp == "270":
+    msg_inp == "l"
+  elif msg_inp == "315":
+    msg_inp = "y"
+  return msg_inp
 
 
 
@@ -96,7 +113,13 @@ s.bind(('0.0.0.0', 12000))
 s.listen(1)
 counter = 0
 
-test_funct = input("please input operation mode")
+# test_funct = input("please input operation mode")
+sel_work_dir = os.getcwd()
+file_acc_path = sel_work_dir+"\\blog\\text_files\\mode.txt"
+my_f = open(file_acc_path,"r")
+test_funct = str(my_f.readline())
+test_funct.replace(" ","")#replace whitespace with nothing
+deb_co = 0
 try:
     while True:
         # print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
@@ -128,63 +151,38 @@ try:
           insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
           insert_vals.save()
         if test_funct == "M":
-
           curr_dir = os.getcwd()
+          deb_co 
           file_path = curr_dir+"\\blog\\text_files\\direction.txt"
           file_path = file_path.replace("\\","/")
           f = open(file_path,"r")
-          #reading angle changes. 
-          # dist = int(f.readline())
-          ang_change = int(f.readline())#reads second line containing angle field. 
+          # ang_change = int(f.readline())#reads line containing angle field.
+          ang_change = input("enter angle change lol: ") 
           f.close()
 
           file_path = curr_dir+"\\blog\\text_files\\direction.txt"
           file_path = file_path.replace("\\","/")
           f = open(file_path,"w")
-          #reading angle changes. 
-          # dist = int(f.readline())
-          f.write("0")
+          f.write("0") #overwrite to 0 as a result. 
           f.close()
 
           if counter == 0:
               head_angle = str(ang_change)
               counter+=1
           else:
-              head_angle = str((int(head_angle)+ang_change)%360)
-
-          ##TCP protocols to send the values back will be used. 
-      
+              ang_change = int(ang_change)
+              head_angle = str((int(head_angle)+ang_change)%360)      
           observed_tile = square_mapper(curr_sq,int(head_angle))
           print(observed_tile)
           cmsg = str(ang_change)
-          if cmsg == "0":
-            cmsg = "f"
-          elif cmsg == "45":
-            cmsg = "d"
-          elif cmsg == "90":
-            cmsg = "r"
-          elif cmsg == "135":
-            cmsg = "a"
-          elif cmsg == "180":
-            cmsg = "b"
-          elif cmsg == "225":
-            cmsg = "x"
-          elif cmsg == "270":
-            cmsg == "l"
-          elif cmsg == "315":
-            cmsg = "y"
-            #is there an angle of 360?
+          cmsg = ang_to_char(cmsg) #convert from an angle to character.
+
           print("Angle Facing",cmsg)
 
-          #THE HEAD ANGLE SHOULD BE WRITTEN INTO THE TABLE.
-
-          # cmsg = cmsg.decode();
           conn.send(cmsg.encode())                
           # print("Maintaining connection")
-          content = conn.recvfrom(32)[0]
+          content = conn.recvfrom(64)[0]
           content = content.decode()
-          print("Checking content",content)
-
           if content=="XX":
               print("if condition entered",content)
               break
@@ -202,7 +200,6 @@ try:
           print("debugging",temp_dict)
 
           new_squares = square_mapper(curr_sq,int(head_angle))
-          ##This obtains the new mapping with a set of arrays for new squares. 
           old_last_sq = live_database.objects.get(last_visited=1)
           old_last_sq.last_visited = 0
           old_last_sq.save()
@@ -214,8 +211,6 @@ try:
             sel_vals = live_database.objects.get(tile_num=curr_sq)
             sel_vals.last_visited=1
             sel_vals.save()
-          # new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
-          # new_sq.save()#apply the new last square.
           for i in range(0,4):
               #loop from 1-4 inclusive.
             see_entries = live_database.objects.filter(tile_num=new_squares[i]) #checks whether value is present inside
@@ -248,9 +243,6 @@ try:
                     alien_ins.save()
                     alien_storer[ali_info] += 1#just in case 0. 
 
-                  # alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
-                  # alien_ins.save()
-                  # alien_storer[ali_info] += 1
                 
 
         else:
@@ -402,7 +394,7 @@ try:
               #       make_new_tile.tile_info = ali_info
               #       make_new_tile.save()
         
-        print("Change Angle Etc. For Next Cycle")
+        # print("Change Angle Etc. For Next Cycle")
 
 
        #s.close()
