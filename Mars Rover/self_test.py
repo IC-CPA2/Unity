@@ -50,8 +50,5 @@ while True:
     client_socket.close()
 
 
-    inp_param = input("<Receive Values from Field of View>")
-
-
 
 
