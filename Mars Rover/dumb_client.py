@@ -10,10 +10,6 @@ print("We're in tcp client...");
 #the server name and port client wishes to access
 server_name = 'localhost'
 server_port = 12000
-#create a TCP client socket
-#Set up a TCP connection
-#connection_socket will be assigned to this client on the server side
-
 #some work
 
 #send the message  to the udp server
