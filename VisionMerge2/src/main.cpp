@@ -7,6 +7,7 @@
 #include <MFRC522.h>
 #include <iostream>
 #include <WiFi.h>
+#include <MPU6050_light.h>
 
 #define HSPI_MISO 12
 #define HSPI_MOSI 13
@@ -83,6 +84,7 @@ void setup()
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
   spi_returnval = 0;
+
 }
 
 int retlargestbin(int arr[65])
@@ -105,6 +107,7 @@ int retlargestbin(int arr[65])
   {
     return 2670 / (maxindex * 10);
   }
+
 }
 
 int speed = 3;
@@ -130,6 +133,8 @@ void loop()
   delay(500);
   */
   // Start the Comms
+  Serial.println(UnityGyro.diffZ());
+
   unsigned long previousMillis = 0;
   unsigned long interval = 30000;
   unsigned long currentMillis = millis();
