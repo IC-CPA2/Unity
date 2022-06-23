@@ -153,18 +153,16 @@ try:
         if test_funct == "M":
           curr_dir = os.getcwd()
           deb_co 
-          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
-          file_path = file_path.replace("\\","/")
-          f = open(file_path,"r")
+          # f = open(file_path,"r")
           # ang_change = int(f.readline())#reads line containing angle field.
+          # f.close()
           ang_change = input("enter angle change lol: ") 
-          f.close()
+          # if str(ang_change)!=0:
+          #   f.write(ang_change)
+
 
           file_path = curr_dir+"\\blog\\text_files\\direction.txt"
           file_path = file_path.replace("\\","/")
-          f = open(file_path,"w")
-          f.write("0") #overwrite to 0 as a result. 
-          f.close()
 
           if counter == 0:
               head_angle = str(ang_change)
@@ -176,12 +174,16 @@ try:
           print(observed_tile)
           cmsg = str(ang_change)
           cmsg = ang_to_char(cmsg) #convert from an angle to character.
+          f = open(file_path,"w")
+          f.write(head_angle) #overwrite to 0 as a result. 
+          f.close()
+
 
           print("Angle Facing",cmsg)
 
           conn.send(cmsg.encode())                
           # print("Maintaining connection")
-          content = conn.recvfrom(64)[0]
+          content = conn.recvfrom(32)[0]
           content = content.decode()
           if content=="XX":
               print("if condition entered",content)
@@ -251,7 +253,7 @@ try:
           conn.send(cmsg.encode())  
           fan = False              
           # print("Maintaining connection")
-          content = conn.recvfrom(32)[0]
+          content = conn.recvfrom(64)[0]
           content = content.decode()
           print("Checking content",content)
           print("content length", len(content))
@@ -369,33 +371,6 @@ try:
 
 
               
-              # if ali_info != "T" and ali_info != "U":
-              #   if alien_storer[ali_info]==0:
-              #     print("L283",alien_storer[ali_info])
-              #     make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
-              #     make_new_tile.save()# we can save the new values into db which are of Terrain or Unknown
-              #   else:
-              #     #labelled as aliens
-              #     top_left = int(new_squares[i])-303 #this iterates and selects the squares w/o aliens. 
-              #     counter = 0
-              #     for y in range(0,7): #assuming a 3 square error (for leniency)
-              #       for x in range(0,7):
-              #         storer = live_database.objects.filter(tile_num=top_left+100*y+x)
-              #         if len(storer) > 0:
-              #           sel_vals = live_database.objects.get(tile_num=top_left+100*y+x)
-              #           print("T inf",sel_vals.tile_info)
-              #           if sel_vals.tile_info==ali_info:
-              #             print("Counter Change")
-              #             counter +=1
-
-              #     if counter == 0:
-              #       print("CHECK COUNTER")
-              #       make_new_tile = live_database.objects.get(tile_num=new_squares[i])
-              #       make_new_tile.tile_info = ali_info
-              #       make_new_tile.save()
-        
-        # print("Change Angle Etc. For Next Cycle")
-
 
        #s.close()
 except KeyboardInterrupt:

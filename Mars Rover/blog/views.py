@@ -510,6 +510,10 @@ def distance(request):
     direc = open(direction_path, "r")
 
     heading = direc.read()
+    if os.path.getsize(direction_path): 
+        print("HERE:", heading)
+    else:
+        heading = "0"
 
     print("HERE:",heading)
 
