@@ -142,8 +142,8 @@ try:
         alien_storer['YA']=len(sel_yellow)
         alien_storer['DGA']=len(sel_darkgreen)
         alien_storer['DBA']=len(sel_darkblue)
-        alien_storer['BA']=len(sel_blue) 
-        alien_storer['W']=0# we select aliens. 
+        alien_storer['BA']=len(sel_blue)  
+        alien_storer['W']=0# we select aliens.
 
         print("Aliens by Colour:",alien_storer)   
 
@@ -161,9 +161,9 @@ try:
           f_op2 = open(file_path,"w")
           f_op2.write("0")
           f_op2.close()
-          # ang_change = input("enter angle change lol: ") 
+# ang_change = input("enter angle change lol: ") 
           # if str(ang_change)!=0:
-          #   f.write(ang_change)
+                    #   f.write(ang_change)
 
 
 
