@@ -56,12 +56,6 @@ def about(request):
     default = """<canvas id="myCanvas" width="50" height="50" style="border:1px solid #000000;"></canvas>"""
 
     curr_dir = os.getcwd()
-    # bat_path = curr_dir+"\\blog\\text_files\\bat.txt"
-    # bat_path = bat_path.replace("\\","/")
-    # f = open(bat_path, "r")
-    # batteryLvl = f.readline() + "%"
-    #reads battery levels. 
-    # f.close()
 
     global counter
     global batteryLvl 
@@ -188,12 +182,12 @@ def about(request):
                 ali = reduce(database)                     
         # print (ali)
 
-    procang_path = curr_dir+"\\blog\\text_files\\procang.txt"
-    procang_path = procang_path.replace("\\","/")
-    pang = open(procang_path, "r")
+    direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
+    direction_path = direction_path.replace("\\","/")
+    direc = open(direction_path, "r")
 
-    heading = pang.read()
-    if os.path.getsize(procang_path): 
+    heading = direc.read()
+    if os.path.getsize(direction_path): 
         print("HERE:", heading)
     else:
         heading = "0"
@@ -449,9 +443,9 @@ def distance(request):
         angle = request.POST["angle"]
         print ("ANGLE:", angle)
 
-        dis_path = curr_dir+"\\blog\\text_files\\direction.txt"
-        dis_path = dis_path.replace("\\","/")
-        f = open (dis_path, "w")
+        pang_path = curr_dir+"\\blog\\text_files\\procang.txt"
+        pang_path = pang_path.replace("\\","/")
+        f = open (pang_path, "w")
         f.write(angle)
         f.close()
 
@@ -520,12 +514,12 @@ def distance(request):
 
                 new_tile.save()   
 
-    direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
-    direction_path = direction_path.replace("\\","/")
-    direc = open(direction_path, "r")
+    pang_path = curr_dir+"\\blog\\text_files\\procang.txt"
+    pang_path = pang_path.replace("\\","/")
+    pang = open(pang_path, "r")
 
-    heading = direc.read()
-    if os.path.getsize(direction_path): 
+    heading = pang.read()
+    if os.path.getsize(pang_path): 
         print("heading from direction:", heading)
     else:
         heading = "0"
