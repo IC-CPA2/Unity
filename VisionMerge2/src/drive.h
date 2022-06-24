@@ -11,7 +11,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0191082802547771; // 0.02019375;
+    double translation_prop = 0.019; // 0.02019375;
 
 public:
     double heading_angle;

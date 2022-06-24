@@ -7,6 +7,7 @@
 #include <MFRC522.h>
 #include <iostream>
 #include <WiFi.h>
+// #include <MPU6050_light.h>
 
 #define HSPI_MISO 12
 #define HSPI_MOSI 13
@@ -336,12 +337,17 @@ String currentview()
 
 void loop()
 {
-  Serial.println(totlum());
-  Serial.println(getDist(currentview()));
-  driveUnity.turn(90, false);
-  delay(1000);
-  driveUnity.turn(90, true);
-  delay(1000);
+  // Serial.println(totlum());
+  // Serial.println(getDist(currentview()));
+  // driveUnity.turn(90, false);
+  // delay(1000);
+  // driveUnity.turn(90, true);
+  // delay(1000);
+
+  double current_angle = gyro.currentangle();
+
+  Serial.println(current_angle);
+  delay(500);
   /*
   Serial.println(currentview());
   String view = currentview();
