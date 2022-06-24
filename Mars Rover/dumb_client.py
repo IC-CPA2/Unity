@@ -18,11 +18,11 @@ while True:
     for x in f:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((server_name, server_port))
-        msg = client_socket.recv(1024)
-        print("Client Received Angle :",msg.decode())
         time.sleep(1.1)
         msg = str(x)
         client_socket.send(msg.encode())
+        msg = client_socket.recv(1024)
+
         client_socket.close()
 
 
