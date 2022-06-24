@@ -337,6 +337,7 @@ String currentview()
 
 void loop()
 {
+<<<<<<< Updated upstream:VisionMerge2/src/main.cpp
   // Serial.println(totlum());
   // Serial.println(getDist(currentview()));
   // driveUnity.turn(90, false);
@@ -348,6 +349,14 @@ void loop()
 
   Serial.println(current_angle);
   delay(500);
+=======
+  //Serial.println(totlum());
+  //Serial.println(getDist(currentview()));
+  driveUnity.turn(90, false);
+  delay(1000);
+  driveUnity.turn(90, true);
+  delay(1000);
+>>>>>>> Stashed changes:Integration/src/main.cpp
   /*
   Serial.println(currentview());
   String view = currentview();
