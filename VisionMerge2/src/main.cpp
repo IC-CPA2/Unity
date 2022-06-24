@@ -1,3 +1,6 @@
+#include <iostream>
+#include <list>
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <drive.h>
@@ -116,6 +119,15 @@ float fl_2 = 10;
 float fl_3 = 0.5;
 float fl_4 = 5;
 
+std::ostream &operator<<(std::ostream &os, const std::list<std::string> &list)
+{
+  for (auto const &i : list)
+  {
+    os << i << std::endl;
+  }
+  return os;
+}
+
 void loop()
 {
   /*
@@ -233,9 +245,18 @@ void loop()
     Serial.println("-------");
     Serial.print("Heading to tile ");
     Serial.print(i);
-    Serial.println("--------");
+    Serial.print("Tiles array before");
+    std::cout << tiles;
 
-    driveUnity.navigate_to_neighbouring_coordinate(speed, tiles[i], fl_1, fl_2, fl_3, fl_4);
+    Serial.println("--------");
+    // try inputting the two coordinates as separate values
+    driveUnity.navigate_to_neighbouring_tile(speed, tiles[i], fl_1, fl_2, fl_3, fl_4);
+    Serial.println("-------");
+    Serial.print("After the function, i is ");
+    Serial.print(i);
+    Serial.print("Tiles array after");
+    std::cout << tiles;
+    Serial.println("--------");
     Serial.println("Tile x");
     Serial.println(roverUnity.tile_x);
     Serial.println("Tile y");

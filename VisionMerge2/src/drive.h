@@ -102,7 +102,7 @@ public:
         RoverMotors.brake();
     }
     // navigate to the next (neigbouring!) tile in the array of neighbouring tile coords by the navigation algorithm NOTE: currently only supports 90degree rotations
-    void navigate_to_neighbouring_coordinate(int speed, int next_tile[2], double motor_prop, double kp, double ki, double kd)
+    void navigate_to_neighbouring_tile(int speed, int next_tile[2], double motor_prop, double kp, double ki, double kd)
     {
 
         // state machine here to determine whether or not to turn first and then move
