@@ -8,7 +8,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0225;
+    double translation_prop = 0.019;
 
 public:
     double heading_angle;
@@ -51,6 +51,21 @@ public:
         {
             roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
         }
+
+        // ensure that the required head angle is within the range of 0 <= angle < 360
+
+        if (roverUnity.required_head_angle >= 360)
+        {
+            roverUnity.required_head_angle = roverUnity.required_head_angle - 360;
+        }
+        else if (roverUnity.required_head_angle < 0)
+        {
+            roverUnity.required_head_angle = 360 - roverUnity.required_head_angle;
+        }
+
+
+
+
         int i=0;
         while (abs(turned_angle) < abs(angle_degrees))
         {

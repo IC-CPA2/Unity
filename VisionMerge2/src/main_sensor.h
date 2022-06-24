@@ -79,7 +79,7 @@ double abs_coord_y = 0;
 volatile byte movementflag = 0;
 volatile int xydat[2];
 
-SPIClass * vspi = NULL;
+SPIClass *vspi = NULL;
 
 int convTwosComp(int b)
 {
@@ -245,6 +245,9 @@ struct Rover
   double translation_prop = 15 / 666 * 666 / 15;
   // position of rover in terms of centimetre translation
   double pos_x, pos_y;
+
+  int tile_x = 0;
+  int tile_y = 0;
 };
 
 // struct AbsCoords
@@ -268,11 +271,15 @@ void calc_abs_coords()
   Serial.println("Rover dy");
   Serial.println(dy);
 
-  double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+  double head_angle_radians = roverUnity.head_angle * M_PI / 180;
 
-  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_x = cos(head_angle_radians) * dx + roverUnity.pos_x;
 
-  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+  roverUnity.pos_y = sin(head_angle_radians) * dy + roverUnity.pos_y;
+
+  roverUnity.tile_x = floor((roverUnity.pos_x * roverUnity.translation_prop) / 21);
+
+  roverUnity.tile_y = floor((roverUnity.pos_y * roverUnity.translation_prop) / 21);
 
   Serial.println("Rover HEAD ANGLE");
   Serial.println(roverUnity.head_angle);
@@ -346,7 +353,18 @@ void optical_measurements()
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
 
-  roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
+  if (roverUnity.head_angle >= 360)
+  {
+    roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx - 360;
+  }
+  else if (roverUnity.head_angle < 0)
+  {
+    roverUnity.head_angle = 360 - roverUnity.head_angle - turning_prop * roverUnity.dx;
+  }
+  else
+  {
+    roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
+  }
 
   // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
   // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???

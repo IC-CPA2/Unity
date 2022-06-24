@@ -84,9 +84,9 @@ private:
 
     // let's initialise the PD constants
 
-    Kd = 3;
+    Kd = 1;
 
-    Kp = 5;
+    Kp = 2;
 
     Ki = 0;
 
