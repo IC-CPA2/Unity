@@ -240,20 +240,21 @@ void loop()
 
   int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
 
-  for (int i = 0; i < 3; i++)
+  for (int location_values = 0; location_values < 3; location_values++)
   {
     Serial.println("-------");
     Serial.print("Heading to tile ");
-    Serial.print(i);
+    Serial.print(location_values);
     Serial.print("Tiles array before");
     std::cout << tiles;
 
     Serial.println("--------");
     // try inputting the two coordinates as separate values
-    driveUnity.navigate_to_neighbouring_tile(speed, tiles[i], fl_1, fl_2, fl_3, fl_4);
+    driveUnity.navigate_to_neighbouring_tile(speed, tiles[location_values], fl_1, fl_2, fl_3, fl_4);
     Serial.println("-------");
     Serial.print("After the function, i is ");
-    Serial.print(i);
+    // i = i - 1;
+    Serial.print(location_values);
     Serial.print("Tiles array after");
     std::cout << tiles;
     Serial.println("--------");
