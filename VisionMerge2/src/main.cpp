@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <drive.h>
 #include <Radar.h>
+#include <gyroscope.h>
 
 #include <Wire.h>
 #include <MFRC522.h>
@@ -55,6 +56,7 @@ int anglepoint = 0;
 Drive driveUnity;
 Motors motor;
 Radar radar;
+GyroScope gyro; 
 
 void initWiFi()
 {
@@ -84,7 +86,6 @@ void setup()
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
   spi_returnval = 0;
-
 }
 
 int retlargestbin(int arr[65])
@@ -107,7 +108,6 @@ int retlargestbin(int arr[65])
   {
     return 2670 / (maxindex * 10);
   }
-
 }
 
 int speed = 3;
