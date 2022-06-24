@@ -1,0 +1,199 @@
+        /* <!-- <div class="item8">
+            {% for i in counter %}
+                {% for j in counter %}
+                    <canvas id={{i}}{{j}} width="50" height="50"
+                        style="border:1px solid #000000;">
+                    </canvas>
+                    <script>
+                        var c = document.getElementById({{i}}{{j}});
+                        var ctx = c.getContext("2d");
+                        var img = document.getElementById("terrain");
+                        ctx.drawImage(img,0,0,50,50);
+                    </script>
+                        {% if aliens|index:i|index:j == 0 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("alien");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% elif aliens|index:i|index:j == 2 %}
+                            <script>
+                                var c = document.getElementById({{i}}{{j}});
+                                var ctx = c.getContext("2d");
+                                var img = document.getElementById("rover");
+                                ctx.drawImage(img,0,0,50,50);
+                            </script>
+                        {% endif %}
+
+                {% endfor %}
+                <br>
+            {% endfor %}
+        </div> -->
+
+        
+
+        <!-- <div id="div2" style="padding-top:3%;padding-left:5%;float:left">
+            <form>
+            <h2>Mode</h2>
+            <form action="form/" method="post">
+            {% csrf_token %}
+            <label for="modes">Mode:</label>
+            <select name="modes" id="modes">
+                <option value="Slow">Slow</option>
+                <option value="Fast">Fast</option>
+            </select>
+            </form>
+        </div>   -->
+
+    
+        <!-- <div class="buttons">
+            <div class="buttonup">
+                <button type = "button"> ↑ </button>
+            </div>
+            <div class="buttondown">
+                <button type = "button"> ↓ </button>
+            </div>
+            <div class="buttonleft">
+                <button type = "button"> ← </button>
+            </div>
+            <div class="buttonright">
+                <button type = "button"> → </button>
+            </div>
+        </div> --> */
+
+        /* <div id="div3" style="padding-top:27%;padding-left:3%;">
+        <style>
+        #myProgress{
+            width: 30%;
+            background-color: #c1c1c1;
+        }
+            
+        #myBar{
+            width: {{battery}};
+            height: 30px;
+            background-color: #F05760;
+        }
+        </style>
+        
+        <body>
+            Battery Level:
+            <div id="myProgress">
+            <div id="myBar"></div>
+            </div>
+        </body>
+        </div>
+    </div> */
+
+<div class="buttons"> 
+                <div class="buttonup">
+                    <button type = "button"> ↑ </button>
+                </div>
+                <div class="buttondown">
+                    <button type = "button"> ↓ </button>
+                </div>
+                <div class="buttonleft">
+                    <button type = "button"> ← </button>
+                </div>
+                <div class="buttonright">
+                    <button type = "button"> → </button>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            <form action="">
+                <label for="distance"> <font size="3"> Distance (cm): </font></label><br>
+                <input type="text" id="dist" name="dist" value="0"><br>
+                <div class="slidecontainer">
+                    <input type="range" min="0" max="360" value="0" id="myRange" step="90">
+                    <br><font size="3"> <span id="slide"></span>º </font>
+                </div>
+                <input type="submit" value="Submit" onclick="refreshScreen()">
+
+                <script>
+                    var slider = document.getElementById("myRange");
+                    var output = document.getElementById("slide");
+                    output.innerHTML = slider.value; // Display the default slider value
+                
+                    // Update the current slider value (each time you drag the slider handle)
+                    slider.oninput = function() {
+                    output.innerHTML = this.value;
+                    }
+                    
+                    function refreshScreen(){
+                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
+                        console.log(disang)
+                        for (i = 0; i<9; i++){
+                            for (j = 0; j<9; j++){
+                                if (aliens[i][j] == 0){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("alien");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                                else if (aliens[i][j] == 2){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("rover");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                            }
+                        }
+
+                        var elem = document.getElementById("myBar");
+                        var id = setInterval(frame, 10);
+                        function frame() {
+                            elem.style.width = battery;
+                        } 
+                    
+                    }
+
+                </script>
+            </form>
+
+
+            <form action = "" method = "post">
+                {% csrf_token %}
+                {{ forms }}
+                <input type="submit" value=Submit>
+            </form>
+
+
+
+
+function refreshScreen(){
+                        disang = {distance: document.getElementById(dist).value, angle: slider.value};
+                        console.log(disang)
+                        for (i = 0; i<9; i++){
+                            for (j = 0; j<9; j++){
+                                if (aliens[i][j] == 0){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("alien");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                                else if (aliens[i][j] == 2){
+                                    var c = document.getElementById(str(i)+str(j));
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("rover");
+                                    ctx.drawImage(img,0,0,50,50);
+                                }
+                            }
+                        }
+
+                        var elem = document.getElementById("myBar");
+                        var id = setInterval(frame, 10);
+                        function frame() {
+                            elem.style.width = battery;
+                        } 
+                    }

@@ -1,0 +1,34 @@
+{% load static %} <img id="terrain" src="{% static "blog/media/terrain.jpg" %}" alt="terrain" height="0" width="0" />
+{% load static %} <img id="question" src="{% static "blog/media/question.png" %}" alt="question" height="0" width="0" />
+{% load static %} <img id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
+{% load static %} <img id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
+{% load static %} <img id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
+{% load static %} <img id="orange" src="{% static "blog/media/orange.png" %}" alt="orange" height="0" width="0" />
+{% load static %} <img id="red" src="{% static "blog/media/red.png" %}" alt="red" height="0" width="0" />
+{% load static %} <img id="rover" src="{% static "blog/media/rover.png" %}" alt="logo" height="0" width="0" />
+{% load static %} <img id="undiscovered" src="{% static "blog/media/undiscovered.png" %}" alt="undiscovered" height="0" width="0" />
+{% load extras %}
+
+
+<div class="item8">
+
+    {% for i in counter %}
+        {% for j in counter %}
+            <canvas id={{i}}{{j}} width="50" height="50"
+                style="border:0.5px solid #000000;">
+            </canvas>
+            <script>
+                var c = document.getElementById({{i}}{{j}});
+                var ctx = c.getContext("2d");
+                var img = document.getElementById("terrain");
+                ctx.drawImage(img,0,0,50,50);
+                var c = document.getElementById({{i}}{{j}});
+                var ctx = c.getContext("2d");
+                var img = document.getElementById("question");
+                ctx.drawImage(img,0,5,50,40);
+            </script>
+        {% endfor %}
+        <br>
+    {% endfor %}
+</div>  
+

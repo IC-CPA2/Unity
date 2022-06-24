@@ -1,0 +1,69 @@
+<style>
+  body{
+      background-image: url("/static/blog/media/bgabout.jpg") ;
+      background-size: cover;
+      background-repeat: no-repeat;
+  }
+
+  .styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  } 
+
+  .styled-table thead tr {
+    background-color: #ff623fc7;
+    color: #ffffff;
+    text-align: left;
+  }
+
+  .styled-table th,
+  .styled-table td {
+      padding: 12px 15px;
+  }
+
+  label {
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    color: #000;
+    font-weight: bold;
+  }
+
+</style>
+
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Map ID</th>
+      <th>Map Name</th>
+      <th>Date</th>
+      <th>Map Size</th>
+    </tr>
+  </thead>
+    {% for x in posts %}
+  <tbody>
+    <tr>
+      <td>{{ x.map_id }}</td>
+      <td>{{ x.map_name }}</td>
+      <td>{{ x.date_time }}</td>
+      <td>{{ x.map_size }}</td>
+    </tr>
+  </tbody>
+    {% endfor %}
+</table>
+
+<form action="/members/search" method="GET">
+  <label for="map">Map ID:</label><br>
+  <input type="text" id="map" name="mapid" required><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+
+
+
+  <button onclick="location.href = '/about'">Home</button>
+  <br>
