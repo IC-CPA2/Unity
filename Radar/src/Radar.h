@@ -26,7 +26,7 @@ pinMode(LED_GPIO, OUTPUT);
       ADC_VALUE = analogRead(Analog_channel_pin);
       voltage_value = (ADC_VALUE * 3.3 ) / (4095);
 
-        if (voltage_value > 2 ){
+        if (voltage_value > 1.8 ){
           digitalWrite(LED_GPIO, HIGH);
           Serial.println("fan detected!");
           return true;
