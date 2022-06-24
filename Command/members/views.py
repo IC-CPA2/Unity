@@ -112,7 +112,8 @@ def query(request):
                             <img id="darkblue" src="static/members/media/darkblue.png" %}" alt="logo" height="0" width="0" />
                             <img id="darkgreen" src="static/members/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
                             <img id="fan" src="static/members/media/fan.png" %}" alt="logo" height="0" width="0" />
-                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />"""
+                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />
+                            <img id="start" src="static/members/media/start.png" %}" alt="logo" height="0" width="0" />"""
             printout += image_dec
 
             printout += """<div class="grid-container">"""
@@ -354,6 +355,13 @@ def query(request):
                                                 </script>"""
                 printout = printout + "<br>"
 
+            printout = printout + """
+                                                <script>
+                                                    var c = document.getElementById("4040");
+                                                    var ctx = c.getContext("2d");
+                                                    var img = document.getElementById("start");
+                                                    ctx.drawImage(img,0,0,50,50);
+                                                </script>"""
             printout = printout + "</div>"
             printout += """<script>
                             window.onload = function() {
