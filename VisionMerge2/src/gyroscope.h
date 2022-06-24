@@ -28,5 +28,5 @@ class GyroScope{
         Serial.print("Current Angle: ");
         Serial.println(mpu.getAngleZ());
     }
-}
+};
 
