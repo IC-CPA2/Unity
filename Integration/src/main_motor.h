@@ -24,11 +24,11 @@ Developed with ROB-9457
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 21 // 18
+#define AIN1 26 // 21 // 18
 #define BIN1 17
 #define AIN2 25 // 5
 #define BIN2 16
-#define PWMA 22 // 19
+#define PWMA 27 // 22 // 19
 #define PWMB 4
 #define STBY 9
 
@@ -283,6 +283,20 @@ public:
     drive_steer(turning_angle, left);
   }
 };
+
+//   void gyro_turn_angle(int turning_angle){
+//   {
+
+//  double anglediff(){
+//         mpu.update();
+//         double initial = mpu.getAngleZ();
+//         double final = mpu.getAngleZ();
+//         return final - initial;
+//         Serial.print("Angle difference: ");
+//         Serial.println(final-initial);
+//     }
+
+//   }
 
 // void motors_control(int speed,int distance,int turning_angle, int error)
 // {

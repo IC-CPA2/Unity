@@ -1,5 +1,6 @@
 #include <main_motor.h>
 #include <main_sensor.h>
+#include <gyroscope.h>
 
 class Drive
 {
@@ -9,6 +10,7 @@ private:
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
     double translation_prop = 0.0191082802547771; // 0.02019375;
+    GyroScope gyro;
 
 public:
     double heading_angle;
@@ -65,6 +67,8 @@ public:
             RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
+        
+
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
 
         roverUnity.head_angle = roverUnity.required_head_angle;
@@ -77,6 +81,25 @@ public:
 
         RoverMotors.brake();
     };
+
+    void turn_Gyro (int angle_degrees, bool turnLeft)
+        {
+
+            double initial_angle = gyro.currentangle();
+            RoverMotors.turn(turnLeft);
+            double present_angle = gyro.currentangle();
+
+            double angle_change = present_angle - initial_angle;
+            
+            double total_angle_change = total_angle_change + angle_change;
+
+            while (abs(total_angle_change) < abs(angle_degrees)){
+
+             RoverMotors.turn(turnLeft); 
+
+            }
+
+        };
     //(-10 < speed < 10) drive forward a certain distance, call it inside void loop() in main.cpp, it is BLOCKING
     void forward_distance(int speed, double distance)
     {

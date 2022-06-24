@@ -338,9 +338,9 @@ void loop()
 {
   Serial.println(totlum());
   Serial.println(getDist(currentview()));
-  driveUnity.turn(90, false);
+  driveUnity.turn_Gyro(90, false);
   delay(1000);
-  driveUnity.turn(90, true);
+  driveUnity.turn_Gyro(90, true);
   delay(1000);
   /*
   Serial.println(currentview());
