@@ -25,11 +25,32 @@ public:
         Serial.println("Done!\n");
     }
 
-    double currentangle()
-    {
+    double currentangle(){
         mpu.update();
-        Serial.print("Current Angle: ");
-        Serial.println(mpu.getAngleZ());
-        return mpu.getAngleZ();
+        float modified_angle = mpu.getAngleZ()/2;
+        int i = abs(mpu.getAngleZ()/2/360);
+        if(modified_angle>360){
+            modified_angle = modified_angle - 360*i;
+            Serial.print("Current Angle: ");
+            Serial.println(modified_angle);
+        }
+        if (modified_angle<0){
+            modified_angle = modified_angle +360 *(i+1);
+            Serial.print("Current Angle: ");
+            Serial.println(modified_angle);
+        }
+        
+         return modified_angle;
     }
+
+    double anglediff(){
+        mpu.update();
+        double initial = mpu.getAngleZ();
+        double final = mpu.getAngleZ();
+        return final - initial;
+        Serial.print("Angle difference: ");
+        Serial.println(final-initial);
+    }
+
+
 };
