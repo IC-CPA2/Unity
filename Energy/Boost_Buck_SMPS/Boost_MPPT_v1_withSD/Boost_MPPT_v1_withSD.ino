@@ -112,6 +112,7 @@ void loop() {
 //    Serial.print("Old Duty Cycle: ");
 //    Serial.println(pwm_out);
 
+    if (vout > 5500){
     if(power_present>power_old){
       if(vin_present>vin_old){
         pwm_out = pwm_out - 0.01;
@@ -125,9 +126,11 @@ void loop() {
         pwm_out = pwm_out - 0.01;
       }
     }
+    } else{
+      pwm_out = pwm_out + 0.01;
+    }
 
     //Measure output voltage from port A
-    
     vout = analogRead(A3) * (4.096/1.03) * 2.05 * 2.70 ; // I am using 2 470k resistor as the potential divider
 //    Serial.print("Vout: ");
 //    Serial.println(vout);
