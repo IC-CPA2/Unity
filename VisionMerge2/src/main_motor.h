@@ -24,11 +24,11 @@ Developed with ROB-9457
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 26 // 21 // 18
+#define AIN1 21 // 18
 #define BIN1 17
-#define AIN2 25 // 1 // 5
+#define AIN2 25 // 5
 #define BIN2 16
-#define PWMA 27 // 22 // 19
+#define PWMA 22 // 19
 #define PWMB 4
 #define STBY 9
 
@@ -73,22 +73,22 @@ private:
   }
 
   // the input error here has to be the total_x_translation during straight drive
-  MotorSpeeds speed_straightness_control(int speed, double current_error, double motor_prop, double kp, double ki, double kd)
+  MotorSpeeds speed_straightness_control(int speed, double current_error)
   {
 
     MotorSpeeds speeds;
 
     // adjust constant to model power differences between motor left and right
 
-    motor_proportionality = motor_prop;
+    motor_proportionality = 0.92;
 
     // let's initialise the PD constants
 
-    Kd = kd; // 4;
+    Kd = 3;
 
-    Kp = kp; // 15;
+    Kp = 5;
 
-    Ki = ki; // 4;
+    Ki = 0;
 
     clamping = 20;
 
@@ -140,7 +140,7 @@ private:
     KI = cumulative_error;
 
     correction = Kd * KD + Kp * current_error + Ki * KI;
-    // correction = Kp * current_error;
+    //correction = Kp * current_error;
 
     // NOT TO USE: stop the rover to restabilise in case of too high sverving
 
@@ -179,14 +179,14 @@ private:
     return speeds;
   }
 
-  void drive_straight(int speed, int duration, double current_error, double motor_prop, double kp, double ki, double kd)
+  void drive_straight(int speed, int duration, double current_error)
   {
 
     MotorSpeeds speeds;
     // the input error here has to be the total_x_translation during straight drive
     // Serial.println("speed is controlled, the error is:");
     // Serial.println(current_error);
-    speeds = speed_straightness_control(speed, current_error, motor_prop, kp, ki, kd);
+    speeds = speed_straightness_control(speed, current_error);
 
     // Use of the drive function which takes as arguements the speed
     // and optional duration.  A negative speed will cause it to go
@@ -237,7 +237,7 @@ public:
   double error;
 
   // method to move forward
-  void forward(int speed, double current_error, double motor_prop, double kp, double ki, double kd)
+  void forward(int speed, double current_error)
   {
     int duration = 10; // default value
 
@@ -246,7 +246,7 @@ public:
     // generate duration to control the motors
     duration = convert_to_duration(distance, speed);
 
-    drive_straight(speed, duration, current_error, motor_prop, kp, ki, kd);
+    drive_straight(speed, duration, current_error);
   }
 
   // method to brake
@@ -264,15 +264,15 @@ public:
 
     if (turnLeft)
     {
-      motorLeft.drive(-speed, 1);
-
-      motorRight.drive(speed, 1);
-    }
-    else
-    {
       motorLeft.drive(speed, 1);
 
       motorRight.drive(-speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(-speed, 1);
+
+      motorRight.drive(speed, 1);
     }
   };
 
