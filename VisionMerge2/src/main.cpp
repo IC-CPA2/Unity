@@ -17,13 +17,13 @@
 #define MISO 19
 #define MOSI 23
 #define CS 5
-#define RST_PIN 27
-#define SS_PIN 26
+//#define RST_PIN 27
+//#define SS_PIN 26
 
 WiFiClient client;
 
 // Testing
-MFRC522 mfrc522(SS_PIN, RST_PIN);
+// MFRC522 mfrc522(SS_PIN, RST_PIN);
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 // IPAddress gateway(192, 168, 14, 224);
 // IPAddress subnet(255, 255, 255, 0);
@@ -78,7 +78,7 @@ void setup()
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
   radar.setup();
   spi_returnval = 0;
-  mfrc522.PCD_Init();
+  // mfrc522.PCD_Init();
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
@@ -223,14 +223,24 @@ void loop()
   Serial.println(fl_4, 3);                     // print to 3 degrees of precision (3 d.p.)
 
   Serial.println(speed, DEC);
-  driveUnity.forward_distance(speed, 20, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.forward_distance(speed, 20, fl_1, fl_2, fl_3, fl_4);
+  // driveUnity.turn(90, true);
 
-  // int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
+  int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
 
-  // for (int i = 0; i < 3; i++)
-  // {
+  for (int i = 0; i < 3; i++)
+  {
+    Serial.println("-------");
+    Serial.print("Heading to tile ");
+    Serial.print(i);
+    Serial.println("--------");
 
-  //   driveUnity.navigate_to_neighbouring_coordinate(speed,tiles[i], fl_1, fl_2, fl_3, fl_4);
-
-  // }
+    driveUnity.navigate_to_neighbouring_coordinate(speed, tiles[i], fl_1, fl_2, fl_3, fl_4);
+    Serial.println("Tile x");
+    Serial.println(roverUnity.tile_x);
+    Serial.println("Tile y");
+    Serial.println(roverUnity.tile_y);
+  }
+  Serial.println("Journey finished!");
+  delay(10000);
 }

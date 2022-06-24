@@ -240,12 +240,12 @@ struct Rover
 {
   // dx and dy are in terms of centimetres
   double dx, dy;
-  double head_angle = 90;
-  double required_head_angle = 90;
-  float translation_prop = 15 / 666 * 666 / 15;
-  // NOTE: it begins at 21/2 / 10.5cm - position of rover in terms of cm
-  double pos_x = 10.5;
-  double pos_y = 10.5;
+  double head_angle = 0;
+  double required_head_angle = 0;
+  float translation_prop = 0.019;
+  // NOTE: it begins at 0cm - position of rover in terms of cm
+  double pos_x = 0;
+  double pos_y = 0;
 
   int tile_x = 0;
   int tile_y = 0;
@@ -267,30 +267,36 @@ void calc_abs_coords()
   double dx = roverUnity.dx;
   double dy = roverUnity.dy;
 
-  Serial.println("Rover dx");
-  Serial.println(dx);
-  Serial.println("Rover dy");
-  Serial.println(dy);
+  // Serial.println("Rover dx");
+  // Serial.println(dx);
+  // Serial.println("Rover dy");
+  // Serial.println(dy);
 
-  double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+  double head_angle_radians = roverUnity.head_angle * M_PI / 180;
+  Serial.println("Head angle in radians:");
+  Serial.println(head_angle_radians);
+  Serial.println("Sin of angle in radians:");
+  Serial.println(sin(head_angle_radians));
+  Serial.println("Cosine of angle in radians");
+  Serial.println(cos(head_angle_radians));
 
-  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_x = cos(head_angle_radians) * dx + roverUnity.pos_x;
 
-  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+  roverUnity.pos_y = sin(head_angle_radians) * dy + roverUnity.pos_y;
 
-  roverUnity.tile_x = floor((roverUnity.pos_x - 10.5) / 21);
+  roverUnity.tile_x = floor((roverUnity.pos_x * roverUnity.translation_prop) / 21);
 
-  roverUnity.tile_y = floor((roverUnity.pos_y - 10.5) / 21);
+  roverUnity.tile_y = floor((roverUnity.pos_y * roverUnity.translation_prop) / 21);
 
-  Serial.println("Rover HEAD ANGLE");
-  Serial.println(roverUnity.head_angle);
+  // Serial.println("Rover HEAD ANGLE");
+  // Serial.println(roverUnity.head_angle);
 
-  Serial.print('\n');
+  // Serial.print('\n');
 
-  Serial.println("position x = " + String(roverUnity.pos_x));
+  // Serial.println("position x = " + String(roverUnity.pos_x));
 
-  Serial.println("position y = " + String(roverUnity.pos_y));
-  Serial.print('\n');
+  // Serial.println("position y = " + String(roverUnity.pos_y));
+  // Serial.print('\n');
 
   // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
 };
@@ -334,17 +340,17 @@ void optical_measurements()
   int val = mousecam_read_reg(ADNS3080_PIXEL_SUM);
   MD md;
   mousecam_read_motion(&md);
-  for (int i = 0; i < md.squal / 4; i++)
-    Serial.print('*');
-  Serial.print(' ');
-  Serial.print((val * 100) / 351);
-  Serial.print(' ');
-  Serial.print(md.shutter);
-  Serial.print(" (");
-  Serial.print((int)convTwosComp(md.dx));
-  Serial.print(',');
-  Serial.print((int)convTwosComp(md.dy));
-  Serial.println(')');
+  // for (int i = 0; i < md.squal / 4; i++)
+  //   Serial.print('*');
+  // Serial.print(' ');
+  // Serial.print((val * 100) / 351);
+  // Serial.print(' ');
+  // Serial.print(md.shutter);
+  // Serial.print(" (");
+  // Serial.print((int)convTwosComp(md.dx));
+  // Serial.print(',');
+  // Serial.print((int)convTwosComp(md.dy));
+  // Serial.println(')');
 
   // Serial.println(md.max_pix);
 

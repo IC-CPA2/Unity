@@ -139,8 +139,8 @@ private:
 
     KI = cumulative_error;
 
-      correction = Kd * KD + Kp * current_error + Ki * KI;
-    //correction = Kp * current_error;
+    correction = Kd * KD + Kp * current_error + Ki * KI;
+    // correction = Kp * current_error;
 
     // NOT TO USE: stop the rover to restabilise in case of too high sverving
 
@@ -264,15 +264,15 @@ public:
 
     if (turnLeft)
     {
-      motorLeft.drive(speed, 1);
-
-      motorRight.drive(-speed, 1);
-    }
-    else
-    {
       motorLeft.drive(-speed, 1);
 
       motorRight.drive(speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(speed, 1);
+
+      motorRight.drive(-speed, 1);
     }
   };
 
