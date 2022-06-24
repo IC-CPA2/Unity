@@ -512,8 +512,6 @@ def distance(request):
         print("MODES")
         modes = request.GET["mode"]
         mo = modes
-        mode_path = curr_dir+"\\blog\\text_files\\mode.txt"
-        mode_path = mode_path.replace("\\","/")
         m = open(mode_path, "w")
 
         mod = ""
