@@ -1,5 +1,8 @@
 #include <main_motor.h>
 #include <main_sensor.h>
+#include <gyroscope.h>
+
+GyroScope gyro;
 
 class Drive
 {
@@ -26,7 +29,7 @@ public:
     {
 
         optical_distance_moved();
-        straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
+        straightness_error = roverUnity.required_head_angle - gyro.currentangle();
         RoverMotors.forward(speed, straightness_error);
         coord_x = translation_prop * roverUnity.pos_x;
         coord_y = translation_prop * roverUnity.pos_y;
@@ -52,9 +55,18 @@ public:
             roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
         }
         int i = 0;
-        while (abs(turned_angle) < abs(angle_degrees))
+
+        // integrating gyroscope code
+
+        double angle_error = roverUnity.required_head_angle - gyro.currentangle();
+
+        // DO REDUCE THE ERROR TO UNDER 1 OR 0.5 BY CREATING A PID CONTROLLER!!!
+        while (abs(angle_error) > 5)
         {
-            turned_angle = turned_angle + optical_angle_turned();
+
+            RoverMotors.turn(turnLeft); //
+            angle_error = roverUnity.required_head_angle - gyro.currentangle();
+            // turned_angle = turned_angle + optical_angle_turned();
             if (i % 100 == 0)
             {
                 Serial.println(turned_angle);
@@ -62,7 +74,6 @@ public:
             i++;
             // Serial.println(turned_angle);
             //  TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
-            RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
         }
 
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
@@ -86,7 +97,7 @@ public:
         while (elapsed_rover_distance * translation_prop < distance)
         {
             optical_distance_moved();
-            straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
+            straightness_error = roverUnity.required_head_angle - gyro.currentangle();
             RoverMotors.forward(speed, straightness_error);
             elapsed_rover_distance = elapsed_rover_distance + roverUnity.dy;
             coord_x = translation_prop * roverUnity.pos_x;
