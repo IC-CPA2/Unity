@@ -2,11 +2,13 @@
 #include <SPI.h>
 #include <drive.h>
 #include <Radar.h>
+#include <gyroscope.h>
 
 #include <Wire.h>
 #include <MFRC522.h>
 #include <iostream>
 #include <WiFi.h>
+#include <MPU6050_light.h>
 
 #define HSPI_MISO 12
 #define HSPI_MOSI 13
@@ -54,6 +56,7 @@ int anglepoint = 0;
 Drive driveUnity;
 Motors motor;
 Radar radar;
+GyroScope gyro; 
 
 void initWiFi()
 {
@@ -130,6 +133,8 @@ void loop()
   delay(500);
   */
   // Start the Comms
+  Serial.println(UnityGyro.diffZ());
+
   unsigned long previousMillis = 0;
   unsigned long interval = 30000;
   unsigned long currentMillis = millis();
