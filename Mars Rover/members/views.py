@@ -354,6 +354,12 @@ def query(request):
                                                 </script>"""
                 printout = printout + "<br>"
 
+            printout = printout + """<script>
+                                        var c = document.getElementById("4040");
+                                        var ctx = c.getContext("2d");
+                                        var img = document.getElementById("start");
+                                        ctx.drawImage(img,0,0,50,50);
+                                    </script>"""
             printout = printout + "</div>"
             printout += """<script>
                             window.onload = function() {

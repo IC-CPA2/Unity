@@ -1,5 +1,5 @@
     {% load static %} <img class="lazy" id="terrain" src="{% static "blog/media/terrain.png" %}" alt="terrain" height="0" width="0" />
-    {% load static %} <img class="lazy" id="question" src="{% static "blog/media/questions.png" %}" alt="question" height="0" width="0" />
+    <!-- {% load static %} <img class="lazy" id="question" src="{% static "blog/media/questions.png" %}" alt="question" height="0" width="0" /> -->
     {% load static %} <img class="lazy" id="pink" src="{% static "blog/media/pink.png" %}" alt="pink" height="0" width="0" />
     {% load static %} <img class="lazy" id="blue" src="{% static "blog/media/blue.png" %}" alt="blue" height="0" width="0" />
     {% load static %} <img class="lazy" id="green" src="{% static "blog/media/green.png" %}" alt="green" height="0" width="0" />
@@ -236,11 +236,11 @@
                         var ctx = c.getContext("2d");
                         var img = document.getElementById("terrain");
                         ctx.drawImage(img,0,0,50,50);
-                        var c = document.getElementById({{i}}{{j}});
+                        // var c = document.getElementById({{i}}{{j}});
                         console.log({{i}}{{j}})
-                        var ctx = c.getContext("2d");
-                        var img = document.getElementById("question");
-                        ctx.drawImage(img,12,12,25,25);
+                        // var ctx = c.getContext("2d");
+                        // var img = document.getElementById("question");
+                        // ctx.drawImage(img,12,12,25,25);
                     </script>
                         {% if aliens|index:i|index:j == 0 %}
                             <script>
