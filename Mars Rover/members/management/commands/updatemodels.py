@@ -56,10 +56,6 @@ class Command(BaseCommand):
         iterator = len(live_database.objects.all())
         live_database.objects.all().delete()
 
-        s = live_database(tile_num="4040",tile_info="R",last_visited=1)
-        s.save()
-        s = live_database(tile_num="4041",tile_info="PA",last_visited=0)
-        s.save()
         print("AFTER",live_database.objects.all().values())
     
 

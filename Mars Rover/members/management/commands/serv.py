@@ -136,8 +136,8 @@ deb_co = 0
 try:
     while True:
         # print("rendering database with values: ",live_database.objects.all().values(),"\n curr sq is: ",curr_sq)
-        conn,address = s.accept()   
-        iterator = len(live_database.objects.all())
+        conn,address = s.accept()
+        print("line 2")   
         alien_storer = {}
         # sel_pink = live_database.objects.filter(tile_info="PA")
         # sel_blue = live_database.objects.filter(tile_info="BA")
@@ -161,21 +161,27 @@ try:
         alien_storer = storer()
 
         print("Aliens by Colour:",alien_storer)   
+        iterator = len(live_database.objects.all())
 
         if iterator == 0:
           insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
           insert_vals.save()
         if test_funct == "M":
+          print("manual mode")
           curr_dir = os.getcwd()
-          file_path = curr_dir+"\\blog\\text_files\\direction.txt"
+          file_path = curr_dir+"\\blog\\text_files\\procang.txt"
           file_path = file_path.replace("\\","/")
+          
+          my_path_th = curr_dir+"\\blog\\text_files\\direction.txt"
+          my_path_th = my_path_th.replace("\\","/")
+
 
           f_op2 = open(file_path,"r")
           ang_change = int(f_op2.readline())#reads line containing angle field.
-          f_op2.close()
-          f_op2 = open(file_path,"w")
-          f_op2.write("0")
-          f_op2.close()
+          f_op2.close()#rewrite the values. 
+          f_op3 = open(file_path,"w")
+          f_op3.write("0")
+          f_op3.close()
           # ang_change = input("enter angle change lol: ") 
           # if str(ang_change)!=0:
           #   f.write(ang_change)
@@ -215,16 +221,21 @@ try:
           temp_dict[4] = all_info[4][:-1]
           temp_dict[5] = all_info[5]
           head_ang = temp_dict[5]
-          observed_tile = square_mapper(curr_sq,int(head_ang))
+          h_ang = int(head_ang)
+          while h_ang<0:
+            h_ang += 360
+          
+          print("head angles", h_ang)
+          observed_tile = square_mapper(curr_sq,h_ang)
   
-          f = open(file_path,"w")
-          f.write(head_ang) #overwrite to 0 as a result. 
+          f = open(my_path_th,"w")
+          f.write(str(h_ang)) #overwrite to 0 as a result. 
           f.close()           
 
 
           print("debugging",temp_dict)
 
-          new_squares = square_mapper(curr_sq,int(head_angle))
+          new_squares = square_mapper(curr_sq,int(head_ang))
           old_last_sq = live_database.objects.get(last_visited=1)
           old_last_sq.last_visited = 0
           old_last_sq.save()
@@ -271,29 +282,24 @@ try:
                 
 
         else:
-          # print("BOTTOM LOOP")
+          print("BOTTOM LOOP")
           cmsg = "A"
           conn.send(cmsg.encode())  
           fan = False              
           # print("Maintaining connection")
-          content = conn.recvfrom(64)[0]
-          content = content.decode()
-          print("Checking content",content)
-          print("content length", len(content))
+          try:
+            content = conn.recvfrom(32)[0]
+            content = content.decode()
+          except:
+            print("in except loop")
+            pass
 
-          if len(content)<=4:
-              print("checking IF condition")
-              break
-          else:
-              print("see errors")
-              pass
-            
+              
           all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
           if len(all_info) >= 6:
             if len(all_info) == 7:
               fan = True
 
-            print("line 239")
             coords = all_info[0].split(",") #gives x and y coordinates
             curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
             #send back as current values the X,Y values. 
@@ -303,29 +309,32 @@ try:
             temp_dict[3] = all_info[3][:-1]
             temp_dict[4] = all_info[4][:-1]
             temp_dict[5] = all_info[5]
+            print("content is",content)
 
 
 
             # print("debugging",temp_dict)
             angle = temp_dict[5]
+            h_ang = int(angle)
+            while h_ang<0:
+              h_ang += 360
             curr_dir = os.getcwd()
             direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
             direction_path = direction_path.replace("\\","/")
             direc = open(direction_path, "w")
 
-            direc.write(angle)
+            direc.write(str(h_ang))
 
 
             # print("debug: ",angle)
             print(temp_dict[5])
             print(curr_sq)
 
-            new_squares = square_mapper(curr_sq,int(angle))
+            new_squares = square_mapper(curr_sq,h_ang)
             ##This obtains the new mapping with a set of arrays for new squares. 
             old_last_sq = live_database.objects.get(last_visited=1)
             old_last_sq.last_visited = 0
             old_last_sq.save()
-            print("run code")
             checker = live_database.objects.filter(tile_num=curr_sq)
             if len(checker) == 0:
               if fan:
@@ -379,12 +388,116 @@ try:
 
                   if alien_storer[ali_info] == 0:#check if an alien is rendered.
                     print("line 356 entered")
- 
+
                     #we check if this is 0 and need to like reprocess. 
                     if check_info == "T" or check_info=="U":
                       alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
                       alien_ins.save()
                       alien_storer[ali_info] += 1#just in case 0. 
+
+
+            
+          # print("Server REceived",content)
+          # print("content length", len(content))
+
+            
+          # all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
+          # if len(all_info) >= 6:
+          #   if len(all_info) == 7:
+          #     fan = True
+
+          #   print("line 239")
+          #   coords = all_info[0].split(",") #gives x and y coordinates
+          #   curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
+          #   #send back as current values the X,Y values. 
+          #   temp_dict = {}#dictionary for the information sent back by TCP server. 
+          #   temp_dict[1] = all_info[1][:-1]
+          #   temp_dict[2] = all_info[2][:-1]
+          #   temp_dict[3] = all_info[3][:-1]
+          #   temp_dict[4] = all_info[4][:-1]
+          #   temp_dict[5] = all_info[5]
+
+
+
+          #   # print("debugging",temp_dict)
+          #   angle = temp_dict[5]
+          #   curr_dir = os.getcwd()
+          #   direction_path = curr_dir+"\\blog\\text_files\\direction.txt"
+          #   direction_path = direction_path.replace("\\","/")
+          #   direc = open(direction_path, "w")
+
+          #   direc.write(angle)
+
+
+          #   # print("debug: ",angle)
+          #   print(temp_dict[5])
+          #   print(curr_sq)
+
+          #   new_squares = square_mapper(curr_sq,int(angle))
+          #   ##This obtains the new mapping with a set of arrays for new squares. 
+          #   old_last_sq = live_database.objects.get(last_visited=1)
+          #   old_last_sq.last_visited = 0
+          #   old_last_sq.save()
+          #   print("run code")
+          #   checker = live_database.objects.filter(tile_num=curr_sq)
+          #   if len(checker) == 0:
+          #     if fan:
+          #       new_sq = live_database(tile_num=curr_sq,tile_info="F",last_visited=1)
+          #     else:
+          #       new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
+          #     new_sq.save()#apply the new last square.
+          #   else:
+          #     sel_vals = live_database.objects.get(tile_num=curr_sq)
+          #     if fan:
+          #       sel_vals.tile_info="F"
+          #     sel_vals.last_visited=1
+          #     sel_vals.save()
+
+          #   for i in range(0,4):
+          #       #loop from 1-4 inclusive.
+          #     check_db = live_database.objects.filter(tile_num=new_squares[i]) #checks whether value is present inside
+          #     ali_info = temp_dict[i+1]
+          #     # print("I val: ",i," aliens information: ",ali_info)
+          #     if len(check_db)==0:#check if an entry exists in the given tile. 
+          #       if ali_info == "T" or ali_info == "U":# if terrain or unknown in the slot. 
+          #         make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+          #         make_new_tile.save()
+                
+          #       else:
+          #         print("entering bottom crap")
+          #         #check if not a terrain or Unknown thingy.
+          #         if alien_storer[ali_info] == 0:#for aliens we can just save them if not there before. 
+          #           first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+          #           first_ali.save() #there does not need to be any new vals inserted.
+          #           alien_storer[ali_info] += 1#not labelled as terrain etc. prevents multiple insertions my guess is. 
+          #           if ali_info == "W":
+          #             alien_storer[ali_info] = 0
+          #         elif ali_info == "W":
+          #           print("entering bottom if conditions")
+          #           wallquery = live_database.objects.filter(tile_num=new_squares[i])
+          #           if len(wallquery)!=0:
+          #             wall = live_database.objects.get(tile_num=new_squares[i])
+          #             wall.tile_info="W"
+          #             wall.save()
+          #           else:
+          #             first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+          #             first_ali.save()
+          #       # we can select tile info from dictionary
+
+          #     else: #think about the new conditions to insert a new alien onto the screen
+          #       if ali_info != "T" and ali_info != "U":#this is the case something is written in the tile. 
+          #         ##get and label as a new tile, no previouosly written information. 
+          #         check_sq = live_database.objects.get(tile_num=new_squares[i])
+          #         check_info = check_sq.tile_info
+
+          #         if alien_storer[ali_info] == 0:#check if an alien is rendered.
+          #           print("line 356 entered")
+ 
+          #           #we check if this is 0 and need to like reprocess. 
+          #           if check_info == "T" or check_info=="U":
+          #             alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
+          #             alien_ins.save()
+          #             alien_storer[ali_info] += 1#just in case 0. 
                 
         
           else:
