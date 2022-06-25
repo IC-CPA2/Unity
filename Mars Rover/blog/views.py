@@ -159,18 +159,41 @@ def about(request):
             if len(filthy)!=0:
                 filt_cond = live_database.objects.get(last_visited=1)
                 rover_pos = filt_cond.tile_num
+                # print ("INT", int(rover_pos))
+                # if (int(rover_pos) > 7070):
+                #     print ("FOR")
+                #     rover_pos = 7070
+                
                 rover_posy = str(rover_pos)[0:2]
                 rover_posy = int(rover_posy)
                 rover_posx = str(rover_pos)[2:4]
                 rover_posx = int(rover_posx)
+                
                 for i in range (rover_posy-7, rover_posy+7):
                     for j in range (rover_posx-7, rover_posx+7):  
-                        key = str(i)+str(j)
+                        # print (rover_posx, rover_posy)
+                                              # print ("IJ")
+                        # print ("IJ", j,i)
+                        # print ("i: ", i)
+                        # print ("j: ", j)
+                        if (j >= 71):
+                            j = 70
+                        
+                        if (i >= 71):
+                            i = 70
+                        stringj = str(j)
+                        stringi = str(i)
+                        if len(stringj)==1:
+                            stringj = "0" + stringj
+                        if len(stringi)==1:
+                            stringi = "0" + stringi
+                        key = stringi + stringj
+
                         tile = live_database.objects.filter(tile_num=key).values()
                         rover_pos = filt_cond.tile_num
+                        
 
                         if len(tile) > 0:
-                            
                             tile = live_database.objects.get(tile_num=key)
                             info = tile.tile_info
                             if (info == "T"):
@@ -195,10 +218,16 @@ def about(request):
                                 database[i][j] = 11
                             elif (info == "W"):
                                 database[i][j] = 12
+                        print ("key", key)
+                        print ("roverpos", rover_pos)
+                        if int(rover_pos) > 7070:
+                            rover_pos = "7070"
                         if key == rover_pos:
+                            print("hello")
                             database[i][j] = 2
                         
-                ali = reduce(database)                     
+                ali = reduce(database) 
+                print (ali)                    
 
 
     direc = open(direction_path, "r")
@@ -306,9 +335,9 @@ def distance(request):
     alien_path = alien_path.replace("\\","/")
 
     img = []
-    ali = [[1]*9 for i in range(9)]
+    ali = [[7]*9 for i in range(9)]
     db_length = len(live_database.objects.all())
-    database = [[1]*71 for i in range(71)]
+    database = [[7]*71 for i in range(71)]
     rover_pos = 0
 
     if db_length > 0:
@@ -371,15 +400,30 @@ def distance(request):
 
                 for i in range (rover_posy-7, rover_posy+7):
                     for j in range (rover_posx-7, rover_posx+7):  
-                        key = str(i)+str(j)
-                        # print(key)
+                        # print (rover_posx, rover_posy)
+                                              # print ("IJ")
+                        # print ("IJ", j,i)
+                        # print ("i: ", i)
+                        # print ("j: ", j)
+                        if (j >= 71):
+                            j = 70
+                        
+                        if (i >= 71):
+                            i = 70
+                        stringj = str(j)
+                        stringi = str(i)
+                        if len(stringj)==1:
+                            stringj = "0" + stringj
+                        if len(stringi)==1:
+                            stringi = "0" + stringi
+                        key = stringi + stringj
+
                         tile = live_database.objects.filter(tile_num=key).values()
-                        # filt_cond = live_database.objects.get(last_visited=1)
                         rover_pos = filt_cond.tile_num
+                        
 
                         if len(tile) > 0:
                             tile = live_database.objects.get(tile_num=key)
-                            # print (tile.tile_info)
                             info = tile.tile_info
                             if (info == "T"):
                                 database[i][j] = 7
@@ -403,9 +447,13 @@ def distance(request):
                                 database[i][j] = 11
                             elif (info == "W"):
                                 database[i][j] = 12
-                        if key == rover_pos:
+                        print ("key", key)
+                        print ("roverpos", rover_pos)
+                        if (key == rover_pos or int(rover_pos) > 7070):
+                            print("hello")
                             database[i][j] = 2
-                ali = reduce(database)        
+                        
+                ali = reduce(database)         
     
 
     if 'reset' in request.GET:

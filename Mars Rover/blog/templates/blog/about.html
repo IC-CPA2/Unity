@@ -448,6 +448,17 @@
                                 var img = document.getElementById("315d");
                                 ctx.drawImage(img,0,0,50,50);
                             </script>
+                            {% else %}
+                                <script>
+                                    var c = document.getElementById({{i}}{{j}});
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("terrain");
+                                    ctx.drawImage(img,0,0,50,50);
+                                    var c = document.getElementById({{i}}{{j}});
+                                    var ctx = c.getContext("2d");
+                                    var img = document.getElementById("0d");
+                                    ctx.drawImage(img,0,0,50,50);
+                                </script>
                             {% endif %}
                         {% endif %}
                 {% endfor %}
