@@ -241,8 +241,10 @@ struct Rover
   // dx and dy are in terms of centimetres
   double dx, dy;
   double head_angle = 0;
+  double head_angle_unbounded = 0;
   double required_head_angle = 0;
-  double translation_prop = 15 / 666 * 666 / 15;
+  double required_head_angle_unbounded = 0;
+  float translation_prop = 0.019;
   // position of rover in terms of centimetre translation
   double pos_x, pos_y;
 
@@ -353,6 +355,13 @@ void optical_measurements()
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
 
+//assign the unbounded head angle for straightness control
+
+ roverUnity.head_angle_unbounded = roverUnity.head_angle_unbounded - turning_prop * roverUnity.dx;
+
+
+
+  //adjust the normalised head angle
   if (roverUnity.head_angle >= 360)
   {
     roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx - 360;
