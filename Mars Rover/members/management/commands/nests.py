@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 insert_vals = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
                 insert_vals.save()
             alien_storer = {}
-            print("in this line")
+            # print("in this line")
             alien_storer = storer()
             nav_curr_dir = os.getcwd()
             my_file = open(nav_curr_dir+"/on_serv.txt","r") #read the string from the text file. 
@@ -92,8 +92,8 @@ class Command(BaseCommand):
             if content == "XX":
                 break
             my_file.close()
-            print("check content",content)
-            print("BOTTOM LOOP")
+            # print("check content",content)
+            # print("BOTTOM LOOP")
             all_info = content.split(";") ##gives array like ['0,1';'PA1';'T2';'T3';'T4']
             fan = False
             if len(all_info) >= 6:
@@ -122,7 +122,7 @@ class Command(BaseCommand):
             ##This obtains the new mapping with a set of arrays for new squares. 
             check_if_in = live_database.objects.filter(last_visited=1)
             if len(check_if_in)!=0:
-                print("thing is getting overwritten")
+                # print("thing is getting overwritten")
                 old_last_sq = live_database.objects.get(last_visited=1)
                 old_last_sq.last_visited = 0
                 old_last_sq.save()
@@ -131,7 +131,7 @@ class Command(BaseCommand):
                 if fan:
                     new_sq = live_database(tile_num=curr_sq,tile_info="F",last_visited=1)
                 else:
-                    print("should happen here.")
+                    # print("should happen here.")
                     new_sq = live_database(tile_num=curr_sq,tile_info="T",last_visited=1)
                     new_sq.save()#apply the new last square.
             else:
@@ -154,14 +154,17 @@ class Command(BaseCommand):
                         make_new_tile = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                         make_new_tile.save()
                     else:
-                        print("entering bottom crap")
+                        print("checking ins_conds")
                         #check if not a terrain or Unknown thingy.
                         if alien_storer[ali_info] == 0:#for aliens we can just save them if not there before. 
+                            print("check alien entering condition!!")
+                            print("double confo 161!!")
                             first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
                             first_ali.save() #there does not need to be any new vals inserted.
-                            alien_storer[ali_info] += 1#not labelled as terrain etc. prevents multiple insertions my guess is. 
-                        if ali_info == "W":
-                            alien_storer[ali_info] = 0
+                            alien_storer[ali_info] += 1#not labelled as terrain etc. prevents multiple insertions my guess is.
+
+                            if ali_info == "W":
+                                alien_storer[ali_info] = 0
                         elif ali_info == "W":
                             print("entering bottom if conditions")
                             wallquery = live_database.objects.filter(tile_num=new_squares[i])
@@ -169,11 +172,13 @@ class Command(BaseCommand):
                                 wall = live_database.objects.get(tile_num=new_squares[i])
                                 wall.tile_info="W"
                                 wall.save()
-                        else:
-                            first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
-                            first_ali.save()
+                            else:
+                                print("verify ali_inf: ",ali_info)
+                                first_ali = live_database(tile_num=new_squares[i],tile_info=temp_dict[i+1],last_visited=0)
+                                first_ali.save()
                 # we can select tile info from dictionary
                 else: #think about the new conditions to insert a new alien onto the screen
+                    print("entering else conditions")
                     if ali_info != "T" and ali_info != "U":#this is the case something is written in the tile. 
                         ##get and label as a new tile, no previouosly written information. 
                         check_sq = live_database.objects.get(tile_num=new_squares[i])
@@ -184,5 +189,5 @@ class Command(BaseCommand):
                                 alien_ins = live_database(tile_num=new_squares[i],tile_info=ali_info,last_visited=0)
                                 alien_ins.save()
                                 alien_storer[ali_info] += 1#just in case 0. 
-                print("loop edge")
+                # print("loop edge")
 

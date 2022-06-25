@@ -31,7 +31,7 @@ def reduce (hundred):
         x = i
         y = j
 
-  output = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
+  output = [[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7],[7,7,7,7,7,7,7,7,7]]
 
   startx = x-4
   starty = y-4
@@ -103,8 +103,9 @@ def about(request):
         f.close()
 
     img = []
-    database = [[1]*71 for i in range(71)]
-    ali = [[1]*9 for i in range(9)]
+    database = [[7]*71 for i in range(71)]
+    ali = [[7]*9 for i in range(9)]
+    
     rover_pos = 0
     db_length = len(live_database.objects.all())
 
@@ -152,6 +153,7 @@ def about(request):
             ali = reduce(database)   
 
         else:
+            
             print("AFTER")
             filthy = live_database.objects.filter(last_visited=1)
             if len(filthy)!=0:
@@ -168,6 +170,7 @@ def about(request):
                         rover_pos = filt_cond.tile_num
 
                         if len(tile) > 0:
+                            
                             tile = live_database.objects.get(tile_num=key)
                             info = tile.tile_info
                             if (info == "T"):
@@ -194,6 +197,7 @@ def about(request):
                                 database[i][j] = 12
                         if key == rover_pos:
                             database[i][j] = 2
+                        
                 ali = reduce(database)                     
 
 
@@ -250,6 +254,7 @@ def about(request):
     elif modss == "A":
         mo = "Autonomous"
 
+    print (ali)
     context = {
         'counter': ['1','2','3','4','5','6','7','8','9'],
         'aliens': ali,
