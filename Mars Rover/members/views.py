@@ -112,7 +112,8 @@ def query(request):
                             <img id="darkblue" src="static/members/media/darkblue.png" %}" alt="logo" height="0" width="0" />
                             <img id="darkgreen" src="static/members/media/darkgreen.png" %}" alt="logo" height="0" width="0" />
                             <img id="fan" src="static/members/media/fan.png" %}" alt="logo" height="0" width="0" />
-                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />"""
+                            <img id="wall" src="static/members/media/wall.png" %}" alt="logo" height="0" width="0" />
+                            <img id="start" src="static/members/media/start.png" %}" alt="logo" height="0" width="0" />"""
             printout += image_dec
 
             printout += """<div class="grid-container">"""
