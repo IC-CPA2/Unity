@@ -39,7 +39,11 @@ uint16_t spi_returnval;
 const char *ssid = "Milu-PC";
 const char *password = "123456789";
 const uint16_t port = 12000;
-const char *host = "192.168.137.1";
+//milu computer ip
+//const char *host = "192.168.137.1";
+//Kelvin computer ip
+const char *host = "192.168.137.206";
+
 
 void calcDistance();
 void resetCounter();
@@ -238,31 +242,48 @@ void loop()
   // driveUnity.forward_distance(speed, 20, fl_1, fl_2, fl_3, fl_4);
   // driveUnity.turn(90, true);
 
-  int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
+  // int tiles[3][2] = {{0, 1}, {1, 1}, {1, 0}};
 
-  for (int location_values = 0; location_values < 3; location_values++)
-  {
-    Serial.println("-------");
-    Serial.print("Heading to tile ");
-    Serial.print(location_values);
-    Serial.print("Tiles array before");
-    std::cout << tiles;
+  // for (int location_values = 0; location_values < 3; location_values++)
+  // {
+  //   Serial.print("Value of i: ");
+  //   Serial.println(location_values);
+  //   Serial.println("-------");
+  //   Serial.print("Heading to tile ");
+  //   Serial.print(location_values);
+  //   Serial.println("Tiles array before");
+  //   std::cout << tiles;
 
-    Serial.println("--------");
-    // try inputting the two coordinates as separate values
-    driveUnity.navigate_to_neighbouring_tile(speed, tiles[location_values], fl_1, fl_2, fl_3, fl_4);
-    Serial.println("-------");
-    Serial.print("After the function, i is ");
-    // i = i - 1;
-    Serial.print(location_values);
-    Serial.print("Tiles array after");
-    std::cout << tiles;
-    Serial.println("--------");
-    Serial.println("Tile x");
-    Serial.println(roverUnity.tile_x);
-    Serial.println("Tile y");
-    Serial.println(roverUnity.tile_y);
-  }
-  Serial.println("Journey finished!");
-  delay(10000);
+  //   Serial.println("--------");
+  //   // try inputting the two coordinates as separate values
+  //   driveUnity.navigate_to_neighbouring_tile(speed, tiles[location_values], fl_1, fl_2, fl_3, fl_4);
+  //   Serial.println("-------");
+  //   Serial.print("After the function, i is ");
+  //   // i = i - 1;
+  //   Serial.print(location_values);
+  //   Serial.print("Tiles array after");
+  //   std::cout << tiles;
+  //   Serial.println("--------");
+  //   Serial.println("Tile x");
+  //   Serial.println(roverUnity.tile_x);
+  //   Serial.println("Tile y");
+  //   Serial.println(roverUnity.tile_y);
+  // }
+  // Serial.println("Journey finished!");
+  // delay(10000);
+  driveUnity.forward_distance(speed,20, fl_1, fl_2, fl_3, fl_4);
+  Serial.println(driveUnity.coord_x);
+    Serial.println(driveUnity.coord_y);
+    driveUnity.turn(90,false);
+      driveUnity.forward_distance(speed,20, fl_1, fl_2, fl_3, fl_4);  
+      Serial.println(driveUnity.coord_x);
+    Serial.println(driveUnity.coord_y);
+          driveUnity.turn(90,false);
+              driveUnity.forward_distance(speed,20, fl_1, fl_2, fl_3, fl_4);
+                Serial.println(driveUnity.coord_x);
+    Serial.println(driveUnity.coord_y);
+                          driveUnity.turn(90,false);
+                                        driveUnity.forward_distance(speed,20, fl_1, fl_2, fl_3, fl_4);
+                                          Serial.println(driveUnity.coord_x);
+    Serial.println(driveUnity.coord_y);
 }

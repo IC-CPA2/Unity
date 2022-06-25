@@ -241,7 +241,9 @@ struct Rover
   // dx and dy are in terms of centimetres
   double dx, dy;
   double head_angle = 0;
+  double head_angle_unbounded = 0;
   double required_head_angle = 0;
+  double required_head_angle_unbounded = 0;
   float translation_prop = 0.019;
   // NOTE: it begins at 0cm - position of rover in terms of cm
   double pos_x = 0;
@@ -272,15 +274,15 @@ void calc_abs_coords()
   // Serial.println("Rover dy");
   // Serial.println(dy);
 
-  double head_angle_radians = roverUnity.head_angle * M_PI / 180;
-  Serial.println("Head angle in radians:");
-  Serial.println(head_angle_radians);
-  Serial.println("Sin of angle in radians:");
-  Serial.println(sin(head_angle_radians));
-  Serial.println("Cosine of angle in radians");
-  Serial.println(cos(head_angle_radians));
+  double head_angle_radians = roverUnity.head_angle_unbounded * M_PI / 180;
+  // Serial.println("Head angle in radians:");
+  // Serial.println(head_angle_radians);
+  // Serial.println("Sin of angle in radians:");
+  // Serial.println(sin(head_angle_radians));
+  // Serial.println("Cosine of angle in radians");
+  // Serial.println(cos(head_angle_radians));
 
-  roverUnity.pos_x = cos(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_x = cos(head_angle_radians) * dy + roverUnity.pos_x;
 
   roverUnity.pos_y = sin(head_angle_radians) * dy + roverUnity.pos_y;
 
@@ -359,6 +361,14 @@ void optical_measurements()
 
   roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
+
+  //update unbounded head angle for accurate straightness control
+
+  roverUnity.head_angle_unbounded = roverUnity.head_angle_unbounded - turning_prop * roverUnity.dx;
+
+
+
+
   if (roverUnity.head_angle >= 360)
   {
     roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx - 360;
