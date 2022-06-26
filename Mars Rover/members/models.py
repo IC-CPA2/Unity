@@ -5,7 +5,7 @@ from django.utils import timezone
 class map_info(models.Model):
     map_id = models.AutoField(primary_key=True)
     map_name = models.CharField(max_length=50)
-    # user_map_name = models.CharField(max_length=50)
+    user_map_name = models.CharField(max_length=50)
     map_size = models.CharField(max_length=50)
     date_time = models.DateTimeField(default=timezone.now)
     def _str_(self):
