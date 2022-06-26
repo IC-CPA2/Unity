@@ -17,12 +17,11 @@
 #define MISO 19
 #define MOSI 23
 #define CS 5
-#define RST_PIN 27
-#define SS_PIN 26
+
 
 WiFiClient client;
+GyroScope gyro;
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 IPAddress gateway(192, 168, 14, 224);
 IPAddress subnet(255, 255, 255, 0);
@@ -79,11 +78,13 @@ void setup()
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
   radar.setup();
   spi_returnval = 0;
-  mfrc522.PCD_Init();
+
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
   spi_returnval = 0;
+
+  gyro.setup();
 }
 
 char *getColor(char *string)
@@ -336,12 +337,17 @@ String currentview()
 
 void loop()
 {
-  Serial.println(totlum());
-  Serial.println(getDist(currentview()));
-  driveUnity.turn_Gyro(90, false);
+  // Serial.println(totlum());
+  // Serial.println(getDist(currentview()));
+  driveUnity.turn(90, false);
   delay(1000);
-  driveUnity.turn_Gyro(90, true);
+  driveUnity.turn(90, true);
   delay(1000);
+  gyro.currentangle();
+  delay(100);
+  Serial.print("Gyro current angle: ");
+  Serial.println(gyro.currentangle());
+
   /*
   Serial.println(currentview());
   String view = currentview();
