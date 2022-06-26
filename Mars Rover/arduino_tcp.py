@@ -18,6 +18,17 @@ def ex_ang():
     splitstr = line.split(";")
     return splitstr
 
+def angleAdjust(angle):
+  if angle % 90 == 0:
+    return angle
+  else:
+    modul = angle % 90
+    if modul <= 45:
+      return angle - modul
+    else:
+      oppmod = 90 - modul
+      return angle + oppmod
+
 memo = {'bd':'W','r':'RA','y':'YA','p':'PA','b':'BA','dg':'DGA','lg':'GA','nb':'TA'}
 curr_time = time.time()
 while True:
@@ -35,16 +46,16 @@ while True:
     if(len(info)==6):
         if int(float(info[5]))==0:
             if(int(float(info[3]))>prev_x):
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(int(float(info[5]))))
+                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
             else:
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(int(float(info[5]))))
+                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
         else:
             if(int(float(info[3]))>prev_x):
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(int(float(info[5]))))
+                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
             else:
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(int(float(info[5]))))
+                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
     elif (len(info)==4):
-        f.write(str(int(float(info[1])))+","+str(int(float(info[2])))+";T1;T2;T3;T4;"+str(int(float(info[3]))))
+        f.write(str(int(float(info[1])))+","+str(int(float(info[2])))+";T1;T2;T3;T4;"+str(angleAdjust(int(float(info[3])))))
 
         # f.write("0,0;U1;U2;U3;U4;0")
     f.close()
