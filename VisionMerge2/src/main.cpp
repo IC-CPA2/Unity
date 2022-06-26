@@ -4,7 +4,7 @@
 #include <Radar.h>
 
 #include <Wire.h>
-#include <MFRC522.h>
+
 #include <iostream>
 #include <WiFi.h>
 // #include <MPU6050_light.h>
@@ -14,16 +14,15 @@
 #define HSPI_SCLK 14
 #define HSPI_SS 15
 
-#define SCK 18
-#define MISO 19
-#define MOSI 23
-#define CS 5
-#define RST_PIN 27
-#define SS_PIN 26
+// #define SCK 18
+// #define MISO 19
+// #define MOSI 23
+// #define CS 5
+
 
 WiFiClient client;
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);
+
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 IPAddress gateway(192, 168, 14, 224);
 IPAddress subnet(255, 255, 255, 0);
@@ -80,7 +79,7 @@ void setup()
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
   radar.setup();
   spi_returnval = 0;
-  mfrc522.PCD_Init();
+
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
@@ -343,13 +342,14 @@ void loop()
   // delay(1000);
   // driveUnity.turn(90, true);
   // delay(1000);
-
+  
   double current_angle = gyro.currentangle();
 
   // Serial.println(current_angle);
   // delay(500);
   //Serial.println(totlum());
   //Serial.println(getDist(currentview()));
+  //driveUnity.forward_distance(3,20);
   Serial.println("Turn right");
   driveUnity.turn(90, false);
   delay(1000);

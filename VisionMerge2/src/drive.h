@@ -42,43 +42,53 @@ public:
         optical_distance_moved();
         RoverMotors.brake();
     };
+
     // call this to turn the rover a certain amount of degrees
     void turn(int angle_degrees, bool turnLeft)
     {
         double turned_angle = 0;
-        
-        //  initialise the PD constants
-        Kd = 3;
-
-        Kp = 5;
-
-        Ki = 0;
 
         // ENABLE THIS PART OF THE CODE FOR ROTATION FEEDBACK FROM THE OFS
         if (turnLeft)
         {
-            roverUnity.required_head_angle = roverUnity.required_head_angle + angle_degrees;
+            roverUnity.required_head_angle = roverUnity.required_head_angle + angle_degrees ;
         }
         else
         {
-            roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
+            roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees ;
         }
         int i = 0;
 
         // integrating gyroscope code
-
-        double angle_error = roverUnity.required_head_angle - gyro.currentangle();
-
-
+        //double angle_error_previous = roverUnity.required_head_angle - gyro.currentangle(); 
+        double angle_error_previous = roverUnity.required_head_angle - gyro.currentangle();
         // DO REDUCE THE ERROR TO UNDER 1 OR 0.5 BY CREATING A PID CONTROLLER!!!
-        while (abs(angle_error_current) > 5)
+        while (abs(angle_error_previous) > 3)
         {
+            Serial.print("angle error: ");
+            Serial.println(abs(angle_error_previous));
+            Serial.print("Required head_angle: ");
+            Serial.println(roverUnity.required_head_angle);
+            RoverMotors.turn(turnLeft);
+            angle_error_previous = roverUnity.required_head_angle - gyro.currentangle();         
+            // Kd = 3;
 
-            RoverMotors.turn(turnLeft); 
-            Serial.print("Angle error:");
-            angle_error = roverUnity.required_head_angle - gyro.currentangle();
-            Serial.println(angle_error);
+            // Kp = 5;
+
+            // Ki = 0;
+
+            // KD = angle_error_current - angle_error_previous;
+
+            // correction = 4*(Kd * KD + Kp * angle_error_current + Ki * KI);
+            // if(correction > 250){
+            //     correction = 250;
+            // }
+            // speed = correction; 
+            // double angle_error_current = roverUnity.required_head_angle - gyro.currentangle();
             // turned_angle = turned_angle + optical_angle_turned();
+            //  initialise the PD constants
+
+
             if (i % 100 == 0)
             {
                 Serial.println(turned_angle);

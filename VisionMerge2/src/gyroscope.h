@@ -8,7 +8,7 @@ class GyroScope{
     public:
 
     void setup(){
-        Serial.begin(115200);
+       // Serial.begin(115200);
         Wire.begin();
 
         byte status = mpu.begin();
@@ -17,8 +17,8 @@ class GyroScope{
         while(status!=0){ } // stop everything if could not connect to MPU6050
 
         Serial.println(F("Calculating offsets, do not move MPU6050"));
-        delay(1000);
         mpu.calcOffsets(true,true); // gyro and accelero
+        delay(1000);
         Serial.println("Done!\n");
     }
 
@@ -32,7 +32,7 @@ class GyroScope{
     double currentangle(){
         mpu.update();
         float modified_angle = mpu.getAngleZ()/2;
-        //int i = abs(mpu.getAngleZ()/2/360);
+        int i = abs(mpu.getAngleZ()/2/360);
         // if(modified_angle>360){
         //     modified_angle = modified_angle - 360*i;
         // }else if (modified_angle<0){

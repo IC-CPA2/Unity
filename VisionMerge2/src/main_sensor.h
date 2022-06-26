@@ -216,7 +216,7 @@ void optical_setup()
   vspi->setDataMode(SPI_MODE3);
   vspi->setBitOrder(MSBFIRST);
 
-  Serial.begin(9600); // this
+  //Serial.begin(9600); // this
 
   if (mousecam_init() == -1)
   {

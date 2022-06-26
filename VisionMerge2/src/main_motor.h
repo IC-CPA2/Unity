@@ -261,8 +261,7 @@ public:
   // NOTE: this function is open-loop, do not use in production!
   void turn(bool turnLeft)
   {
-    int speed = 70;
-
+    float speed = 70;
     if (turnLeft)
     {
       motorLeft.drive(-speed, 1);
