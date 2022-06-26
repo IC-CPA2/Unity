@@ -265,15 +265,15 @@ public:
 
     if (turnLeft)
     {
-      motorLeft.drive(speed, 1);
-
-      motorRight.drive(-speed, 1);
-    }
-    else
-    {
       motorLeft.drive(-speed, 1);
 
       motorRight.drive(speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(speed, 1);
+
+      motorRight.drive(-speed, 1);
     }
   };
 

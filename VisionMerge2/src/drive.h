@@ -12,6 +12,7 @@ private:
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
     double translation_prop = 0.019; // 0.02019375;
+    double Kd, Kp, Ki, KD, KI, correction;
 
 public:
     double heading_angle;
@@ -22,6 +23,7 @@ public:
     void setup()
     {
         optical_setup();
+        gyro.setup();
     };
 
     //(-10 < speed < 10) drive forward indefinitely, call it inside the void loop() in main.cpp, it is NON-BLOCKING
@@ -44,6 +46,13 @@ public:
     void turn(int angle_degrees, bool turnLeft)
     {
         double turned_angle = 0;
+        
+        //  initialise the PD constants
+        Kd = 3;
+
+        Kp = 5;
+
+        Ki = 0;
 
         // ENABLE THIS PART OF THE CODE FOR ROTATION FEEDBACK FROM THE OFS
         if (turnLeft)
@@ -60,12 +69,15 @@ public:
 
         double angle_error = roverUnity.required_head_angle - gyro.currentangle();
 
+
         // DO REDUCE THE ERROR TO UNDER 1 OR 0.5 BY CREATING A PID CONTROLLER!!!
-        while (abs(angle_error) > 5)
+        while (abs(angle_error_current) > 5)
         {
 
-            RoverMotors.turn(turnLeft); //
+            RoverMotors.turn(turnLeft); 
+            Serial.print("Angle error:");
             angle_error = roverUnity.required_head_angle - gyro.currentangle();
+            Serial.println(angle_error);
             // turned_angle = turned_angle + optical_angle_turned();
             if (i % 100 == 0)
             {
@@ -105,4 +117,5 @@ public:
         };
         RoverMotors.brake();
     }
+
 };
