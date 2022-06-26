@@ -148,6 +148,7 @@
                 <br>
             {% endfor %}
         </div>
+        
         <div class="item2">
             <div class="item1">
                 {% if wifis %}
@@ -467,19 +468,37 @@
         </div> 
         
         <div class="item9">
-            <style>
-                #myProgress{
-                    width: 100%;
-                    background-color: #9f9f9f;
-                }
-                    
-                #myBar{
-                    width: {{battery}};
-                    height: 20px;
-                    background: rgb(255,61,61);
-                    background: linear-gradient(90deg, rgba(255,61,61,1) 0%, rgba(0,255,27,1) 100%);
-                }
-            </style>
+            {% if battery < 30 %}
+                <style>
+                    #myProgress{
+                        width: 100%;
+                        background-color: #9f9f9f;
+                    }
+                        
+                    #myBar{
+                        width: {{battery}};
+                        height: 20px;
+                        background-color: rgb(255, 46, 48);
+                        /* background: rgb(255,61,61);
+                        background: linear-gradient(90deg, rgba(255,61,61,1) 0%, rgba(0,255,27,1) 100%); */
+                    }
+                </style>
+            {% else %}
+                <style>
+                    #myProgress{
+                        width: 100%;
+                        background-color: #9f9f9f;
+                    }
+                        
+                    #myBar{
+                        width: {{battery}};
+                        height: 20px;
+                        background-color: rgb(65, 255, 98);
+                        /* background: rgb(255,61,61);
+                        background: linear-gradient(90deg, rgba(255,61,61,1) 0%, rgba(0,255,27,1) 100%); */
+                    }
+                </style>
+            {% endif %}
             <font size="3"> <b>Battery Level:</b></font>
             <div id="myProgress">
             <div id="myBar"></div>
@@ -487,10 +506,10 @@
         </div>
         
 
-        <!-- <script>
-            window.setInterval('refresh()', 4250); 	// Call a function every 10000 milliseconds (OR 10 seconds).
+        <script>
+            window.setInterval('refresh()', 2000); 	// Call a function every 10000 milliseconds (OR 10 seconds).
 
             function refresh() {
                 window.location.reload();
             }
-        </script> -->
+        </script>

@@ -218,16 +218,16 @@ def about(request):
                                 database[i][j] = 11
                             elif (info == "W"):
                                 database[i][j] = 12
-                        print ("key", key)
-                        print ("roverpos", rover_pos)
+                        # print ("key", key)
+                        # print ("roverpos", rover_pos)
                         if int(rover_pos) > 7070:
                             rover_pos = "7070"
                         if key == rover_pos:
-                            print("hello")
+                            # print("hello")
                             database[i][j] = 2
                         
                 ali = reduce(database) 
-                print (ali)                    
+                # print (ali)                    
 
 
     direc = open(direction_path, "r")
@@ -283,7 +283,7 @@ def about(request):
     elif modss == "A":
         mo = "Autonomous"
 
-    print (ali)
+    # print (ali)
     context = {
         'counter': ['1','2','3','4','5','6','7','8','9'],
         'aliens': ali,
@@ -291,7 +291,8 @@ def about(request):
         'wifis': os.system("ping -c 1 google.com")==0,
         'options': ['Manual', 'Autonomous'],
         'picked': mo,
-        'alienlogs': alienlog
+        'alienlogs': alienlog,
+        'battery': batteryLvl
     } 
 
     return render(request, 'blog/about.html', context)
@@ -447,10 +448,10 @@ def distance(request):
                                 database[i][j] = 11
                             elif (info == "W"):
                                 database[i][j] = 12
-                        print ("key", key)
-                        print ("roverpos", rover_pos)
+                        # print ("key", key)
+                        # print ("roverpos", rover_pos)
                         if (key == rover_pos or int(rover_pos) > 7070):
-                            print("hello")
+                            # print("hello")
                             database[i][j] = 2
                         
                 ali = reduce(database)         
@@ -499,7 +500,7 @@ def distance(request):
             tile_numarr.append(str(y)+str(x))
             
 
-            print (y,x)
+            # print (y,x)
 
             if x > maxx:
                 maxx = x
