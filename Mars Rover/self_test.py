@@ -4,6 +4,7 @@
 #python3 manage.py updatemodels
 
 import socket
+import os
 import time
 print("We're in tcp client...");
 
