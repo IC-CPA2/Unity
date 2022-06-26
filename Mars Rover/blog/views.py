@@ -292,7 +292,7 @@ def about(request):
         'options': ['Manual', 'Autonomous'],
         'picked': mo,
         'alienlogs': alienlog,
-        'battery': batteryLvl
+        'battery': str(batteryLvl) + "%"
     } 
 
     return render(request, 'blog/about.html', context)

@@ -38,16 +38,16 @@ def retu_home():
     pass
 
 while True:
-    f = open(get_file,'w')
+    f = open(get_file,'r')
     line = f.readline()
 
+    if (os.stat("file").st_size == 0):
+        f = open(get_file,'w')
+        f.write("0,0;U1;U2;U3;U4;0")
     # string = ex_ang()
     # angle = string[5]
     # first_angle = angle
 
 
-    if len(line) == 6:
+    else:
         retu_home()
-    
-
-                       

@@ -1,1 +1,1 @@
-3,25;T1;PAx;Tx;Tx;270;XX
+3,3;T1;PAx;Tx;Tx;270
