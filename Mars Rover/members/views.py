@@ -101,7 +101,6 @@ def query(request):
                             </style>"""
 
             image_dec = """ <img id="terrain" src="static/members//media/terrain.png" %}" alt="terrain" height="0" width="0" />
-                            <img id="question" src="static/members/media/questions.png" %}" alt="question" height="0" width="0" />
                             <img id="pink" src="static/members/media/pink.png" %}" alt="pink" height="0" width="0" />
                             <img id="blue" src="static/members/media/blue.png" %}" alt="blue" height="0" width="0" />
                             <img id="green" src="static/members/media/green.png" %}" alt="green" height="0" width="0" />

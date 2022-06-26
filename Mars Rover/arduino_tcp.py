@@ -31,7 +31,7 @@ while True:
     info = msg.split(";")
     f = open("on_serv.txt","w")
     if(len(info)==6):
-        f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;"+";T2;T3;"+memo[info[0]]+"x;"+str(int(float(info[5]))))
+        f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;T3;"+memo[info[0]]+"x;"+str(int(float(info[5]))))
     elif (len(info)==4):
         f.write(str(int(float(info[1])))+","+str(int(float(info[2])))+";T1;T2;T3;T4;"+str(int(float(info[3]))))
 

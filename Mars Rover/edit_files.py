@@ -17,7 +17,7 @@ def ex_ang():
     return splitstr
 
 def retu_home():
-    time.sleep(7)#sleep 4 secs.                   
+    time.sleep(5)#sleep 4 secs.                   
     #extracts the current angle. 
     #we will ha+ve an approximation algorithm.        
     file_vals = ex_ang()
