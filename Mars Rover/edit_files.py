@@ -17,7 +17,7 @@ def ex_ang():
     return splitstr
 
 def retu_home():
-    time.sleep(5.5)#sleep 4 secs.                   
+    time.sleep(7)#sleep 4 secs.                   
     #extracts the current angle. 
     #we will ha+ve an approximation algorithm.        
     file_vals = ex_ang()
@@ -28,7 +28,7 @@ def retu_home():
     ycoord = int(coords[1])
 
     if (xcoord<25 and xcoord>-25) and (ycoord<25 and ycoord>-25):
-        new_y = round(math.cos(angle/57.296)+ycoord)
+        new_y = round(ycoord-math.cos(angle/57.296))
         new_x = round(xcoord+math.sin(angle/57.296))
         open_text = get_file()
         file_op = open(open_text,"w")
@@ -38,12 +38,12 @@ def retu_home():
     pass
 
 while True:
-    f = open(get_file,'r')
+    f = open(get_file(),'r')
     line = f.readline()
 
-    if (os.stat("file").st_size == 0):
-        f = open(get_file,'w')
-        f.write("0,0;U1;U2;U3;U4;0")
+    if (os.stat(get_file()).st_size == 0):
+        f = open(get_file(),'w')
+        f.write("0,0;U1;U2;U3;U4;180")
     # string = ex_ang()
     # angle = string[5]
     # first_angle = angle

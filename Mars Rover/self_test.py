@@ -29,7 +29,7 @@ def char_to_ang(msg_inp):
     msg_inp == "270"
   elif msg_inp == "y":
     msg_inp = "315"
-  return msg_inp
+  return str(msg_inp)
 
 
 
@@ -38,15 +38,15 @@ def char_to_ang(msg_inp):
 while True:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_name, server_port))
+
+    new_msg = input("Rover Sends Coordinates: ")
+
+    client_socket.send(new_msg.encode())
     msg = client_socket.recv(1024)
     msg = msg.decode()
     msg = char_to_ang(msg)
     print("Client angle change received : ",msg)
 
-    new_msg = input("Rover Sends Coordinates: ")
-    #0,0;T1;Tx;Tx;Tx;0
-    
-    client_socket.send(new_msg.encode())
     client_socket.close()
 
 
