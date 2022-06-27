@@ -173,8 +173,8 @@ def query(request):
             print(maxx)
             print(maxy)
             printout += """<div>"""
-            for j in range(miny-1,maxy+2):
-                for i in range(minx-1,maxx+2):
+            for j in range(miny,maxy+1):
+                for i in range(minx,maxx+1):
                     if (str(i)+str(j) in tilenum):
                         if tilenum[str(i)+str(j)] == "PA":
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
