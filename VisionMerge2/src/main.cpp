@@ -17,12 +17,9 @@
 #define MISO 19
 #define MOSI 23
 #define CS 5
-#define RST_PIN 27
-#define SS_PIN 26
 
 WiFiClient client;
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 // IPAddress gateway(192, 168, 14, 224);
 // IPAddress subnet(255, 255, 255, 0);
@@ -77,7 +74,7 @@ void setup()
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
   radar.setup();
   spi_returnval = 0;
-  mfrc522.PCD_Init();
+
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
