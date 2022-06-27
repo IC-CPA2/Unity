@@ -55,6 +55,8 @@ class Command(BaseCommand):
         #made some modifications to handle the iterator.
         iterator = len(live_database.objects.all())
         live_database.objects.all().delete()
+        # map_info.objects.all().delete()
+        # all_info.objects.all().delete()
 
         s = live_database(tile_num="4040",tile_info="R",last_visited=1)
         s.save()

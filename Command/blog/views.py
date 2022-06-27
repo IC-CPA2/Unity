@@ -205,19 +205,19 @@ def about(request):
     else:
         heading = "0"
 
-    alie = open(alien_path, "r")
+    # alie = open(alien_path, "r")
     alienlog = []
 
-    for i in alie:
-        alienlog.append(i)
+    # for i in alie:
+    #     alienlog.append(i)
 
     aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R')).values_list()
 
     for i in aliensquery:
         tile_num = i[0]
-        y = tile_num[:2]
-        x = tile_num[2:]
-        tile_num = x + ', ' + y
+        y = -(int(tile_num[:2]) - 40)
+        x = int(tile_num[2:]) - 40
+        tile_num = str(x) + ', ' + str(y)
         tile_info = i[1]
         if tile_info == 'BA':
             tile_info = 'Blue Alien'
@@ -257,7 +257,9 @@ def about(request):
         'wifis': os.system("ping -c 1 google.com")==0,
         'options': ['Manual', 'Autonomous'],
         'picked': mo,
-        'alienlogs': alienlog
+        'alienlogs': alienlog,
+        'battery': str(100-batteryLvl) + "%",
+        'charging': False
     } 
 
     return render(request, 'blog/about.html', context)
@@ -446,7 +448,7 @@ def distance(request):
             tile_numarr.append(str(y)+str(x))
             
 
-            print (y,x)
+            # print (y,x)
 
             if x > maxx:
                 maxx = x
