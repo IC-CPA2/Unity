@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "..\\..\\driving_motor"
+		},
+		{
+			"name": "late-drive",
+			"path": "..\\..\\late-drive"
+		},
+		{
+			"name": "VisionMerge2",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cmath": "cpp"
+		}
+	}
+}
