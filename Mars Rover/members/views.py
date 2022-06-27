@@ -67,9 +67,9 @@ def query(request):
 
         for i in aliensquery:
             tile_num = i[0]
-            y = tile_num[:2]
-            x = tile_num[2:]
-            tile_num = x + ', ' + y
+            x = (int(tile_num[:2]) - 40)
+            y = -(int(tile_num[2:]) - 40)
+            tile_num = str(x) + ', ' + str(y)
             tile_info = i[1]
             if tile_info == 'BA':
                 tile_info = 'Blue Alien'
@@ -165,8 +165,8 @@ def query(request):
                 # print(tilenum)
 
             printout += """<div>"""
-            for i in range(miny-1,maxy+2):
-                for j in range(minx-1,maxx+2):
+            for j in range(miny-1,maxy+2):
+                for i in range(minx-1,maxx+2):
                     if (str(i)+str(j) in tilenum):
                         if tilenum[str(i)+str(j)] == "PA":
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
@@ -385,10 +385,7 @@ def query(request):
                                         var ctx = c.getContext("2d");
                                         var img = document.getElementById("start");
                                         ctx.drawImage(img,0,0,50,50);
-                                        var c = document.getElementById("4040");
-                                        var ctx = c.getContext("2d");
-                                        var img = document.getElementById("rover");
-                                        ctx.drawImage(img,0,0,50,50);
+                                        
                                     </script>"""
             printout = printout + "</div>"
             printout += """<script>
