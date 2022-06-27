@@ -45,7 +45,7 @@ while True:
     prev_x = float((f.read().split(";")[0]).split(",")[0])
     f = open("on_serv.txt","w")
     if(len(info)==6):
-        f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;T3;"+memo[info[0]]+"x;"+str(angleAdjust(int(float(info[5])))))
+        f.write(str(-int(float(info[4])))+','+str(int(float(info[3])))+";T1;T2;T3;"+memo[info[0]]+"x;"+str(angleAdjust(int(float(info[5])))))
 
         # if int(float(info[5]))==0:
         #     if(int(float(info[3]))>prev_x):
@@ -58,7 +58,7 @@ while True:
             # else:
             #     f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
     elif (len(info)==4):
-        f.write(str(int(float(info[1])))+","+str(int(float(info[2])))+";T1;T2;T3;T4;"+str(angleAdjust(int(float(info[3])))))
+        f.write(str(-int(float(info[2])))+","+str(int(float(info[1])))+";T1;T2;T3;T4;"+str(angleAdjust(int(float(info[3])))))
 
         # f.write("0,0;U1;U2;U3;U4;0")
     f.close()
