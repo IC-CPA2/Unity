@@ -24,6 +24,13 @@ def members_list_(request):
     # print(posts.query)
     # print(connection.queries)
     print(posts.values)
+
+    if 'reset' in request.GET:
+        yes = request.GET["reset"]
+        if yes == "1":
+            live_database.objects.filter(last_visited=0).delete()
+
+            
     return render(request, 'output.html',context)
 
 def query(request):
@@ -42,13 +49,13 @@ def query(request):
 
         tile = all_info.objects.filter(map_id_id=search_id).values_list('tile_number')
         for i in tile:
-            y = str(i)[2:4]
-            y = int(y)
-            x = str(i)[4:6]
+            x = str(i)[2:4]
             x = int(x)
+            y = str(i)[4:6]
+            y = int(y)
             tile_numarr.append(str(y)+str(x))
 
-            # print("y,x:",y,x)
+            print("y,x:",y,x)
 
             if x > maxx:
                 maxx = x
@@ -163,7 +170,8 @@ def query(request):
             for k in posts:
                 tilenum[str(k.get('tile_number'))] = str(k.get('tile_info'))
                 # print(tilenum)
-
+            print(maxx)
+            print(maxy)
             printout += """<div>"""
             for j in range(miny-1,maxy+2):
                 for i in range(minx-1,maxx+2):
