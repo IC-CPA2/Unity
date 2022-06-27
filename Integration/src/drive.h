@@ -8,7 +8,7 @@ private:
     Motors RoverMotors;
     int elapsed_rover_distance = 0;
     double straightness_error = 0;
-    double translation_prop = 0.0191082802547771; // 0.02019375;
+    double translation_prop = 0.019; // 0.0225;
 
 public:
     double heading_angle;
@@ -18,6 +18,7 @@ public:
     // call this in the void setup() in main.cpp
     void setup()
     {
+
         optical_setup();
     };
 
@@ -26,7 +27,7 @@ public:
     {
 
         optical_distance_moved();
-        straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
+        straightness_error = roverUnity.required_head_angle_unbounded - roverUnity.head_angle_unbounded;
         RoverMotors.forward(speed, straightness_error);
         coord_x = translation_prop * roverUnity.pos_x;
         coord_y = translation_prop * roverUnity.pos_y;
@@ -40,34 +41,48 @@ public:
     // call this to turn the rover a certain amount of degrees
     void turn(int angle_degrees, bool turnLeft)
     {
+
+        motorLeft.brake();
+        motorRight.brake();
+
         double turned_angle = 0;
 
         // ENABLE THIS PART OF THE CODE FOR ROTATION FEEDBACK FROM THE OFS
         if (turnLeft)
         {
             roverUnity.required_head_angle = roverUnity.required_head_angle + angle_degrees;
+            roverUnity.required_head_angle_unbounded = roverUnity.required_head_angle_unbounded + angle_degrees;
         }
         else
         {
             roverUnity.required_head_angle = roverUnity.required_head_angle - angle_degrees;
+            roverUnity.required_head_angle_unbounded = roverUnity.required_head_angle_unbounded - angle_degrees;
         }
+
+        if (roverUnity.required_head_angle >= 360)
+        {
+            roverUnity.required_head_angle = roverUnity.required_head_angle - 360;
+        }
+        else if (roverUnity.required_head_angle < 0)
+        {
+            roverUnity.required_head_angle = 360 + roverUnity.required_head_angle;
+        }
+
         int i = 0;
         while (abs(turned_angle) < abs(angle_degrees))
         {
             turned_angle = turned_angle + optical_angle_turned();
-            if (i % 100 == 0)
-            {
-                Serial.println(turned_angle);
-            }
-            i++;
             // Serial.println(turned_angle);
             //  TODO: implement this optical_angle_turned() function based on dy and dx changes in given optical flow sensing period
             RoverMotors.turn(turnLeft); // TODO: implement this .turn(turnLeft) method into Motors class, it just simply starts spinning the wheels into opposite directions!
+            // Serial.println(turnLeft);
         }
 
         // roverUnity.head_angle = roverUnity.head_angle + turned_angle;
 
         roverUnity.head_angle = roverUnity.required_head_angle;
+
+        roverUnity.head_angle_unbounded = roverUnity.head_angle_unbounded + turned_angle;
 
         // RoverMotors.turn_angle(angle_degrees, turnLeft);
 
@@ -86,7 +101,7 @@ public:
         while (elapsed_rover_distance * translation_prop < distance)
         {
             optical_distance_moved();
-            straightness_error = roverUnity.required_head_angle - roverUnity.head_angle;
+            straightness_error = roverUnity.required_head_angle_unbounded - roverUnity.head_angle_unbounded;
             RoverMotors.forward(speed, straightness_error);
             elapsed_rover_distance = elapsed_rover_distance + roverUnity.dy;
             coord_x = translation_prop * roverUnity.pos_x;

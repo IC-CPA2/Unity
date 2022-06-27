@@ -17,12 +17,12 @@
 #define MISO 19
 #define MOSI 23
 #define CS 5
-#define RST_PIN 27
-#define SS_PIN 26
+// #define RST_PIN 27
+// #define SS_PIN 26
 
 WiFiClient client;
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);
+// MFRC522 mfrc522(SS_PIN, RST_PIN);
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 IPAddress gateway(192, 168, 14, 224);
 IPAddress subnet(255, 255, 255, 0);
@@ -33,9 +33,11 @@ uint16_t spi_val;
 uint8_t spi_reg;
 uint16_t spi_returnval;
 const char *ssid = "matthew";
-const char *password = "12345678";
+const char *password = "123456789";
 const uint16_t port = 12000;
-const char *host = "192.168.137.190";
+const char *host = "192.168.137.121";
+
+String msgs;
 
 void calcDistance();
 void resetCounter();
@@ -52,20 +54,17 @@ int anglepoint = 0;
 
 Drive driveUnity;
 Motors motor;
-Radar radar;
 
 void initWiFi()
 {
-  /*
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-    Serial.print("connecting to WiFi ..");
-    while (WiFi.status() != WL_CONNECTED)
-    {
-      Serial.print('.');
-      delay(1000);
-    }
-    */
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.print("connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print('.');
+    delay(1000);
+  }
 }
 
 SPIClass *hspi = NULL;
@@ -77,13 +76,22 @@ void setup()
   pinMode(HSPI_SS, OUTPUT);
   hspi = new SPIClass(HSPI);
   hspi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_SS);
-  radar.setup();
+
   spi_returnval = 0;
-  mfrc522.PCD_Init();
+  //mfrc522.PCD_Init();
   initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
   spi_returnval = 0;
+  msgs = "start";
+  driveUnity.brake();
+  delay(3000);
+  roverUnity.tile_x = 0;
+  roverUnity.tile_y = 0;
+  roverUnity.required_head_angle_unbounded = 0;
+  roverUnity.head_angle_unbounded = 0;
+  roverUnity.head_angle = 0;
+  roverUnity.required_head_angle = 0;
 }
 
 char *getColor(char *string)
@@ -117,6 +125,40 @@ int getPos(char *string)
   }
   pos = atoi(arr[2]);
   return pos;
+}
+
+String message(String col, int distance, int position, int coordx, int coordy, int angle)
+{
+  String result;
+  String color;
+  if (col != "nb")
+  {
+    if (position <= 1)
+    {
+      color = col + "1";
+      result = String(coordx) + "," + String(coordy) + ";" + color + ";" + "T2" + ";" + "T3" + ";" + "T4" + ";" + String(angle);
+    }
+    else if (position == 2)
+    {
+      color = col + "2";
+      result = String(coordx) + "," + String(coordy) + ";" + "T1" + ";" + color + ";" + "T3" + ";" + "T4" + ";" + String(angle);
+    }
+    else if (position == 3)
+    {
+      color = col + "3";
+      result = String(coordx) + "," + String(coordy) + ";" + "T1" + ";" + "T2" + ";" + color + ";" + "T4" + ";" + String(angle);
+    }
+    else if (position >= 4)
+    {
+      color = col + "4";
+      result = String(coordx) + "," + String(coordy) + ";" + "T1" + ";" + "T2" + ";" + "T3" + ";" + color + ";" + String(angle);
+    }
+  }
+  else
+  {
+    result = String(coordx) + "," + String(coordy) + ";T1;T2;T3;T4;" + String(angle);
+  }
+  return result;
 }
 
 int retlargestbin(int arr[65])
@@ -215,10 +257,13 @@ String currentview()
   int gc = 0;
   int dgc = 0;
 
+  int blackc = 0;
+  int whitec = 0;
+
   int buildingcount = 1;
   int buildingdist = 1;
 
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < 2000; i++)
   {
     hspi->beginTransaction(settings);
     digitalWrite(HSPI_SS, LOW);
@@ -283,8 +328,14 @@ String currentview()
     }
     else if (col == 7)
     {
-      buildingcount++;
-      buildingdist = buildingdist + dist;
+      if (pos == 1)
+      {
+        whitec++;
+      }
+      else if (pos == 0)
+      {
+        blackc++;
+      }
     }
   }
 
@@ -304,92 +355,66 @@ String currentview()
           "dgdistf: "+String(dgdistf) + + "," + String(retstrength(dgbin))+ ","+ String(dgc)+";"+
           "buildingdist: "+String(buildingcount)+","+String(buildingdist);
   */
-  if (retstrength(redbin) > 5 && redc > 20 && retstrength(pinkbin) < 100)
+  if (blackc > 30 && whitec > 30)
+  {
+    return "bd;10;10";
+  }
+  if (retstrength(redbin) > 5 && redc > 5 && retstrength(pinkbin) < 20)
   {
     return "r;" + String(reddistf) + ";" + String(redpos / redc);
   }
-  else if (retstrength(yelbin) > 10 && retstrength(pinkbin) < 100)
+  else if (retstrength(yelbin) > 3 && retstrength(pinkbin) < 20)
   {
     return "y;" + String(yeldistf) + ";" + String(yelpos / yelc);
   }
-  else if (retstrength(pinkbin) > 20)
+  else if (retstrength(pinkbin) > 5)
   {
     return "p;" + String(pinkdistf) + ";" + String(pinkpos / pinkc);
   }
-  else if (retstrength(bluebin) > 10 && bluec >= 10)
+  else if (retstrength(bluebin) > 3 && bluec >= 3)
   {
     return "b;" + String(bluedistf) + ";" + String(bluepos / bluec);
   }
-  else if (retstrength(dgbin) > 10 && dgc > 15)
+  else if (retstrength(dgbin) > 3 && dgc > 4)
   {
     return "dg;" + String(dgdistf) + ";" + String(dgpos / dgc);
   }
-  else if (retstrength(gbin) > 10 && gc > 15)
+  else if (retstrength(gbin) > 3 && gc > 4 && gdistf > 10)
   {
     return "lg;" + String(gdistf) + ";" + String(gpos / gc);
   }
   else
   {
-    return "nb;1000;1000";
+    return "nb";
   }
 }
 
+int cnt = 0;
+int start = -1;
+int wallside = start;
+
+// definining motor parameters
+
+float fl_1 = 0.92;
+float fl_2 = 10;
+float fl_3 = 0.5;
+float fl_4 = 5;
+
+bool stop = 0;
+
+int speed = 3;
+
+int angle_to_turn = 90;
+
+int lengthfield = 1;
+
 void loop()
 {
-  Serial.println(totlum());
-  Serial.println(getDist(currentview()));
-  driveUnity.turn(90, false);
-  delay(1000);
-  driveUnity.turn(90, true);
-  delay(1000);
-  /*
-  Serial.println(currentview());
-  String view = currentview();
-  char val[100];
-  view.toCharArray(val,100);
-  Serial.println(view);
-  Serial.println(val);
-  Serial.println(getPos(val));
-  Serial.println(getDist(view));
-  Serial.println(getColor(val));
-  */
-
-  /*
-  if(totlum()<70){
-    Serial.println("wall");
-    driveUnity.turn(90,false);
-    driveUnity.forward(3);
-    delay(3000);
-    driveUnity.turn(90,false);
-  }
-  if(getDist(currentview())<25){
-    Serial.println("avoiding");
-    driveUnity.turn(90,false);
-    driveUnity.forward(3);
-    delay(3000);
-    driveUnity.turn(90,true);
-  }
-  else{
-    driveUnity.forward(3);
-  }
-  */
-
-  /*
-  String view = currentview();
-  char * val;
-  view.toCharArray(val,10);
-
-  if(getDist(val)<20){
-    driveUnity.turn(90,false);
-    driveUnity.forward(3);
-    delay(3000);
-    driveUnity.turn(90,true);
-  }
-
   unsigned long previousMillis = 0;
   unsigned long interval = 30000;
   unsigned long currentMillis = millis();
-  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval)){
+  if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval))
+  {
     Serial.print(millis());
     Serial.println("Need To Reconnect....");
     WiFi.disconnect();
@@ -397,11 +422,13 @@ void loop()
     previousMillis = currentMillis;
   }
   bool connected;
-  std::string msg;
   connected = client.connect(host, port);
   int i = 0;
-  client.print("hello");
-  while (i==0){
+  Serial.println(msgs);
+  client.print(msgs + ";" + String(roverUnity.tile_x) + ";" + String(roverUnity.tile_y) + ";" + String(roverUnity.head_angle));
+  //client.print(msgs + ";" + String(-roverUnity.tile_y) + ";" + String(roverUnity.tile_x) + ";" + String(roverUnity.head_angle));
+  while (i == 0)
+  {
     if (!connected)
     {
       Serial.println("connection to host server failed");
@@ -413,10 +440,152 @@ void loop()
     {
       char c = client.read();
       Serial.println(c);
-      driveUnity.turn(90,false);
-      i=1;
+      if (c == 'A' && stop == 0)
+      {
+        while (1)
+        {
+          String tview = currentview();
+          int tl = totlum();
+          Serial.println(tview);
+          Serial.println(totlum());
+          if (tl < 100)
+          {
+            if (abs(coordx) > lengthfield && ((wallside == -1 && start == 1)||(wallside == 1 && start == -1)))
+            {
+              driveUnity.turn(angle_to_turn, start == 1);
+              while (totlum() > 100)
+              {
+                driveUnity.forward(speed);
+              }
+              driveUnity.brake();
+              msgs = "wall1," + String(tl);
+              stop = 1;
+              break;
+            }
+            else if (abs(coordx) > lengthfield && ((wallside == 1 && start == 1)||(wallside == -1 && start == -1)))
+            {
+              driveUnity.turn(angle_to_turn, false);
+              Serial.println("Required unbounded, unbounded angle");
+              Serial.print(roverUnity.required_head_angle_unbounded);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle_unbounded);
+              Serial.println("----------");
+              Serial.println("Required, actual head angle");
+              Serial.print(roverUnity.required_head_angle);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle);
+              Serial.println("----------");
+              driveUnity.turn(angle_to_turn, false);
+              Serial.println("Required unbounded, unbounded angle");
+              Serial.print(roverUnity.required_head_angle_unbounded);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle_unbounded);
+              Serial.println("----------");
+              Serial.println("Required, actual head angle");
+              Serial.print(roverUnity.required_head_angle);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle);
+              Serial.println("----------");
+              while (totlum() > 100)
+              {
+                driveUnity.forward(speed);
+              }
+              driveUnity.brake();
+              driveUnity.turn(angle_to_turn, start == 1);
+              Serial.println("Required unbounded, unbounded angle");
+              Serial.print(roverUnity.required_head_angle_unbounded);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle_unbounded);
+              Serial.println("----------");
+              Serial.println("Required, actual head angle");
+              Serial.print(roverUnity.required_head_angle);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle);
+              Serial.println("----------");
+              while (totlum() > 100)
+              {
+                driveUnity.forward(speed);
+              }
+              msgs = "wall2," + String(tl);
+              stop = 1;
+              break;
+            }
+            else
+            {
+              Serial.println("Normal Wall");
+              Serial.print("LUM: ");
+              Serial.println(totlum());
+              wallside = wallside * -1;
+              driveUnity.brake();
+              driveUnity.turn(angle_to_turn, wallside != 1);
+              Serial.println("Required unbounded, unbounded angle");
+              Serial.print(roverUnity.required_head_angle_unbounded);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle_unbounded);
+              Serial.println("----------");
+              Serial.println("Required, actual head angle");
+              Serial.print(roverUnity.required_head_angle);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle);
+              Serial.println("----------");
+              driveUnity.forward_distance(speed, 20);
+              coordx++;
+              driveUnity.turn(angle_to_turn, wallside != 1);
+              Serial.println("Required unbounded, unbounded angle");
+              Serial.print(roverUnity.required_head_angle_unbounded);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle_unbounded);
+              Serial.println("----------");
+              Serial.println("Required, actual head angle");
+              Serial.print(roverUnity.required_head_angle);
+              Serial.print(",");
+              Serial.print(roverUnity.head_angle);
+              Serial.println("----------");
+              msgs = "wall," + String(tl);
+              break;
+            }
+          }
+          if (tview == "nb" || getDist(tview) > 30)
+          {
+            driveUnity.forward(speed);
+            coordy = coordy + wallside;
+          }
+          else
+          {
+            Serial.println("Obstruction");
+            driveUnity.brake();
+            driveUnity.turn(angle_to_turn, wallside == 1);
+            Serial.println("Required unbounded, unbounded angle");
+            Serial.print(roverUnity.required_head_angle_unbounded);
+            Serial.print(",");
+            Serial.print(roverUnity.head_angle_unbounded);
+            Serial.println("----------");
+            Serial.println("Required, actual head angle");
+            Serial.print(roverUnity.required_head_angle);
+            Serial.print(",");
+            Serial.print(roverUnity.head_angle);
+            Serial.println("----------");
+            driveUnity.forward_distance(speed, 20);
+            coordx++;
+            bool turningLeft = wallside == -1;
+            driveUnity.turn(angle_to_turn, turningLeft);
+            Serial.println("Required unbounded, unbounded angle");
+            Serial.print(roverUnity.required_head_angle_unbounded);
+            Serial.print(",");
+            Serial.print(roverUnity.head_angle_unbounded);
+            Serial.println("----------");
+            Serial.println("Required, actual head angle");
+            Serial.print(roverUnity.required_head_angle);
+            Serial.print(",");
+            Serial.print(roverUnity.head_angle);
+            Serial.println("----------");
+            msgs = tview;
+            break;
+          }
+        }
+      }
+      i = 1;
       break;
     }
   }
-  */
 }

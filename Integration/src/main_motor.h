@@ -24,11 +24,11 @@ Developed with ROB-9457
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 21 // 18
+#define AIN1 26 // 21 // 18
 #define BIN1 17
 #define AIN2 25 // 5
 #define BIN2 16
-#define PWMA 22 // 19
+#define PWMA 27 // 22 // 19
 #define PWMB 4
 #define STBY 9
 
@@ -72,7 +72,6 @@ private:
     return (int)x; // might not work
   }
 
-
   // the input error here has to be the total_x_translation during straight drive
   MotorSpeeds speed_straightness_control(int speed, double current_error)
   {
@@ -85,9 +84,9 @@ private:
 
     // let's initialise the PD constants
 
-    Kd = 3;
+    Kd = 1;
 
-    Kp = 5;
+    Kp = 2;
 
     Ki = 0;
 
@@ -265,15 +264,15 @@ public:
 
     if (turnLeft)
     {
-      motorLeft.drive(speed, 1);
-
-      motorRight.drive(-speed, 1);
-    }
-    else
-    {
       motorLeft.drive(-speed, 1);
 
       motorRight.drive(speed, 1);
+    }
+    else
+    {
+      motorLeft.drive(speed, 1);
+
+      motorRight.drive(-speed, 1);
     }
   };
 

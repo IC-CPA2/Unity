@@ -71,7 +71,7 @@ int rover_angle = 0;
 
 // rover turning adjustment proportionality constant
 
-float turning_prop = 0.0925; // 0.108;
+float turning_prop = 0.0945;
 
 double abs_coord_x = 0;
 double abs_coord_y = 0;
@@ -238,15 +238,17 @@ byte frame[ADNS3080_PIXELS_X * ADNS3080_PIXELS_Y];
 
 struct Rover
 {
+  // dx and dy are in terms of centimetres
   double dx, dy;
-  double head_angle = 90;
-  double required_head_angle = 90;
-  double translation_prop = 15 / 666 * 666 / 15;
-  // NOTE: it begins at 21/2 / 10.5cm - position of rover in terms of cm
-  double pos_x = 10.5;
-  double pos_y = 10.5;
+  double head_angle = 0;
+  double required_head_angle = 0;
+  double translation_prop = 0.019;
+  double required_head_angle_unbounded = 0;
+  double head_angle_unbounded = 0;
   int tile_x = 0;
   int tile_y = 0;
+  // position of rover in terms of centimetre translation
+  double pos_x, pos_y;
 };
 
 // struct AbsCoords
@@ -255,6 +257,7 @@ struct Rover
 // };
 
 // definition of our global ROVER struct
+
 Rover roverUnity;
 
 void calc_abs_coords()
@@ -264,28 +267,31 @@ void calc_abs_coords()
   double dx = roverUnity.dx;
   double dy = roverUnity.dy;
 
-  Serial.println("Rover dx");
-  Serial.println(dx);
-  Serial.println("Rover dy");
-  Serial.println(dy);
+  // Serial.println("Rover dx");
+  // Serial.println(dx);
+  // Serial.println("Rover dy");
+  // Serial.println(dy);
 
-  double head_angle_radians = roverUnity.head_angle * 2 * M_PI / 180;
+  double head_angle_radians = roverUnity.head_angle_unbounded * M_PI / 180;
 
-  roverUnity.pos_x = sin(head_angle_radians) * dx + roverUnity.pos_x;
+  roverUnity.pos_x = cos(head_angle_radians) * dy + roverUnity.pos_x;
 
-  roverUnity.pos_y = cos(head_angle_radians) * dy + roverUnity.pos_y;
+  roverUnity.pos_y = sin(head_angle_radians) * dy + roverUnity.pos_y;
 
-  Serial.println("Rover HEAD ANGLE");
-  Serial.println(roverUnity.head_angle);
+  roverUnity.tile_x = floor((roverUnity.pos_x * roverUnity.translation_prop) / 15);
 
-  Serial.print('\n');
+  roverUnity.tile_y = floor((roverUnity.pos_y * roverUnity.translation_prop) / 15);
 
-  Serial.println("position x = " + String(roverUnity.pos_x));
+  // Serial.println("Rover HEAD ANGLE");
+  // Serial.println(roverUnity.head_angle);
 
-  Serial.println("position y = " + String(roverUnity.pos_y));
-  Serial.print('\n');
+  // Serial.print('\n');
 
-  // TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
+  // Serial.println("position x = " + String(roverUnity.pos_x));
+
+  // Serial.println("position y = " + String(roverUnity.pos_y));
+  // Serial.print('\n');
+  //  TODO: implement calculation of absolute coordinates here based on movement reported by the optical flow sensor
 };
 
 void optical_measurements()
@@ -310,13 +316,13 @@ void optical_measurements()
     {
       for(j=0; j<ADNS3080_PIXELS_X; j++, k++)
       {
-        Serial.print(asciiart(frame[k]));
-        Serial.print(' ');
+        //Serial.print(asciiart(frame[k]));
+        //Serial.print(' ');
       }
-      Serial.println();
+      //Serial.println();
     }
   }
-  Serial.println();
+  //Serial.println();
   delay(250);
 
 #else
@@ -328,26 +334,39 @@ void optical_measurements()
   MD md;
   mousecam_read_motion(&md);
   for (int i = 0; i < md.squal / 4; i++)
-    Serial.print('*');
-  Serial.print(' ');
-  Serial.print((val * 100) / 351);
-  Serial.print(' ');
-  Serial.print(md.shutter);
-  Serial.print(" (");
-  Serial.print((int)convTwosComp(md.dx));
-  Serial.print(',');
-  Serial.print((int)convTwosComp(md.dy));
-  Serial.println(')');
+    // Serial.print('*');
+    // Serial.print(' ');
+    // Serial.print((val * 100) / 351);
+    // Serial.print(' ');
+    // Serial.print(md.shutter);
+    // Serial.print(" (");
+    // Serial.print((int)convTwosComp(md.dx));
+    // Serial.print(',');
+    // Serial.print((int)convTwosComp(md.dy));
+    // Serial.println(')');
 
-  // Serial.println(md.max_pix);
+    // Serial.println(md.max_pix);
 
-  // roverUnity.dx = roverUnity.translation_prop * convTwosComp(md.dx);
-  // roverUnity.dy = roverUnity.translation_prop * convTwosComp(md.dy);
+    // roverUnity.dx = roverUnity.translation_prop * convTwosComp(md.dx);
+    // roverUnity.dy = roverUnity.translation_prop * convTwosComp(md.dy);
 
-  roverUnity.dx = convTwosComp(md.dx);
+    roverUnity.dx = convTwosComp(md.dx);
   roverUnity.dy = convTwosComp(md.dy);
 
-  roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
+  roverUnity.head_angle_unbounded = roverUnity.head_angle_unbounded - turning_prop * roverUnity.dx;
+
+  if (roverUnity.head_angle >= 360)
+  {
+    roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx - 360;
+  }
+  else if (roverUnity.head_angle < 0)
+  {
+    roverUnity.head_angle = 360 + roverUnity.head_angle - turning_prop * roverUnity.dx;
+  }
+  else
+  {
+    roverUnity.head_angle = roverUnity.head_angle - turning_prop * roverUnity.dx;
+  }
 
   // roverUnity.rover_distance_x = roverUnity.distance_X + roverUnity.dx; // maybe devide by 157 ???
   // roverUnity.distance_y = roverUnity.distance_y + roverUnity.dy; // maybe devide by 157 ???
