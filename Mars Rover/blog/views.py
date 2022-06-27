@@ -238,19 +238,19 @@ def about(request):
     else:
         heading = "0"
 
-    alie = open(alien_path, "r")
+    # alie = open(alien_path, "r")
     alienlog = []
 
-    for i in alie:
-        alienlog.append(i)
+    # for i in alie:
+    #     alienlog.append(i)
 
     aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R')).values_list()
 
     for i in aliensquery:
         tile_num = i[0]
-        y = tile_num[:2]
-        x = tile_num[2:]
-        tile_num = x + ', ' + y
+        y = -(int(tile_num[:2]) - 40)
+        x = int(tile_num[2:]) - 40
+        tile_num = str(x) + ', ' + str(y)
         tile_info = i[1]
         if tile_info == 'BA':
             tile_info = 'Blue Alien'

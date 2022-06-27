@@ -61,13 +61,44 @@ def query(request):
         
         sizex = maxx-minx+1
         sizey = maxy-miny+1
+        
+        alienlog = []
+        aliensquery = live_database.objects.filter(~Q(tile_info='T'), ~Q(tile_info='U'), ~Q(tile_info='R')).values_list()
 
+        for i in aliensquery:
+            tile_num = i[0]
+            y = tile_num[:2]
+            x = tile_num[2:]
+            tile_num = x + ', ' + y
+            tile_info = i[1]
+            if tile_info == 'BA':
+                tile_info = 'Blue Alien'
+            elif tile_info == 'YA':
+                tile_info = 'Yellow Alien'
+            elif tile_info == 'GA':
+                tile_info = 'Green Alien'
+            elif tile_info == 'RA':
+                tile_info = 'Red Alien'
+            elif tile_info == 'PA':
+                tile_info = 'Pink Alien'
+            elif tile_info == 'DGA':
+                tile_info = 'Dark Green Alien'
+            elif tile_info == 'DBA':
+                tile_info = 'Dark Blue Alien'
+            elif tile_info == 'W':
+                tile_info = 'Building'
+            elif tile_info == 'F':
+                tile_info = 'Underground Infrastructure'
+
+            display = tile_info + ": " + tile_num
+            if display not in alienlog:
+                alienlog.append(display)
 
         grid = """
                 <style>
                 .grid-container {
                     display: grid;
-                    grid-template-columns: auto;
+                    grid-template-columns: auto auto;
                     gap: 10px;
                     height: auto;
                 }
@@ -163,12 +194,7 @@ def query(request):
                                                         var img = document.getElementById("terrain");
                                                         ctx.drawImage(img,0,0,50,50);
                                                     </script>
-                                                    <script>
-                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
-                                                    var ctx = c.getContext("2d");
-                                                    var img = document.getElementById("rover");
-                                                    ctx.drawImage(img,0,0,50,50);
-                                                    </script>"""
+                                                    """
                         elif tilenum[str(i)+str(j)] == "BA":
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
@@ -359,6 +385,10 @@ def query(request):
                                         var ctx = c.getContext("2d");
                                         var img = document.getElementById("start");
                                         ctx.drawImage(img,0,0,50,50);
+                                        var c = document.getElementById("4040");
+                                        var ctx = c.getContext("2d");
+                                        var img = document.getElementById("rover");
+                                        ctx.drawImage(img,0,0,50,50);
                                     </script>"""
             printout = printout + "</div>"
             printout += """<script>
@@ -371,18 +401,17 @@ def query(request):
                             </script>"""
 
             pathlist = []
-            paths = "<h4> Paths: </h4>"
-            # for k in posts:
-            #     pathlist.append(k.get('path'))
-            #     paths += k.get('path') + "<br>"
+            paths = "<h4> Alien Log: </h4>"
+            for k in alienlog:
+                paths += k + "<br>"
 
-            # grid2 = "<div>" + "</div>"
+            grid2 = "<div>" + paths + "</div>"
             
             buttons = "<div>" + buttons + "</div>"
 
-            # grid4 = "<div>" + "</div>"
+            grid4 = "<div>" + "</div>"
 
-            return HttpResponse (grid + printout + buttons + "</div>")
+            return HttpResponse (grid + printout + grid2 + buttons + grid4 + "</div>")
         else:
             posts = map_info.objects.all().values('map_id','date_time','map_size','map_name')
             context = {
