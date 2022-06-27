@@ -3,6 +3,7 @@ from socket import *
 import socket
 import time
 import math 
+import os
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -41,19 +42,21 @@ while True:
     msg = content.decode('UTF-8')
     info = msg.split(";")
     f = open("on_serv.txt","r")
-    prev_x = (f.read().split(";")[0]).split(",")[0]
+    prev_x = float((f.read().split(";")[0]).split(",")[0])
     f = open("on_serv.txt","w")
     if(len(info)==6):
-        if int(float(info[5]))==0:
-            if(int(float(info[3]))>prev_x):
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
-            else:
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
-        else:
-            if(int(float(info[3]))>prev_x):
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
-            else:
-                f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
+        f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;T3;"+memo[info[0]]+"x;"+str(angleAdjust(int(float(info[5])))))
+
+        # if int(float(info[5]))==0:
+        #     if(int(float(info[3]))>prev_x):
+        #         f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
+        #     else:
+        #         f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
+        # else:
+        #     if(int(float(info[3]))>prev_x):
+        #         f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";T1;T2;"+memo[info[0]]+"x;T4;"+str(angleAdjust(int(float(info[5])))))
+            # else:
+            #     f.write(str(int(float(info[3])))+','+str(int(float(info[4])))+";"+memo[info[0]]+"x;T2;T3;T4;"+str(angleAdjust(int(float(info[5])))))
     elif (len(info)==4):
         f.write(str(int(float(info[1])))+","+str(int(float(info[2])))+";T1;T2;T3;T4;"+str(angleAdjust(int(float(info[3])))))
 
