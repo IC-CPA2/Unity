@@ -82,8 +82,8 @@ def query(request):
 
         for i in aliensquery:
             tile_num = i[0]
-            x = (int(tile_num[:2]) - 45)
-            y = (int(tile_num[2:]) - 45)
+            x = -(int(tile_num[:2]) - 45)
+            y = -(int(tile_num[2:]) - 45)
             tile_num = str(x) + ', ' + str(y)
             tile_info = i[1]
             if tile_info == 'BA':
@@ -178,15 +178,18 @@ def query(request):
             for k in posts:
                 tilenum[str(k.get('tile_number'))] = str(k.get('tile_info'))
                 # print(tilenum)
-            print(maxx)
-            print(maxy)
+            print("MAXX",maxx)
+            print("MAXY",minx)
             printout += """<div>"""
-            for j in range(miny,maxy+9):
-                for i in range(minx,maxx+9):
-                    if (str(i)+str(j) in tilenum):
+            for j in range(miny-5,maxy+5):
+                for i in range(minx-5,maxx+5):
+                    flip = 45 - i
+                    i = 45 + flip
+                    if (str(i)+str(j) in tilenum): 
                         if tilenum[str(i)+str(j)] == "PA":
                             if len(str(j)) < 2:
                                 j = int("0" + str(j))
+                            
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
                                                     </canvas>
