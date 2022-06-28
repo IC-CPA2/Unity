@@ -55,8 +55,8 @@ class Command(BaseCommand):
         #made some modifications to handle the iterator.
         iterator = len(live_database.objects.all())
         live_database.objects.all().delete()
-        # map_info.objects.all().delete()
-        # all_info.objects.all().delete()
+        map_info.objects.all().delete()
+        all_info.objects.all().delete()
 
         print("AFTER",live_database.objects.all().values())
     

@@ -82,8 +82,8 @@ def query(request):
 
         for i in aliensquery:
             tile_num = i[0]
-            x = (int(tile_num[:2]) - 40)
-            y = -(int(tile_num[2:]) - 40)
+            x = (int(tile_num[:2]) - 45)
+            y = -(int(tile_num[2:]) - 45)
             tile_num = str(x) + ', ' + str(y)
             tile_info = i[1]
             if tile_info == 'BA':
@@ -420,7 +420,7 @@ def query(request):
                 printout = printout + "<br>"
 
             printout = printout + """<script>
-                                        var c = document.getElementById("4040");
+                                        var c = document.getElementById("4545");
                                         var ctx = c.getContext("2d");
                                         var img = document.getElementById("start");
                                         ctx.drawImage(img,0,0,50,50);
