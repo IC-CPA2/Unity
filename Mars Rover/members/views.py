@@ -48,10 +48,18 @@ def query(request):
         search_id = request.GET["mapid"]
 
         tile = all_info.objects.filter(map_id_id=search_id).values_list('tile_number')
-        for i in tile:
-            x = str(i)[2:4]
+        for i in tile:#we have value i as 403 but need an 0403
+            print("I debugged is: ", i)
+            checker = str(i)[0:len(i)-2]
+            print(str(i)[5])
+            if (str(i)[5]=="'"):
+                x = str(0)+str(i)[3]
+                y = str(i)[3:5]
+            else:
+                x = str(i)[2:4]
+                y = str(i)[4:6]
             x = int(x)
-            y = str(i)[4:6]
+            print("Y VALUE DEBUG: ",y)
             y = int(y)
             tile_numarr.append(str(y)+str(x))
 
@@ -173,10 +181,12 @@ def query(request):
             print(maxx)
             print(maxy)
             printout += """<div>"""
-            for j in range(miny,maxy+1):
-                for i in range(minx,maxx+1):
+            for j in range(miny,maxy+9):
+                for i in range(minx,maxx+9):
                     if (str(i)+str(j) in tilenum):
                         if tilenum[str(i)+str(j)] == "PA":
+                            if len(str(j)) < 2:
+                                j = int("0" + str(j))
                             printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
                                                     </canvas>
@@ -348,40 +358,61 @@ def query(request):
                                                     ctx.drawImage(img,0,0,50,50);
                                                     </script>"""
                         elif tilenum[str(i)+str(j)] == "T":
-                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                            l = str(i)
+                            k = str(j)
+                            if len(str(j)) < 2:
+                                k = "0" + str(j)
+                            if len(str(i)) < 2:
+                                l = "0" + str(i)
+                            print(l,k)
+                            printout = printout + """<canvas id=\""""+ l + k +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
                                                     </canvas>
                                                     <script>
-                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var c = document.getElementById(\"""" + l + k + """\");
                                                         var ctx = c.getContext("2d");
                                                         var img = document.getElementById("terrain");
                                                         ctx.drawImage(img,0,0,50,50);
                                                     </script>"""
                         else:
-                            printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                            l = str(i)
+                            k = str(j)
+                            if len(str(j)) < 2:
+                                k = "0" + str(j)
+                            if len(str(i)) < 2:
+                                l = "0" + str(i)
+                            print(l,k)
+                            printout = printout + """<canvas id=\""""+ l + k +"""\"width="50" height="50"
                                                         style="border:0.5px solid #000000;">
                                                     </canvas>
                                                     <script>
-                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var c = document.getElementById(\"""" + l + k + """\");
                                                         var ctx = c.getContext("2d");
                                                         var img = document.getElementById("terrain");
                                                         ctx.drawImage(img,0,0,50,50);
-                                                        var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                        var c = document.getElementById(\"""" + l + k + """\");
                                                         var ctx = c.getContext("2d");
                                                         var img = document.getElementById("question");
                                                         ctx.drawImage(img,12,12,25,25);
                                                     </script>"""
 
                     else:
-                        printout = printout + """<canvas id=\""""+ str(i) + str(j) +"""\"width="50" height="50"
+                        l = str(i)
+                        k = str(j)
+                        if len(str(j)) < 2:
+                            k = "0" + str(j)
+                        if len(str(i)) < 2:
+                            l = "0" + str(i)
+                        print(l,k)
+                        printout = printout + """<canvas id=\""""+ l + k +"""\"width="50" height="50"
                                                     style="border:0.5px solid #000000;">
                                                 </canvas>
                                                 <script>
-                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var c = document.getElementById(\"""" + l + k + """\");
                                                     var ctx = c.getContext("2d");
                                                     var img = document.getElementById("terrain");
                                                     ctx.drawImage(img,0,0,50,50);
-                                                    var c = document.getElementById(\"""" + str(i) + str(j) + """\");
+                                                    var c = document.getElementById(\"""" + l + k + """\");
                                                     var ctx = c.getContext("2d");
                                                     var img = document.getElementById("question");
                                                     ctx.drawImage(img,12,12,25,25);

@@ -42,7 +42,6 @@ while True:
     msg = content.decode('UTF-8')
     info = msg.split(";")
     f = open("on_serv.txt","r")
-    prev_x = float((f.read().split(";")[0]).split(",")[0])
     f = open("on_serv.txt","w")
     if(len(info)==6):
         f.write(str(-int(float(info[4])))+','+str(int(float(info[3])))+";T1;T2;T3;"+memo[info[0]]+"x;"+str(angleAdjust(int(float(info[5])))))

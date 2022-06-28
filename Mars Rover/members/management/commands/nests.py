@@ -68,9 +68,9 @@ class Command(BaseCommand):
         pass
     def handle(self,*args, **options):
         print("reached here")
-        curr_sq = "4040"
+        curr_sq = "4545"
         if len(live_database.objects.all()) == 0:
-            curr_sq = "4040"
+            curr_sq = "4545"
         else:
             print("in else loop")
             sel_filter = live_database.objects.filter(last_visited=1)
@@ -100,7 +100,7 @@ class Command(BaseCommand):
                 if len(all_info) == 7:
                     fan = True
             coords = all_info[0].split(",") #gives x and y coordinates
-            curr_sq = 4040+int(coords[0])+(100*int(coords[1]))
+            curr_sq = 4545+int(coords[0])+(100*int(coords[1]))
             #send back as current values the X,Y values. 
             temp_dict = {}#dictionary for the information sent back by TCP server. 
             temp_dict[1] = all_info[1][:-1]
