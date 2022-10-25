@@ -16,7 +16,7 @@ Please install on platform.io (MFRC522), Wifi (Jake Merz), Sparkfun libraries on
 ## Command Subsection Notes
 Run 
 ````shell
-launch.sh &lt;ip address> 
+launch.sh <ip address> 
 ````
 
 to run the web application <br>
