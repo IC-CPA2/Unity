@@ -14,7 +14,15 @@ Amy
 Please install on platform.io (MFRC522), Wifi (Jake Merz), Sparkfun libraries onto system. Start by running the server by running python/python3 server.py. Then input the values to be input into control the rover. The documentation is expressed in quite an easy readable way.
 
 ## Command Subsection Notes
-Run launch.sh &lt;ip address> to run the web application <br>
-To clear database run clear.sh
+Run 
+````shell
+launch.sh &lt;ip address> 
+````
+
+to run the web application <br>
+To clear database run
+````shell
+clear.sh
+````
 
 
